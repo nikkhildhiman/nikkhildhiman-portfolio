@@ -39,7 +39,7 @@ export default function Hero({ onOpenVideo }) {
 
   const CARDS = [
     { id: 0, img: 'https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?q=80&w=2070&auto=format&fit=crop', title: 'COMMERCIAL' },
-    { id: 1, img: 'https://images.unsplash.com/photo-1517409252321-ba31697eeaf6?q=80&w=2070&auto=format&fit=crop', title: 'YOUTUBE' },
+    { id: 1, video: '/assets/instagranstory-2.mp4', title: 'VERTICAL EDITING' },
     { id: 2, img: 'https://images.unsplash.com/photo-1535016120720-40c746a47ce4?q=80&w=2070&auto=format&fit=crop', title: 'COLOR GRADE' }
   ];
 
@@ -98,7 +98,7 @@ export default function Hero({ onOpenVideo }) {
               
               <button 
                 className="btn-secondary magnetic" 
-                onClick={() => onOpenVideo('https://www.w3schools.com/html/mov_bbb.mp4')}
+                onClick={() => onOpenVideo('/assets/instagranstory-2.mp4')}
                 style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '16px 32px', borderRadius: '9999px', border: '1px solid var(--color-black)', color: 'var(--color-black)', background: 'transparent', fontWeight: 600, cursor: 'pointer' }}
               >
                 <Play size={18} fill="currentColor" /> Play Showreel
@@ -139,7 +139,7 @@ export default function Hero({ onOpenVideo }) {
                   key={card.id}
                   onMouseEnter={() => handleCardHover(idx)}
                   onMouseLeave={handleCardLeave}
-                  onClick={() => onOpenVideo('https://www.w3schools.com/html/mov_bbb.mp4')}
+                  onClick={() => onOpenVideo(card.video ? card.video : '/assets/instagranstory-2.mp4')}
                   style={{
                     position: 'absolute',
                     top: baseTransforms[idx].top,
@@ -156,7 +156,11 @@ export default function Hero({ onOpenVideo }) {
                     border: '1px solid rgba(255,255,255,0.2)'
                   }}
                 >
-                  <img src={card.img} alt={card.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  {card.video ? (
+                    <video src={card.video} autoPlay muted loop playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <img src={card.img} alt={card.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  )}
                   
                   {/* Overlay Title */}
                   <div style={{
