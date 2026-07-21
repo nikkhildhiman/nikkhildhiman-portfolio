@@ -1,0 +1,302 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ==========================================================================
+   GENEROUS EDITORIAL SPACING & HIGH-CONTRAST VISIBILITY TOKENS
+   ========================================================================== */
+
+:root {
+  /* Light Mode Tokens */
+  --bg-main: #F8F8F6;
+  --bg-soft-gradient: #F8F8F6;
+  --color-glass: rgba(255, 255, 255, 0.4);
+  --color-surface: transparent;
+  --glass-border: rgba(0, 0, 0, 0.04);
+  --card-border: rgba(0, 0, 0, 0.04);
+  
+  --color-black: #111111;
+  --color-ink: #111111;
+  --text-main: #111111;
+  --text-muted: #4A4A4A;
+  
+  --accent-blue: #5B8CFF;
+  --color-hover: #7AA5FF;
+  --color-success: #7BC47F;
+
+  /* Typography Stack */
+  --font-heading: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Easing & Physics */
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-apple: all 0.8s var(--ease-expo);
+  --transition-fast: all 0.25s var(--ease-expo);
+}
+
+/* Dark Mode Overrides */
+[data-theme='dark'], body.dark-mode {
+  --bg-main: #0B0B0D;
+  --bg-soft-gradient: #0B0B0D;
+  --color-glass: rgba(255, 255, 255, 0.02);
+  --color-surface: transparent;
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --card-border: rgba(255, 255, 255, 0.06);
+
+  --color-black: #FFFFFF;
+  --color-ink: #FFFFFF;
+  --text-main: #FFFFFF;
+  --text-muted: #D4D4D9;
+
+  --accent-blue: #5B8CFF;
+  --color-hover: #7AA5FF;
+}
+
+/* Base Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+html, body {
+  background: var(--bg-soft-gradient);
+  color: var(--color-black);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* Lenis Smooth Scroll resets */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+/* Scrollbar Track */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-black);
+  border-radius: 4px;
+}
+
+/* Typography Hierarchy - Elegant Minimalism */
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  color: var(--color-black) !important;
+  line-height: 1.05;
+}
+
+p {
+  color: var(--text-muted) !important;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+}
+
+/* Container & Generous Breathing Room Spacing */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 40px;
+  width: 100%;
+}
+
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 36px;
+}
+
+.section-padding {
+  padding: 140px 0;
+}
+
+/* Minimalist Cards - No heavy box shadows */
+.glass-card, .surface-card {
+  background: var(--color-glass) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 16px;
+  padding: 44px;
+  transition: transform 0.6s var(--ease-expo), border-color 0.4s ease, background 0.4s ease;
+  position: relative;
+}
+
+.glass-card:hover, .surface-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-black) !important;
+}
+
+/* Action Buttons */
+.btn-lime, .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background-color: var(--color-black) !important;
+  color: var(--bg-main) !important;
+  padding: 16px 36px;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.3s var(--ease-expo), background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-lime:hover, .btn-primary:hover {
+  background-color: var(--accent-blue) !important;
+  color: #ffffff !important;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(91, 140, 255, 0.4);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background-color: transparent;
+  color: var(--color-black) !important;
+  padding: 16px 36px;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 9999px;
+  border: 1px solid var(--glass-border) !important;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.3s var(--ease-expo), border-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-secondary:hover {
+  border-color: var(--color-black) !important;
+  transform: translateY(-3px);
+}
+
+/* Utility Badges */
+.badge-black {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  background-color: var(--color-black) !important;
+  color: var(--bg-main) !important;
+  border-radius: 9999px;
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Keyframe Animations */
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(1deg); }
+}
+
+.floating-ui-panel {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+/* Sticky CTA */
+.sticky-cta-container {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  z-index: 90;
+  pointer-events: auto;
+}
+
+/* Mouse Glow */
+.mouse-glow-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(700px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(91, 140, 255, 0.12), transparent 80%);
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN SYSTEM (DESKTOP, LAPTOP, TABLET, MOBILE)
+   ========================================================================== */
+
+/* 1. LAPTOP VIEW (< 1280px) */
+@media (max-width: 1280px) {
+  .container { padding: 0 32px; }
+  .section-padding { padding: 120px 0; }
+  .grid-12 { gap: 32px; }
+  .glass-card, .surface-card { padding: 36px; }
+}
+
+/* 2. TABLET VIEW (< 992px) */
+@media (max-width: 992px) {
+  .container { padding: 0 24px; }
+  .section-padding { padding: 90px 0; }
+  .grid-12 { gap: 24px; }
+  .glass-card, .surface-card { padding: 32px; }
+  
+  /* Typography Scaling for Tablet */
+  h1 { font-size: clamp(2.8rem, 7vw, 4rem) !important; line-height: 1 !important; }
+  h2 { font-size: clamp(2rem, 5vw, 3rem) !important; }
+  
+  /* Responsive Grids */
+  .grid-12 > div[style*="gridColumn: 'span 7'"], 
+  .grid-12 > div[style*="gridColumn: 'span 5'"] {
+    grid-column: span 12 !important;
+  }
+}
+
+/* 3. MOBILE VIEW (< 640px) */
+@media (max-width: 640px) {
+  .container { padding: 0 16px; }
+  .section-padding { padding: 70px 0; }
+  .grid-12 { gap: 16px; }
+  
+  /* Card Spacing tighter for Mobile */
+  .glass-card, .surface-card { padding: 24px; }
+  
+  /* Typography Scaling for Mobile */
+  h1 { font-size: 2.5rem !important; letter-spacing: -0.02em; }
+  h2 { font-size: 2rem !important; }
+  p { font-size: 1rem !important; line-height: 1.5; }
+  
+  /* UI Element Resets */
+  .floating-ui-panel { display: none !important; }
+  
+  /* Mobile Sticky CTA Docked */
+  .sticky-cta-container {
+    bottom: 20px;
+    right: 20px;
+    left: 20px;
+  }
+  .sticky-cta-container button {
+    width: 100%;
+    padding: 16px !important;
+  }
+  
+  .btn-lime, .btn-primary, .btn-secondary { padding: 14px 24px; font-size: 0.85rem; width: 100%; justify-content: center; }
+  
+  /* Force all grid items to full width on mobile */
+  .grid-12 > div { grid-column: span 12 !important; }
+}

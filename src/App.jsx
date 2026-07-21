@@ -1,0 +1,366 @@
+import React, { useState, useEffect } from 'react';
+import Lenis from 'lenis';
+import gsap from 'gsap';
+import { Layers, Compass, User, Mail, Calendar, ArrowUpRight } from 'lucide-react';
+
+import ParticleCanvas from './components/ParticleCanvas';
+import CinematicLoader from './components/CinematicLoader';
+
+import CustomCursor from './components/CustomCursor';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import SelectedWork from './components/SelectedWork';
+import ServicesSection from './components/ServicesSection';
+import CreativeProcess from './components/CreativeProcess';
+import About from './components/About';
+import TestimonialsSection from './components/TestimonialsSection';
+import BookingModal from './components/BookingModal';
+import VideoModal from './components/VideoModal';
+import ProjectCaseStudyModal from './components/ProjectCaseStudyModal';
+import Footer from './components/Footer';
+
+export default function App() {
+  const [loading, setLoading] = useState(true);
+  const [activePage, setActivePage] = useState('home'); // 'home' | 'work' | 'about' | 'process' | 'contact'
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [activeVideo, setActiveVideo] = useState({ isOpen: false, url: '', title: '' });
+  const [activeCaseStudy, setActiveCaseStudy] = useState({ isOpen: false, project: null });
+  const [darkMode, setDarkMode] = useState(false);
+
+  // Synchronize Dark Mode Data Attribute on Document Element
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.body.classList.add('dark-mode');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.body.classList.remove('dark-mode');
+    }
+  }, [darkMode]);
+
+  // Initialize Lenis Smooth Scroll & GSAP Global Timelines
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      wheelMultiplier: 1.1,
+      touchMultiplier: 2,
+    });
+
+    window.lenis = lenis;
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // Global Magnetic Button Logic
+    const magneticElements = document.querySelectorAll('.magnetic');
+    
+    magneticElements.forEach((el) => {
+      el.addEventListener('mousemove', (e) => {
+        const rect = el.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        
+        gsap.to(el, {
+          x: x * 0.3,
+          y: y * 0.3,
+          duration: 0.4,
+          ease: 'power2.out'
+        });
+      });
+
+      el.addEventListener('mouseleave', () => {
+        gsap.to(el, {
+          x: 0,
+          y: 0,
+          duration: 0.8,
+          ease: 'elastic.out(1, 0.3)'
+        });
+      });
+    });
+
+    // Keyboard Easter Egg: Press 'P' for Cinema Dark Mode
+    const handleKeyDown = (e) => {
+      if (e.key === 'p' || e.key === 'P') {
+        setDarkMode((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      lenis.destroy();
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  const handleToggleDarkMode = () => {
+    setDarkMode((prev) => !prev);
+  };
+
+  const handleNavigate = (page) => {
+    setActivePage(page);
+    if (window.lenis) {
+      window.lenis.scrollTo(0, { duration: 1.2 });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // GSAP Page Transition Fade
+    gsap.fromTo(
+      'main',
+      { opacity: 0.4, y: 15 },
+      { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }
+    );
+  };
+
+  const handleOpenBooking = () => {
+    setIsBookingOpen(true);
+  };
+
+  const handleCloseBooking = () => {
+    setIsBookingOpen(false);
+  };
+
+  const handlePlayVideo = (url, title) => {
+    setActiveVideo({ isOpen: true, url, title });
+  };
+
+  const handleCloseVideo = () => {
+    setActiveVideo({ isOpen: false, url: '', title: '' });
+  };
+
+  const handleOpenCaseStudy = (project) => {
+    setActiveCaseStudy({ isOpen: true, project });
+  };
+
+  const handleCloseCaseStudy = () => {
+    setActiveCaseStudy({ isOpen: false, project: null });
+  };
+
+  return (
+    <div style={{ position: 'relative', minHeight: '100vh' }}>
+      
+      {/* 0. Floating Dust Particle Canvas & Render */}
+      <ParticleCanvas darkMode={darkMode} />
+
+      {/* 1. Cinematic Studio Loader */}
+      {loading && <CinematicLoader onComplete={() => setLoading(false)} />}
+
+      {/* 2. Custom Cursor & 3D Physics Engine */}
+      <CustomCursor />
+
+      {/* 3. Live Premiere Pro Editing Scrubber Bar (Press 'T' to toggle) */}
+
+
+      {/* 4. Header Navigation with Dark Mode Toggle */}
+      <Navbar
+        activePage={activePage}
+        onNavigate={handleNavigate}
+        onOpenBooking={handleOpenBooking}
+        darkMode={darkMode}
+        onToggleDarkMode={handleToggleDarkMode}
+      />
+
+      {/* Global Sticky Conversion CTA */}
+      <div className="sticky-cta-container">
+        <button 
+          className="btn-lime magnetic" 
+          onClick={handleOpenBooking}
+          style={{ 
+            boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+            border: '2px solid rgba(255,255,255,0.1)'
+          }}
+        >
+          START A PROJECT <ArrowUpRight size={20} />
+        </button>
+      </div>
+
+      {/* Multi-Page Route Views */}
+      <main style={{ position: 'relative', zIndex: 2 }}>
+        
+        {/* PAGE 1: STREAMLINED HOME FLOW */}
+        {activePage === 'home' && (
+          <div>
+            <Hero onOpenBooking={handleOpenBooking} onPlayVideo={handlePlayVideo} />
+            <SelectedWork onPlayVideo={handlePlayVideo} onOpenCaseStudy={handleOpenCaseStudy} />
+            <ServicesSection onOpenBooking={handleOpenBooking} />
+            <CreativeProcess onOpenBooking={handleOpenBooking} />
+            <About />
+            <TestimonialsSection />
+          </div>
+        )}
+
+        {/* PAGE 2: WORK */}
+        {activePage === 'work' && (
+          <div style={{ paddingTop: '100px' }}>
+            <div style={{ 
+              height: '50vh', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              justifyContent: 'center', 
+              padding: '0 4vw',
+              borderBottom: '2px solid var(--color-black)',
+              marginBottom: '40px'
+            }}>
+              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>
+                [ PAGE / WORK ARCHIVE ]
+              </div>
+              <h1 style={{ 
+                fontSize: 'clamp(2.5rem, 10vw, 8rem)', 
+                fontFamily: 'var(--font-heading)',
+                fontWeight: 900,
+                color: 'transparent',
+                WebkitTextStroke: '2px var(--color-black)',
+                lineHeight: 0.9,
+                margin: 0,
+                textTransform: 'uppercase'
+              }}>
+                PROJECT <br/><span style={{ color: 'var(--color-black)', WebkitTextStroke: 'none' }}>STORIES</span>
+              </h1>
+            </div>
+
+            <SelectedWork onPlayVideo={handlePlayVideo} onOpenCaseStudy={handleOpenCaseStudy} />
+          </div>
+        )}
+
+        {/* PAGE 3: ABOUT */}
+        {activePage === 'about' && (
+          <div style={{ paddingTop: '100px' }}>
+            <div style={{ 
+              height: '50vh', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              justifyContent: 'center', 
+              padding: '0 4vw',
+              borderBottom: '2px solid var(--color-black)'
+            }}>
+              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>
+                [ PAGE / BEHIND THE CRAFT ]
+              </div>
+              <h1 style={{ 
+                fontSize: 'clamp(2.5rem, 10vw, 8rem)', 
+                fontFamily: 'var(--font-heading)',
+                fontWeight: 900,
+                color: 'transparent',
+                WebkitTextStroke: '2px var(--color-black)',
+                lineHeight: 0.9,
+                margin: 0,
+                textTransform: 'uppercase'
+              }}>
+                BEHIND THE <br/><span style={{ color: 'var(--color-black)', WebkitTextStroke: 'none' }}>CRAFT</span>
+              </h1>
+            </div>
+
+            <About />
+            <TestimonialsSection />
+          </div>
+        )}
+
+        {/* PAGE 4: PROCESS */}
+        {activePage === 'process' && (
+          <div style={{ paddingTop: '100px' }}>
+            <div style={{ 
+              height: '50vh', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              justifyContent: 'center', 
+              padding: '0 4vw',
+              borderBottom: '2px solid var(--color-black)',
+              marginBottom: '40px'
+            }}>
+              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>
+                [ PAGE / THE WORKFLOW ]
+              </div>
+              <h1 style={{ 
+                fontSize: 'clamp(2.5rem, 10vw, 8rem)', 
+                fontFamily: 'var(--font-heading)',
+                fontWeight: 900,
+                color: 'transparent',
+                WebkitTextStroke: '2px var(--color-black)',
+                lineHeight: 0.9,
+                margin: 0,
+                textTransform: 'uppercase'
+              }}>
+                CREATIVE <br/><span style={{ color: 'var(--color-black)', WebkitTextStroke: 'none' }}>BLUEPRINT</span>
+              </h1>
+            </div>
+
+            <CreativeProcess onOpenBooking={handleOpenBooking} />
+            <ServicesSection onOpenBooking={handleOpenBooking} />
+          </div>
+        )}
+
+        {/* PAGE 5: CONTACT */}
+        {activePage === 'contact' && (
+          <div style={{ paddingTop: '100px' }}>
+            <div style={{ 
+              height: '60vh', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              justifyContent: 'center',
+              alignItems: 'center',
+              textAlign: 'center',
+              padding: '0 4vw',
+              borderBottom: '2px solid var(--color-black)',
+              backgroundColor: 'var(--color-secondary)'
+            }}>
+              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>
+                [ INQUIRIES & BOOKING ]
+              </div>
+              <h1 style={{ 
+                fontSize: 'clamp(2.5rem, 10vw, 8rem)', 
+                fontFamily: 'var(--font-heading)',
+                fontWeight: 900,
+                color: 'transparent',
+                WebkitTextStroke: '2px var(--color-black)',
+                lineHeight: 0.9,
+                margin: '0 0 40px 0',
+                textTransform: 'uppercase'
+              }}>
+                LET'S <span style={{ color: 'var(--color-black)', WebkitTextStroke: 'none' }}>CREATE</span>
+              </h1>
+
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <button
+                  className="btn-lime"
+                  onClick={handleOpenBooking}
+                  style={{ padding: '18px 48px', fontSize: '1.1rem', borderRadius: '9999px' }}
+                >
+                  <Calendar size={20} />
+                  <span>LAUNCH BOOKING & CALENDLY INTAKE</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </main>
+
+      {/* 7. Contact & Footer */}
+      <Footer onNavigate={handleNavigate} onOpenBooking={handleOpenBooking} />
+
+      {/* Conversion Booking Modal */}
+      <BookingModal isOpen={isBookingOpen} onClose={handleCloseBooking} />
+
+      {/* Full 8-Part Cinematic Case Study Modal */}
+      <ProjectCaseStudyModal
+        isOpen={activeCaseStudy.isOpen}
+        project={activeCaseStudy.project}
+        onClose={handleCloseCaseStudy}
+        onOpenBooking={handleOpenBooking}
+      />
+
+      {/* Video Player Modal */}
+      <VideoModal
+        isOpen={activeVideo.isOpen}
+        videoUrl={activeVideo.url}
+        title={activeVideo.title}
+        onClose={handleCloseVideo}
+      />
+    </div>
+  );
+}
