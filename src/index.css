@@ -18,7 +18,7 @@
   --text-main: #111111;
   --text-muted: #4A4A4A;
   
-  --accent-blue: #5B8CFF;
+  --accent-blue: #E50914; /* Cinematic Red */
   --color-hover: #7AA5FF;
   --color-success: #7BC47F;
 
@@ -46,7 +46,7 @@
   --text-main: #FFFFFF;
   --text-muted: #D4D4D9;
 
-  --accent-blue: #5B8CFF;
+  --accent-blue: #E50914; /* Cinematic Red */
   --color-hover: #7AA5FF;
 }
 
