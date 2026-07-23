@@ -63,7 +63,7 @@ const ThumbnailCard = ({ data, index }) => {
       onMouseLeave={handleMouseLeave}
       style={{ 
         position: 'relative', 
-        borderRadius: 'var(--radius-md)', 
+        borderRadius: '24px', 
         overflow: 'hidden',
         cursor: 'none', // Managed by Custom Cursor
         aspectRatio: '16/9',
@@ -83,49 +83,6 @@ const ThumbnailCard = ({ data, index }) => {
           willChange: 'transform'
         }}
       />
-      
-      {/* Gradient Overlay for Text Readability */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%)',
-        pointerEvents: 'none'
-      }} />
-
-      {/* Floating Content Parallax Layer */}
-      <div 
-        ref={contentRef}
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          padding: '32px',
-          color: '#ffffff',
-          pointerEvents: 'none',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px'
-        }}
-      >
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <span style={{ backgroundColor: 'var(--primary-blue)', color: '#fff', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '4px', textTransform: 'uppercase' }}>
-            {data.category}
-          </span>
-          <span style={{ backgroundColor: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)', color: '#fff', fontSize: '11px', fontWeight: 800, padding: '4px 10px', borderRadius: '4px', textTransform: 'uppercase' }}>
-            {data.ctrBoost}
-          </span>
-        </div>
-        
-        <h3 style={{ fontSize: '1.6rem', fontWeight: 700, margin: 0, lineHeight: 1.1 }}>
-          {data.title}
-        </h3>
-
-        <div style={{ display: 'flex', gap: '16px', fontSize: '13px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, marginTop: '4px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Eye size={14} /> {data.viewsGenerated}</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><TrendingUp size={14} /> CTR Optimized</div>
-        </div>
-      </div>
     </div>
   );
 };

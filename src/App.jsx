@@ -217,8 +217,7 @@ export default function App() {
               height: '100%',
               objectFit: 'contain',
               animation: 'spin3D 3s linear infinite', // Same fast spin as preloader
-              transformStyle: 'preserve-3d',
-              filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.4))'
+              transformStyle: 'preserve-3d'
             }}
           />
         </div>
@@ -270,34 +269,87 @@ export default function App() {
 
         {/* PAGE 2: WORK */}
         {activePage === 'work' && (
-          <div style={{ paddingTop: '100px' }}>
-            <div style={{ 
-              height: '50vh', 
-              display: 'flex', 
-              flexDirection: 'column', 
-              justifyContent: 'center', 
-              padding: '0 4vw',
-              borderBottom: '2px solid var(--color-black)',
-              marginBottom: '40px'
+          <div style={{ paddingTop: '80px' }}>
+            <SelectedWork onPlayVideo={handlePlayVideo} onOpenCaseStudy={handleOpenCaseStudy} isWorkPage={true} />
+            
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '24px',
+              padding: '0 4vw 120px 4vw',
+              flexWrap: 'wrap'
             }}>
-              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>
-                [ PAGE / WORK ARCHIVE ]
-              </div>
-              <h1 style={{ 
-                fontSize: 'clamp(2.5rem, 10vw, 8rem)', 
-                fontFamily: 'var(--font-heading)',
-                fontWeight: 900,
-                color: 'transparent',
-                WebkitTextStroke: '2px var(--color-black)',
-                lineHeight: 0.9,
-                margin: 0,
-                textTransform: 'uppercase'
-              }}>
-                PROJECT <br/><span style={{ color: 'var(--color-black)', WebkitTextStroke: 'none' }}>STORIES</span>
-              </h1>
+              <button 
+                onClick={() => handleNavigate('reels')}
+                className="magnetic"
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                  backdropFilter: 'blur(20px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                  border: '1px solid var(--glass-border)',
+                  borderRadius: '9999px',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
+                  color: 'var(--color-black)',
+                  padding: '16px 40px',
+                  fontFamily: 'var(--font-heading)',
+                  fontWeight: 800,
+                  fontSize: '1rem',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+                  e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.08)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.03)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                View Reels <ArrowUpRight size={20} />
+              </button>
+              <button 
+                onClick={() => handleNavigate('thumbnails')}
+                className="magnetic"
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                  backdropFilter: 'blur(20px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                  border: '1px solid var(--glass-border)',
+                  borderRadius: '9999px',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
+                  color: 'var(--color-black)',
+                  padding: '16px 40px',
+                  fontFamily: 'var(--font-heading)',
+                  fontWeight: 800,
+                  fontSize: '1rem',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+                  e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.08)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.03)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                View Thumbnails <ArrowUpRight size={20} />
+              </button>
             </div>
-
-            <SelectedWork onPlayVideo={handlePlayVideo} onOpenCaseStudy={handleOpenCaseStudy} />
           </div>
         )}
 
@@ -305,14 +357,14 @@ export default function App() {
         {activePage === 'thumbnails' && (
           <div style={{ paddingTop: '100px' }}>
             <ThumbnailShowcase />
-            <ThumbnailGallery />
+            <ThumbnailGallery onNavigate={handleNavigate} />
           </div>
         )}
 
         {/* PAGE 4: REELS */}
         {activePage === 'reels' && (
           <div style={{ paddingTop: '100px' }}>
-            <Reels onOpenVideo={handlePlayVideo} />
+            <Reels onOpenVideo={handlePlayVideo} onNavigate={handleNavigate} />
           </div>
         )}
 

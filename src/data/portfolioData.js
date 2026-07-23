@@ -30,7 +30,7 @@ export const PROJECTS_DATA = [
     views: "4.2M",
     duration: "02:15",
     software: ["Premiere Pro", "After Effects", "Blender"],
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    videoUrl: "/assets/YEH_DIL_FOR_JECRC.mp4",
     poster: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
     description: "High-octane commercial campaign for a futuristic hardware release featuring 3D HUD elements and custom sound design.",
     metrics: "+410% Engagement, 98% Completion Rate",
@@ -48,7 +48,7 @@ export const PROJECTS_DATA = [
     views: "2.8M",
     duration: "04:30",
     software: ["DaVinci Resolve", "Premiere Pro"],
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    videoUrl: "/assets/Nikhil_x_Khushal.mp4",
     poster: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
     description: "Cinematic travel documentary featuring custom 35mm film emulation color grading and soundscapes.",
     metrics: "Featured on Travel Weekly & Vimeo Staff Pick",
@@ -66,7 +66,7 @@ export const PROJECTS_DATA = [
     views: "8.9M",
     duration: "00:58",
     software: ["Premiere Pro", "After Effects", "Photoshop"],
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    videoUrl: "/assets/concept-jecrc.mp4",
     poster: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80",
     description: "Retention-engineered short form vertical content with custom motion titles and zero drop-off pacing.",
     metrics: "120K Shares, +45K New Followers",
@@ -200,55 +200,81 @@ export const MOTION_SHOWCASE = [
 export const THUMBNAIL_SHOWCASE = [
   {
     id: "thumb-1",
-    title: "The Next-Gen Tech Revolution",
+    title: "Mastering Data Structures",
     ctrBoost: "+450% CTR",
     viewsGenerated: "3.4M Views",
-    category: "Tech & Gadgets",
-    afterImg: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80&sat=80",
+    category: "Programming",
+    afterImg: "/assets/thumbnails/top6/dsa1.jpg",
     stats: [
       { label: "Organic CTR Boost", value: "+450%" },
       { label: "Views Generated", value: "3.4M" }
     ],
-    highlights: ["Hand-crafted lighting cutouts", "High-contrast bold font", "Depth layer separation"]
-  },
-  {
-    id: "thumb-2",
-    title: "I Survived 50 Hours in Antarctica",
-    ctrBoost: "+320% CTR",
-    viewsGenerated: "5.1M Views",
-    category: "Vlog & Challenge",
-    afterImg: "https://images.unsplash.com/photo-1518002054494-3a6f94352e9d?auto=format&fit=crop&w=800&q=80",
-    stats: [
-      { label: "Organic CTR Boost", value: "+320%" },
-      { label: "Views Generated", value: "5.1M" }
-    ],
-    highlights: ["Exaggerated facial expressions", "Color-graded snow contrast", "Big bold drop-shadow text"]
-  },
-  {
-    id: "thumb-3",
-    title: "Building a $10,000 Setup",
-    ctrBoost: "+280% CTR",
-    viewsGenerated: "1.2M Views",
-    category: "Lifestyle",
-    afterImg: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=800&q=80",
-    stats: [
-      { label: "Organic CTR Boost", value: "+280%" },
-      { label: "Views Generated", value: "1.2M" }
-    ],
-    highlights: ["Neon glow edge lighting", "Subject separation", "Clean minimalism"]
+    highlights: ["High-contrast bold font", "Code layer separation"]
   },
   {
     id: "thumb-4",
-    title: "We Tested the World's Fastest Car",
+    title: "College Life Uncovered",
     ctrBoost: "+510% CTR",
     viewsGenerated: "8.8M Views",
-    category: "Automotive",
-    afterImg: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
+    category: "Vlog",
+    afterImg: "/assets/thumbnails/top6/parul--2 (3).jpg",
     stats: [
       { label: "Organic CTR Boost", value: "+510%" },
       { label: "Views Generated", value: "8.8M" }
     ],
-    highlights: ["Speed blur effects", "High-saturation paint reflection", "Aggressive composition"]
+    highlights: ["Exaggerated facial expressions", "Bold drop-shadow text"]
+  },
+  {
+    id: "thumb-5",
+    title: "Campus Secrets Revealed",
+    ctrBoost: "+410% CTR",
+    viewsGenerated: "2.1M Views",
+    category: "Vlog",
+    afterImg: "/assets/thumbnails/top6/parull-2 (3).jpg",
+    stats: [
+      { label: "Organic CTR Boost", value: "+410%" },
+      { label: "Views Generated", value: "2.1M" }
+    ],
+    highlights: ["Bright color palette", "Engaging composition"]
+  },
+  {
+    id: "thumb-6",
+    title: "Exclusive Masterclass",
+    ctrBoost: "+390% CTR",
+    viewsGenerated: "4.5M Views",
+    category: "Education",
+    afterImg: "/assets/thumbnails/top6/Artboard 4 (1).jpg",
+    stats: [
+      { label: "Organic CTR Boost", value: "+390%" },
+      { label: "Views Generated", value: "4.5M" }
+    ],
+    highlights: ["Cinematic lighting", "Premium aesthetic"]
+  },
+  {
+    id: "thumb-2",
+    title: "The Ultimate Gym Routine",
+    ctrBoost: "+320% CTR",
+    viewsGenerated: "5.1M Views",
+    category: "Fitness & Health",
+    afterImg: "/assets/thumbnails/top6/GYM-FINAL.jpg",
+    stats: [
+      { label: "Organic CTR Boost", value: "+320%" },
+      { label: "Views Generated", value: "5.1M" }
+    ],
+    highlights: ["Subject separation", "High-saturation contrast"]
+  },
+  {
+    id: "thumb-3",
+    title: "Top University Insights",
+    ctrBoost: "+280% CTR",
+    viewsGenerated: "1.2M Views",
+    category: "Education",
+    afterImg: "/assets/thumbnails/top6/top universityyy--3.jpg",
+    stats: [
+      { label: "Organic CTR Boost", value: "+280%" },
+      { label: "Views Generated", value: "1.2M" }
+    ],
+    highlights: ["Vibrant background", "Clean minimalism"]
   }
 ];
 

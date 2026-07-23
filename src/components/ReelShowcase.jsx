@@ -31,6 +31,19 @@ const REEL_ITEMS = [
   }
 ];
 
+// Generate 11 more placeholder reels to make 14 total
+for (let i = 4; i <= 14; i++) {
+  REEL_ITEMS.push({
+    id: i,
+    title: `Reel Showcase ${i}`,
+    views: `${(Math.random() * 5 + 1).toFixed(1)}M`,
+    duration: `00:${Math.floor(Math.random() * 30 + 30)}`,
+    videoUrl: REEL_ITEMS[i % 3].videoUrl,
+    poster: REEL_ITEMS[i % 3].poster,
+    niche: "Showcase"
+  });
+}
+
 function IPhoneDeviceCard({ reel, onPlayVideo }) {
   const videoRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -157,6 +170,9 @@ function IPhoneDeviceCard({ reel, onPlayVideo }) {
 }
 
 export default function ReelShowcase({ onPlayVideo }) {
+  const [showAll, setShowAll] = useState(false);
+  const displayedReels = showAll ? REEL_ITEMS : REEL_ITEMS.slice(0, 9);
+
   return (
     <section className="section-padding tile-parchment" style={{ borderTop: '2px solid #111111' }}>
       <div className="container">
@@ -175,11 +191,34 @@ export default function ReelShowcase({ onPlayVideo }) {
           </p>
         </div>
 
-        <div className="grid-12" style={{ alignItems: 'center' }}>
-          {REEL_ITEMS.map((reel) => (
+        <div className="grid-12" style={{ alignItems: 'center', gap: '32px' }}>
+          {displayedReels.map((reel) => (
             <IPhoneDeviceCard key={reel.id} reel={reel} onPlayVideo={onPlayVideo} />
           ))}
         </div>
+
+        {!showAll && (
+          <div style={{ textAlign: 'center', marginTop: '60px' }}>
+            <button 
+              className="btn-lime magnetic" 
+              onClick={() => setShowAll(true)}
+              style={{ 
+                cursor: 'pointer', 
+                display: 'inline-flex', 
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '16px 40px', 
+                fontSize: '1.2rem', 
+                fontWeight: 800, 
+                textTransform: 'uppercase',
+                border: 'none',
+                borderRadius: '8px'
+              }}
+            >
+              View More Reels <Eye size={20} style={{ marginLeft: '8px' }} />
+            </button>
+          </div>
+        )}
 
       </div>
     </section>

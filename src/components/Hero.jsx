@@ -23,7 +23,7 @@ export default function Hero({ onOpenVideo, onNavigate }) {
       "-=0.8"
     );
 
-    // Parallax tracking
+    // Parallax tracking for Hero Cards
     const handleMouseMove = (e) => {
       const x = (e.clientX / window.innerWidth - 0.5) * 2; // -1 to 1
       const y = (e.clientY / window.innerHeight - 0.5) * 2; // -1 to 1
@@ -31,14 +31,87 @@ export default function Hero({ onOpenVideo, onNavigate }) {
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    
+    // Interactive 3D Text Effect for Headline
+    const h1Node = headlineRef.current;
+    
+    const handleTextMouseMove = (e) => {
+      if (!h1Node) return;
+      const rect = h1Node.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+      const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+      
+      // Subtle 3D tilt
+      gsap.to(h1Node, {
+        rotateX: y * -10,
+        rotateY: x * 10,
+        transformPerspective: 1000,
+        ease: 'power2.out',
+        duration: 0.5
+      });
+      
+      // Letter Repulsion Physics
+      const chars = h1Node.querySelectorAll('.char');
+      chars.forEach(char => {
+        const charRect = char.getBoundingClientRect();
+        const charX = charRect.left + charRect.width / 2;
+        const charY = charRect.top + charRect.height / 2;
+        const dx = e.clientX - charX;
+        const dy = e.clientY - charY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const maxDist = 120; // Repulsion radius
+        
+        if (distance < maxDist) {
+          const force = (maxDist - distance) / maxDist;
+          gsap.to(char, {
+            x: -(dx / distance) * force * 50,
+            y: -(dy / distance) * force * 50,
+            scale: 1 + (force * 0.4),
+            rotate: (dx / distance) * force * 30,
+            color: 'var(--color-hover)', // Light up lime
+            duration: 0.3,
+            ease: 'power2.out'
+          });
+        } else {
+          gsap.to(char, { 
+            x: 0, y: 0, scale: 1, rotate: 0, color: '', 
+            duration: 0.8, ease: 'elastic.out(1, 0.3)' 
+          });
+        }
+      });
+    };
+
+    const handleTextMouseLeave = () => {
+      gsap.to(h1Node, {
+        rotateX: 0, rotateY: 0,
+        ease: 'elastic.out(1, 0.3)', duration: 1.2
+      });
+      const chars = h1Node.querySelectorAll('.char');
+      gsap.to(chars, {
+        x: 0, y: 0, scale: 1, rotate: 0, color: '',
+        ease: 'elastic.out(1, 0.3)', duration: 1.2
+      });
+    };
+
+    if (h1Node) {
+      h1Node.addEventListener('mousemove', handleTextMouseMove);
+      h1Node.addEventListener('mouseleave', handleTextMouseLeave);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (h1Node) {
+        h1Node.removeEventListener('mousemove', handleTextMouseMove);
+        h1Node.removeEventListener('mouseleave', handleTextMouseLeave);
+      }
+    };
   }, []);
 
   const handleCardHover = (idx) => setHoveredCard(idx);
   const handleCardLeave = () => setHoveredCard(null);
 
   const CARDS = [
-    { id: 0, img: 'https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?q=80&w=2070&auto=format&fit=crop', title: 'COMMERCIAL' },
+    { id: 0, video: '/assets/Nikhil_x_Khushal.mp4', title: 'COMMERCIAL' },
     { id: 1, video: '/assets/instagranstory-2.mp4', title: 'VERTICAL EDITING' },
     { id: 2, img: 'https://images.unsplash.com/photo-1535016120720-40c746a47ce4?q=80&w=2070&auto=format&fit=crop', title: 'COLOR GRADE' }
   ];
@@ -108,7 +181,6 @@ export default function Hero({ onOpenVideo, onNavigate }) {
                     objectFit: 'contain',
                     animation: 'spin3D 15s linear infinite', 
                     transformStyle: 'preserve-3d',
-                    filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.2))',
                     opacity: 0 // Hidden initially, revealed when global morph finishes
                   }}
                 />
@@ -116,30 +188,32 @@ export default function Hero({ onOpenVideo, onNavigate }) {
             </div>
 
             <h1 ref={headlineRef} style={{ 
+              position: 'relative',
+              zIndex: 40,
               fontSize: 'clamp(4rem, 7.5vw, 8rem)', 
               lineHeight: 0.9, 
               letterSpacing: '-0.03em', 
               color: 'var(--color-black)', 
               margin: '0 0 32px 0', 
               textTransform: 'uppercase',
-              fontWeight: 800
+              fontWeight: 800,
+              transformStyle: 'preserve-3d',
+              cursor: 'default'
             }}>
-              <div style={{ overflow: 'hidden' }}><span style={{ display: 'block' }}>I CREATE</span></div>
-              <div style={{ overflow: 'hidden' }}><span className="stair-text" style={{ color: 'var(--accent-blue)', display: 'block' }}>VISUAL</span></div>
-              <div style={{ overflow: 'hidden' }}><span style={{ display: 'block' }}>STORIES.</span></div>
+              <div className="text-layer" style={{ padding: '10px 0' }}><span style={{ display: 'block' }}>
+                {'I CREATE'.split('').map((c, i) => <span key={i} className="char" style={{ display: 'inline-block', transformOrigin: 'center' }}>{c === ' ' ? '\u00A0' : c}</span>)}
+              </span></div>
+              <div className="text-layer" style={{ padding: '10px 0' }}><span className="stair-text" style={{ color: 'var(--accent-blue)', display: 'block' }}>
+                {'VISUAL'.split('').map((c, i) => <span key={i} className="char" style={{ display: 'inline-block', transformOrigin: 'center' }}>{c}</span>)}
+              </span></div>
+              <div className="text-layer" style={{ padding: '10px 0' }}><span style={{ display: 'block' }}>
+                {'STORIES.'.split('').map((c, i) => <span key={i} className="char" style={{ display: 'inline-block', transformOrigin: 'center' }}>{c}</span>)}
+              </span></div>
             </h1>
 
             <div className="hero-buttons-container" style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
               <button className="btn-lime magnetic" onClick={() => onNavigate('work')}>
                 Explore Work <ArrowUpRight size={18} />
-              </button>
-              
-              <button 
-                className="btn-secondary magnetic" 
-                onClick={() => onOpenVideo('/assets/instagranstory-2.mp4')}
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '16px 32px', borderRadius: '9999px', border: '1px solid var(--color-black)', color: 'var(--color-black)', background: 'transparent', fontWeight: 600, cursor: 'pointer' }}
-              >
-                <Play size={18} fill="currentColor" /> Play Showreel
               </button>
             </div>
           </div>
@@ -203,16 +277,16 @@ export default function Hero({ onOpenVideo, onNavigate }) {
                   {/* Overlay Title */}
                   <div style={{
                     position: 'absolute',
-                    bottom: 0, left: 0, right: 0,
+                    top: 0, left: 0, right: 0,
                     padding: '16px',
-                    background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
                     color: '#fff',
+                    textShadow: '0 2px 10px rgba(0,0,0,0.5)',
                     fontFamily: 'var(--font-heading)',
                     fontWeight: 700,
                     fontSize: '1rem',
                     letterSpacing: '0.05em',
-                    transform: isHovered ? 'translateY(0)' : 'translateY(10px)',
-                    opacity: isHovered ? 1 : 0,
+                    transform: 'translateY(0)',
+                    opacity: 1,
                     transition: 'all 0.4s ease'
                   }}>
                     {card.title}

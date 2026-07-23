@@ -24,8 +24,8 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
 
   const navLinks = [
     { label: 'Work', page: 'work' },
-    { label: 'Thumbnails', page: 'thumbnails' },
     { label: 'Reels', page: 'reels' },
+    { label: 'Thumbnails', page: 'thumbnails' },
     { label: 'About', page: 'about' },
     { label: 'Process', page: 'process' },
     { label: 'Contact', page: 'contact' },
