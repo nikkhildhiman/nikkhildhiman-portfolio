@@ -56,9 +56,19 @@ const CustomVideoCard = ({ project }) => {
   const togglePlay = () => {
     if (videoRef.current) {
       if (videoRef.current.paused) {
-        videoRef.current.play();
+        setIsPlaying(true); // Instant UI feedback
+        if (!hasStarted) setHasStarted(true);
+        
+        const playPromise = videoRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((error) => {
+            console.error('Error attempting to play video:', error);
+            setIsPlaying(false); // Revert UI if play fails
+          });
+        }
       } else {
         videoRef.current.pause();
+        setIsPlaying(false); // Instant UI feedback
       }
     }
   };
