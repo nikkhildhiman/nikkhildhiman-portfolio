@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 
 const CREATION_CATEGORIES = [
@@ -6,30 +6,38 @@ const CREATION_CATEGORIES = [
     num: '01',
     title: 'Commercial Films',
     desc: 'High-velocity 4K commercial films engineered to drive direct customer acquisition.',
-    image: 'https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?q=80&w=2070&auto=format&fit=crop'
+    image: 'https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?q=80&w=2070&auto=format&fit=crop',
+    action: 'work'
   },
   {
     num: '02',
-    title: 'YouTube Series',
-    desc: 'Retention-optimized long-form videos with zero drop-off pacing and narrative hooks.',
-    image: 'https://images.unsplash.com/photo-1517409252321-ba31697eeaf6?q=80&w=2070&auto=format&fit=crop'
+    title: '9:16 Viral Shorts',
+    desc: 'Short-form content for TikTok and Reels with aggressive pattern interrupts.',
+    image: 'https://images.unsplash.com/photo-1596726268958-38cbcd577a79?q=80&w=1964&auto=format&fit=crop',
+    action: 'reels'
   },
   {
     num: '03',
-    title: '9:16 Viral Shorts',
-    desc: 'Short-form content for TikTok and Reels with aggressive pattern interrupts.',
-    image: 'https://images.unsplash.com/photo-1596726268958-38cbcd577a79?q=80&w=1964&auto=format&fit=crop'
-  },
-  {
-    num: '04',
     title: 'Thumbnails & Design',
     desc: '3D lighting cutouts and psychological click drivers built to scale your CTR.',
-    image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=2071&auto=format&fit=crop'
+    image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=2071&auto=format&fit=crop',
+    action: 'thumbnails'
   }
 ];
 
-export default function ServicesSection({ onOpenBooking }) {
+export default function ServicesSection({ onOpenBooking, onNavigate }) {
   const [activeIdx, setActiveIdx] = useState(0);
+
+  useEffect(() => {
+    // Auto-cycle the background image on mobile/tablet since the cards don't require hover
+    const interval = setInterval(() => {
+      if (window.innerWidth <= 1024) {
+        setActiveIdx((prev) => (prev + 1) % CREATION_CATEGORIES.length);
+      }
+    }, 2000); // 2 seconds per image
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section id="services" style={{ backgroundColor: 'var(--color-surface)', paddingTop: '120px', paddingBottom: '120px', position: 'relative' }}>
@@ -57,7 +65,12 @@ export default function ServicesSection({ onOpenBooking }) {
                 <div 
                   key={idx}
                   onMouseEnter={() => setActiveIdx(idx)}
-                  className="magnetic" // Custom cursor hook
+                  onClick={() => {
+                    if (onNavigate && cat.action) {
+                      onNavigate(cat.action);
+                    }
+                  }}
+                  className="magnetic service-item" // Custom cursor hook
                   style={{
                     padding: '24px 32px',
                     borderRadius: '16px',
@@ -73,7 +86,7 @@ export default function ServicesSection({ onOpenBooking }) {
                     transform: isActive ? 'translateX(12px)' : 'translateX(0)'
                   }}
                 >
-                  <span style={{ 
+                  <span className="service-num" style={{ 
                     fontSize: '1.2rem', 
                     fontFamily: 'var(--font-heading)', 
                     fontWeight: 700, 
@@ -97,7 +110,7 @@ export default function ServicesSection({ onOpenBooking }) {
                     </h3>
                     
                     {/* Smooth Expandable Description */}
-                    <div style={{
+                    <div className="service-desc" style={{
                       height: isActive ? 'auto' : 0,
                       overflow: 'hidden',
                       opacity: isActive ? 1 : 0,
@@ -112,7 +125,13 @@ export default function ServicesSection({ onOpenBooking }) {
 
                   {/* Clean Start Project Arrow */}
                   <div 
-                    onClick={(e) => { e.stopPropagation(); onOpenBooking(); }}
+                    className="arrow-btn"
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      if (onNavigate && cat.action) {
+                        onNavigate(cat.action);
+                      }
+                    }}
                     style={{
                       width: '48px',
                       height: '48px',
@@ -124,7 +143,8 @@ export default function ServicesSection({ onOpenBooking }) {
                       justifyContent: 'center',
                       transition: 'all 0.3s ease',
                       transform: isActive ? 'scale(1)' : 'scale(0.8)',
-                      opacity: isActive ? 1 : 0
+                      opacity: isActive ? 1 : 0,
+                      flexShrink: 0
                     }}
                   >
                     <ArrowUpRight size={20} color={isActive ? "#fff" : "var(--color-black)"} />
@@ -191,6 +211,42 @@ export default function ServicesSection({ onOpenBooking }) {
         @media (max-width: 768px) {
           .services-stage {
             height: 300px !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .service-item {
+            padding: 16px !important;
+            gap: 12px !important;
+            transform: none !important;
+            border-radius: 12px !important;
+            opacity: 1 !important;
+          }
+          .service-item h3 {
+            font-size: 1.3rem !important;
+          }
+          .service-item p {
+            font-size: 0.95rem !important;
+          }
+          .service-desc {
+            height: auto !important;
+            opacity: 1 !important;
+            margin-top: 8px !important;
+          }
+          .service-num {
+            color: var(--accent-blue) !important;
+          }
+          .service-item .arrow-btn {
+            width: 36px !important;
+            height: 36px !important;
+            opacity: 1 !important;
+            transform: scale(1) !important;
+            background-color: var(--bg-main) !important;
+            border: 1px solid var(--glass-border) !important;
+          }
+          .service-item .arrow-btn svg {
+            width: 16px !important;
+            height: 16px !important;
+            stroke: var(--color-black) !important;
           }
         }
       `}</style>

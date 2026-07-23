@@ -13,8 +13,19 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileMenuOpen]);
+
   const navLinks = [
     { label: 'Work', page: 'work' },
+    { label: 'Thumbnails', page: 'thumbnails' },
+    { label: 'Reels', page: 'reels' },
     { label: 'About', page: 'about' },
     { label: 'Process', page: 'process' },
     { label: 'Contact', page: 'contact' },
@@ -22,23 +33,25 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
 
   return (
     <header
+      className="main-header"
       style={{
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
         zIndex: 9000,
-        padding: scrolled ? '12px 0' : '22px 0',
         transition: 'all 0.4s var(--ease-expo)'
       }}
     >
       <div className="container">
         <div
+          className={`navbar-inner ${scrolled ? 'scrolled' : ''}`}
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: scrolled ? '8px 20px' : '12px 24px',
+            position: 'relative',
+            zIndex: 9000,
             backgroundColor: scrolled
               ? (darkMode ? 'rgba(18, 18, 22, 0.88)' : 'rgba(248, 248, 246, 0.88)')
               : (darkMode ? 'rgba(18, 18, 22, 0.5)' : 'rgba(255, 255, 255, 0.5)'),
@@ -53,12 +66,12 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
           {/* Brand Mark - NIKHIL */}
           <div
             onClick={() => onNavigate('home')}
-            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}
+            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px' }}
           >
             <div
               style={{
-                width: '34px',
-                height: '34px',
+                width: '40px',
+                height: '40px',
                 borderRadius: '50%',
                 backgroundColor: darkMode ? '#5B8CFF' : 'var(--color-black)',
                 color: darkMode ? '#ffffff' : 'var(--accent-blue)',
@@ -67,12 +80,12 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
                 justifyContent: 'center',
                 fontFamily: 'var(--font-heading)',
                 fontWeight: 800,
-                fontSize: '0.9rem'
+                fontSize: '1rem'
               }}
             >
               N
             </div>
-            <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '1.1rem', color: darkMode ? '#ffffff' : 'var(--color-black)', letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '1.2rem', color: darkMode ? '#ffffff' : 'var(--color-black)', letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span>NIKHIL</span>
               <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#7BC47F', display: 'inline-block' }} />
             </div>
@@ -86,23 +99,18 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
                 <button
                   key={link.page}
                   onClick={() => onNavigate(link.page)}
+                  className="nav-link"
                   style={{
-                    backgroundColor: isActive ? (darkMode ? '#FFFFFF' : 'var(--color-black)') : 'transparent',
-                    color: isActive ? (darkMode ? '#111111' : '#FFFFFF') : (darkMode ? '#A0A0A5' : 'var(--color-black)'),
+                    backgroundColor: isActive ? (darkMode ? '#ffffff' : 'var(--color-black)') : 'transparent',
+                    color: isActive ? (darkMode ? '#111111' : '#ffffff') : (darkMode ? '#ffffff' : 'var(--color-black)'),
                     border: 'none',
                     borderRadius: '9999px',
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.88rem',
-                    fontWeight: isActive ? 700 : 500,
-                    padding: '6px 18px',
+                    fontFamily: 'var(--font-heading)',
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    padding: '8px 16px',
                     cursor: 'pointer',
-                    transition: 'all 0.25s var(--ease-expo)'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) e.target.style.color = darkMode ? '#FFFFFF' : 'var(--accent-blue)';
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) e.target.style.color = darkMode ? '#A0A0A5' : 'var(--color-black)';
+                    transition: 'all 0.3s ease'
                   }}
                 >
                   {link.label}
@@ -112,15 +120,16 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
           </nav>
 
           {/* Action Controls: Theme Switcher + CTA */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             
             {/* Dark Mode Switcher */}
             <button
               onClick={onToggleDarkMode}
               title="Toggle Dark Mode (Press 'P')"
+              className="magnetic"
               style={{
-                width: '36px',
-                height: '36px',
+                width: '40px',
+                height: '40px',
                 borderRadius: '50%',
                 backgroundColor: darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
                 border: darkMode ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(0,0,0,0.08)',
@@ -132,32 +141,35 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
                 transition: 'all 0.25s var(--ease-expo)'
               }}
             >
-              {darkMode ? <Sun size={17} color="#5B8CFF" /> : <Moon size={17} color="#111111" />}
+              {darkMode ? <Sun size={18} color="#5B8CFF" /> : <Moon size={18} color="#111111" />}
             </button>
 
-            {/* Book Project Button */}
+            {/* Book Project Button (Hidden on Mobile) */}
             <button
-              className="btn-lime"
+              className="btn-lime hide-mobile"
               onClick={onOpenBooking}
-              style={{ padding: '9px 20px', fontSize: '0.84rem', borderRadius: '9999px' }}
+              style={{ padding: '10px 24px', fontSize: '0.9rem', borderRadius: '9999px', display: 'flex', alignItems: 'center', gap: '6px' }}
             >
               <span>Book Project</span>
-              <ArrowUpRight size={14} />
+              <ArrowUpRight size={16} />
             </button>
 
-            {/* Mobile Toggle */}
+            {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               style={{
+                width: '40px',
+                height: '40px',
                 backgroundColor: darkMode ? '#ffffff' : 'var(--color-black)',
                 color: darkMode ? '#111111' : '#ffffff',
                 border: 'none',
-                padding: '8px',
                 borderRadius: '50%',
                 cursor: 'pointer',
-                display: 'none'
+                display: 'none',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
-              className="show-mobile"
+              className="show-mobile-flex"
             >
               {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
@@ -166,22 +178,25 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
         </div>
       </div>
 
-      {/* Mobile Menu Drawer */}
+      {/* Premium Full-Screen Mobile Menu */}
       {mobileMenuOpen && (
         <div
           style={{
-            backgroundColor: darkMode ? '#141418' : '#F8F8F6',
-            borderBottom: darkMode ? '1px solid rgba(255,255,255,0.15)' : '1px solid var(--card-border)',
-            padding: '20px',
+            position: 'fixed',
+            inset: 0,
+            zIndex: 8999,
+            backgroundColor: darkMode ? 'rgba(11, 11, 13, 0.98)' : 'rgba(248, 248, 246, 0.98)',
             display: 'flex',
             flexDirection: 'column',
-            gap: '10px',
-            borderRadius: '0 0 20px 20px',
-            boxShadow: '0 12px 32px rgba(0,0,0,0.15)'
+            justifyContent: 'flex-start',
+            padding: '120px 24px max(40px, env(safe-area-inset-bottom)) 24px',
+            gap: '16px',
+            overflowY: 'auto',
+            WebkitOverflowScrolling: 'touch'
           }}
           className="show-mobile"
         >
-          {navLinks.map((link) => (
+          {navLinks.map((link, idx) => (
             <button
               key={link.page}
               onClick={() => {
@@ -189,20 +204,28 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
                 setMobileMenuOpen(false);
               }}
               style={{
-                backgroundColor: activePage === link.page ? (darkMode ? '#ffffff' : 'var(--color-black)') : 'transparent',
-                color: activePage === link.page ? (darkMode ? '#111111' : '#ffffff') : (darkMode ? '#ffffff' : 'var(--color-black)'),
-                border: '1px solid var(--glass-border)',
-                borderRadius: '12px',
+                background: 'transparent',
+                color: activePage === link.page ? (darkMode ? '#ffffff' : 'var(--color-black)') : (darkMode ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)'),
+                border: 'none',
                 fontFamily: 'var(--font-heading)',
-                fontSize: '0.95rem',
-                fontWeight: 700,
-                padding: '12px 16px',
-                textAlign: 'left'
+                fontSize: 'clamp(2.5rem, 10vw, 3.5rem)',
+                fontWeight: 800,
+                textAlign: 'left',
+                padding: '8px 0',
+                textTransform: 'uppercase',
+                letterSpacing: '-0.02em',
+                transition: 'color 0.3s ease'
               }}
             >
               {link.label}
             </button>
           ))}
+          
+          <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <button className="btn-lime" onClick={() => { onOpenBooking(); setMobileMenuOpen(false); }} style={{ width: '100%', padding: '20px', fontSize: '1.1rem', borderRadius: '9999px' }}>
+              Book Project
+            </button>
+          </div>
         </div>
       )}
     </header>

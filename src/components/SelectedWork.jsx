@@ -13,6 +13,7 @@ const PORTFOLIO_DATA = [
     client: 'Nike Global',
     thumbnailUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070&auto=format&fit=crop',
     metric: '12M+ Views',
+    videoUrl: '/assets/concept-jecrc.mp4'
   },
   {
     id: 2,
@@ -21,6 +22,7 @@ const PORTFOLIO_DATA = [
     client: 'Blue Bottle',
     thumbnailUrl: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=2071&auto=format&fit=crop',
     metric: 'Staff Pick',
+    videoUrl: '/assets/YEH_DIL_FOR_JECRC.mp4'
   },
   {
     id: 3,
@@ -29,6 +31,7 @@ const PORTFOLIO_DATA = [
     client: 'Creator MKBHD',
     thumbnailUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1926&auto=format&fit=crop',
     metric: '92% Retention',
+    videoUrl: '/assets/Nikhil_x_Khushal.mp4'
   },
   {
     id: 4,
@@ -37,71 +40,290 @@ const PORTFOLIO_DATA = [
     client: 'Independent',
     thumbnailUrl: 'https://images.unsplash.com/photo-1535016120720-40c746a47ce4?q=80&w=2070&auto=format&fit=crop',
     metric: 'Award Winner',
+    videoUrl: '/assets/girls-ree-4k.mp4'
   }
 ];
 
+const CustomVideoCard = ({ project }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const videoRef = useRef(null);
+
+  const progressRef = useRef(null);
+  const [hasStarted, setHasStarted] = useState(false);
+
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (videoRef.current.paused) {
+        videoRef.current.play();
+      } else {
+        videoRef.current.pause();
+      }
+    }
+  };
+
+  const handlePlay = (e) => {
+    setIsPlaying(true);
+    if (!hasStarted) setHasStarted(true);
+    
+    // Pause all other videos on the page
+    document.querySelectorAll('video').forEach(vid => {
+      if (vid !== e.target) {
+        vid.pause();
+      }
+    });
+  };
+
+  const handlePause = () => {
+    setIsPlaying(false);
+  };
+
+  const toggleMute = (e) => {
+    e.stopPropagation(); // prevent triggering the play toggle
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
+      setIsMuted(videoRef.current.muted);
+    }
+  };
+
+  const toggleFullscreen = (e) => {
+    e.stopPropagation();
+    if (videoRef.current) {
+      if (videoRef.current.requestFullscreen) {
+        videoRef.current.requestFullscreen();
+      } else if (videoRef.current.webkitRequestFullscreen) {
+        videoRef.current.webkitRequestFullscreen();
+      }
+    }
+  };
+
+  const handleTimeUpdate = () => {
+    if (videoRef.current) {
+      const current = videoRef.current.currentTime;
+      const total = videoRef.current.duration;
+      if (total > 0) {
+        setProgress((current / total) * 100);
+      }
+    }
+  };
+
+  const handleSeek = (e) => {
+    e.stopPropagation();
+    if (progressRef.current && videoRef.current) {
+      const rect = progressRef.current.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const percentage = Math.max(0, Math.min(1, clickX / rect.width));
+      videoRef.current.currentTime = percentage * videoRef.current.duration;
+      setProgress(percentage * 100);
+    }
+  };
+
+  return (
+    <div 
+      className={`grid-card magnetic`}
+      style={{
+        width: '100%',
+        aspectRatio: '4/3', // Standard aspect ratio for video thumbnails
+        borderRadius: '16px',
+        overflow: 'hidden',
+        position: 'relative',
+        backgroundColor: '#111',
+        boxShadow: '0 12px 32px rgba(0,0,0,0.08)',
+        border: '1px solid var(--glass-border)',
+        cursor: 'pointer'
+      }}
+      onClick={togglePlay}
+    >
+      <video 
+        ref={videoRef}
+        src={project.videoUrl || 'https://www.w3schools.com/html/mov_bbb.mp4'}
+        poster={project.thumbnailUrl}
+        playsInline
+        preload="metadata"
+        muted={isMuted}
+        onPlay={handlePlay}
+        onPause={handlePause}
+        onEnded={() => setIsPlaying(false)}
+        onTimeUpdate={handleTimeUpdate}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'contain',
+          opacity: 0.9,
+          backgroundColor: '#000' // Ensure black background for letterboxing
+        }}
+      />
+      
+      {/* Centered Play/Pause Button */}
+      {!isPlaying && (
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '64px',
+          height: '64px',
+          borderRadius: '50%',
+          backgroundColor: 'rgba(255, 255, 255, 0.25)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          pointerEvents: 'none', // Handled by outer div click
+          border: '1px solid rgba(255,255,255,0.4)',
+          zIndex: 10
+        }}>
+          <div style={{
+            width: '0',
+            height: '0',
+            borderTop: '10px solid transparent',
+            borderBottom: '10px solid transparent',
+            borderLeft: '16px solid #fff',
+            marginLeft: '4px' // Optical alignment
+          }} />
+        </div>
+      )}
+
+      {hasStarted && (
+        <>
+          {/* Top Right Mute/Unmute Toggle */}
+          <div 
+            onClick={toggleMute}
+            style={{
+              position: 'absolute',
+              top: '16px',
+              right: '16px',
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              backgroundColor: 'rgba(0, 0, 0, 0.4)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              border: '1px solid rgba(255,255,255,0.15)',
+              zIndex: 20
+            }}
+          >
+            {isMuted ? (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <line x1="23" y1="9" x2="17" y2="15"></line>
+                <line x1="17" y1="9" x2="23" y2="15"></line>
+              </svg>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+              </svg>
+            )}
+          </div>
+
+          {/* Fullscreen Button */}
+          <div 
+            onClick={toggleFullscreen}
+            style={{
+              position: 'absolute',
+              top: '16px',
+              right: '60px', // Next to the mute button
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              backgroundColor: 'rgba(0, 0, 0, 0.4)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              border: '1px solid rgba(255,255,255,0.15)',
+              zIndex: 20
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+            </svg>
+          </div>
+
+          {/* Apple-Style Controllable Timeline */}
+          <div 
+            ref={progressRef}
+            onClick={handleSeek}
+            style={{
+              position: 'absolute',
+              bottom: '32px',
+              left: '60px',
+              right: '60px',
+              height: '4px',
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              zIndex: 20
+            }}
+          >
+            <div style={{
+              position: 'relative',
+              height: '100%',
+              width: `${progress}%`,
+              backgroundColor: '#fff',
+              borderRadius: '4px',
+              transition: 'width 0.1s linear'
+            }}>
+              {/* Playhead Scrubber */}
+              <div style={{
+                position: 'absolute',
+                right: '-4px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '10px',
+                height: '10px',
+                backgroundColor: '#fff',
+                borderRadius: '50%',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+              }} />
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
 export default function SelectedWork({ onOpenVideo }) {
   const sectionRef = useRef(null);
-  const scrollWrapperRef = useRef(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const gridRef = useRef(null);
 
   useEffect(() => {
-    // Check mobile to disable horizontal scroll on small screens
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  useEffect(() => {
-    if (isMobile) return; // Don't run horizontal GSAP on mobile (stack instead)
-
-    const section = sectionRef.current;
-    const wrapper = scrollWrapperRef.current;
-    const cards = gsap.utils.toArray('.horizontal-card');
-    const images = gsap.utils.toArray('.parallax-img');
-
-    if (section && wrapper) {
-      // Calculate total scroll distance based on content width
-      const getScrollAmount = () => -(wrapper.scrollWidth - window.innerWidth);
-
-      // The main horizontal scroll tween
-      const tween = gsap.to(wrapper, {
-        x: getScrollAmount,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: section,
-          start: 'top top',
-          end: () => `+=${wrapper.scrollWidth - window.innerWidth}`, // Pin duration matches width
-          pin: true,
-          scrub: 1, // Smooth scrub
-          invalidateOnRefresh: true, // Recalculate on resize
-        }
-      });
-
-      // Internal Image Parallax Loop
-      images.forEach((img) => {
-        // Move images slightly to the right inside their containers as you scroll left
-        gsap.to(img, {
-          xPercent: 30, // Parallax intensity
-          ease: 'none',
+    // Elegant fade-in animation for cards as you scroll down normally
+    const ctx = gsap.context(() => {
+      const cards = gsap.utils.toArray('.grid-card');
+      
+      gsap.fromTo(cards, 
+        { y: 60, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: 'power3.out',
           scrollTrigger: {
-            trigger: section, // Bound to the same section trigger
-            start: 'top top',
-            end: () => `+=${wrapper.scrollWidth - window.innerWidth}`,
-            scrub: 1,
-            invalidateOnRefresh: true,
+            trigger: gridRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse'
           }
-        });
-      });
+        }
+      );
+    }, sectionRef);
 
-      return () => {
-        tween.kill();
-        ScrollTrigger.getAll().forEach(t => t.kill());
-      };
-    }
-  }, [isMobile]);
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section 
@@ -109,132 +331,61 @@ export default function SelectedWork({ onOpenVideo }) {
       ref={sectionRef} 
       style={{ 
         backgroundColor: 'var(--color-surface)',
-        overflow: 'hidden', // Hide overflow for the horizontal scrolling
-        padding: isMobile ? '80px 0' : '0' // Mobile needs padding, Desktop uses 100vh pin
+        paddingTop: '160px',
+        paddingBottom: '160px',
+        position: 'relative'
       }}
     >
-      
-      {/* Desktop Horizontal Scroll Wrapper */}
-      <div 
-        ref={scrollWrapperRef}
-        style={{
-          display: 'flex',
-          height: isMobile ? 'auto' : '100vh',
-          alignItems: 'center',
-          padding: isMobile ? '0 24px' : '0 10vw',
-          gap: isMobile ? '64px' : '8vw',
-          flexDirection: isMobile ? 'column' : 'row',
-          width: isMobile ? '100%' : 'max-content'
-        }}
-      >
+      <div className="container">
         
-        {/* Intro Block (Scrolls with the gallery) */}
-        <div style={{ 
-          minWidth: isMobile ? '100%' : '30vw',
-          maxWidth: isMobile ? '100%' : '400px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '24px'
-        }}>
-          <h2 style={{ fontSize: 'clamp(4rem, 8vw, 6rem)', color: 'var(--color-black)', margin: 0, lineHeight: 1, textTransform: 'uppercase', letterSpacing: '-0.02em', fontWeight: 800 }}>
+        {/* Intro Text Block */}
+        <div style={{ marginBottom: '64px' }}>
+          <div style={{ fontFamily: 'var(--font-heading)', fontSize: '0.85rem', color: 'var(--accent-blue)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '12px', letterSpacing: '0.05em' }}>
+            Portfolio Showcase
+          </div>
+          <h2 style={{ fontSize: 'clamp(3rem, 6vw, 5rem)', color: 'var(--color-black)', margin: 0, lineHeight: 1, textTransform: 'uppercase', letterSpacing: '-0.02em', fontWeight: 800 }}>
             SELECTED <br/><span style={{ color: 'var(--text-muted)' }}>WORK</span>
           </h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', lineHeight: 1.5, margin: 0 }}>
-            A curated collection of my most impactful visual stories, commercial edits, and viral short-form content.
-          </p>
         </div>
 
-        {/* The Project Cards */}
-        {PORTFOLIO_DATA.map((project, index) => (
-          <div 
-            key={project.id}
-            className={`horizontal-card video-hover`} // Custom Cursor Hook
-            onClick={() => onOpenVideo('https://www.w3schools.com/html/mov_bbb.mp4')}
-            style={{
-              position: 'relative',
-              width: isMobile ? '100%' : '60vw',
-              height: isMobile ? '50vh' : '70vh',
-              minWidth: isMobile ? '100%' : '800px',
-              borderRadius: '24px',
-              overflow: 'hidden',
-              cursor: 'none', // Hide standard cursor
-              boxShadow: '0 32px 64px rgba(0,0,0,0.15)',
-              border: '1px solid var(--glass-border)'
-            }}
-          >
-            {/* Parallax Image Wrapper */}
-            <div style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, overflow: 'hidden' }}>
-              <img 
-                className="parallax-img"
-                src={project.thumbnailUrl} 
-                alt={project.title}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: isMobile ? '0' : '-15%', // Offset for parallax calculation
-                  width: isMobile ? '100%' : '130%', // Wider to allow for parallax sliding
-                  height: '100%',
-                  objectFit: 'cover',
-                  willChange: 'transform'
-                }}
-              />
-            </div>
-            
-            {/* Cinematic Overlay */}
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 40%, transparent 100%)',
-              pointerEvents: 'none'
-            }}></div>
-
-            {/* Content Overlay */}
-            <div style={{
-              position: 'absolute',
-              bottom: 0, left: 0, right: 0,
-              padding: isMobile ? '32px 24px' : '48px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px'
-            }}>
-              
-              {/* Top Meta Data */}
-              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <span style={{ padding: '6px 12px', backgroundColor: 'var(--accent-blue)', color: '#fff', fontSize: '0.75rem', fontWeight: 700, borderRadius: '99px', textTransform: 'uppercase' }}>
-                  {project.category}
-                </span>
-                <span style={{ color: '#ccc', fontSize: '0.85rem', fontFamily: 'var(--font-heading)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  {project.client}
-                </span>
-              </div>
-
-              {/* Title */}
-              <h3 style={{ margin: 0, fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', color: '#ffffff', fontFamily: 'var(--font-heading)', fontWeight: 800, lineHeight: 1, letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
-                {project.title}
-              </h3>
-
-              {/* Bottom Meta Data */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px', borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '24px' }}>
-                <div>
-                  <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>Key Metric</div>
-                  <div style={{ fontSize: '1.2rem', color: '#fff', fontWeight: 600 }}>{project.metric}</div>
-                </div>
-                
-                <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.3)' }}>
-                  <ArrowUpRight size={24} color="#fff" />
-                </div>
-              </div>
-
-            </div>
-          </div>
-        ))}
-
+        {/* Normal Vertical CSS Grid */}
+        <div 
+          ref={gridRef}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '40px',
+            width: '100%',
+          }}
+          className="portfolio-normal-grid"
+        >
+          {PORTFOLIO_DATA.map((project) => (
+            <CustomVideoCard key={project.id} project={project} />
+          ))}
+        </div>
       </div>
 
       <style>{`
-        /* Smooth scrolling snap could go here if we didn't use scrub */
-        @media (max-width: 768px) {
-          #work { min-height: auto !important; }
+        .portfolio-normal-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+        }
+        @media (max-width: 1024px) {
+          .portfolio-normal-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        .grid-card {
+          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+        }
+        .grid-card:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 24px 48px rgba(0,0,0,0.15);
+        }
+        .grid-card:hover .parallax-img {
+          transform: scale(1.08);
+        }
+        .grid-card:hover .card-content {
+          transform: translateY(0);
         }
       `}</style>
     </section>

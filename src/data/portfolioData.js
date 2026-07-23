@@ -204,15 +204,51 @@ export const THUMBNAIL_SHOWCASE = [
     ctrBoost: "+450% CTR",
     viewsGenerated: "3.4M Views",
     category: "Tech & Gadgets",
-    beforeImg: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80&sat=-60",
     afterImg: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80&sat=80",
-    beforeImage: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80&sat=-60",
-    afterImage: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80&sat=80",
     stats: [
       { label: "Organic CTR Boost", value: "+450%" },
       { label: "Views Generated", value: "3.4M" }
     ],
     highlights: ["Hand-crafted lighting cutouts", "High-contrast bold font", "Depth layer separation"]
+  },
+  {
+    id: "thumb-2",
+    title: "I Survived 50 Hours in Antarctica",
+    ctrBoost: "+320% CTR",
+    viewsGenerated: "5.1M Views",
+    category: "Vlog & Challenge",
+    afterImg: "https://images.unsplash.com/photo-1518002054494-3a6f94352e9d?auto=format&fit=crop&w=800&q=80",
+    stats: [
+      { label: "Organic CTR Boost", value: "+320%" },
+      { label: "Views Generated", value: "5.1M" }
+    ],
+    highlights: ["Exaggerated facial expressions", "Color-graded snow contrast", "Big bold drop-shadow text"]
+  },
+  {
+    id: "thumb-3",
+    title: "Building a $10,000 Setup",
+    ctrBoost: "+280% CTR",
+    viewsGenerated: "1.2M Views",
+    category: "Lifestyle",
+    afterImg: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=800&q=80",
+    stats: [
+      { label: "Organic CTR Boost", value: "+280%" },
+      { label: "Views Generated", value: "1.2M" }
+    ],
+    highlights: ["Neon glow edge lighting", "Subject separation", "Clean minimalism"]
+  },
+  {
+    id: "thumb-4",
+    title: "We Tested the World's Fastest Car",
+    ctrBoost: "+510% CTR",
+    viewsGenerated: "8.8M Views",
+    category: "Automotive",
+    afterImg: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
+    stats: [
+      { label: "Organic CTR Boost", value: "+510%" },
+      { label: "Views Generated", value: "8.8M" }
+    ],
+    highlights: ["Speed blur effects", "High-saturation paint reflection", "Aggressive composition"]
   }
 ];
 

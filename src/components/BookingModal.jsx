@@ -80,7 +80,7 @@ export default function BookingModal({ isOpen, onClose }) {
       }}
     >
       {/* Top Navigation Bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '40px', borderBottom: '1px solid var(--glass-border)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'max(40px, calc(20px + env(safe-area-inset-top))) 24px 24px 24px', borderBottom: '1px solid var(--glass-border)' }}>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
           {step > 1 && step < 4 && (
             <button onClick={prevStep} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: 'var(--text-muted)' }}>

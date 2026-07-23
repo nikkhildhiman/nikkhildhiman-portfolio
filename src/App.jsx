@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Lenis from 'lenis';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 import { Layers, Compass, User, Mail, Calendar, ArrowUpRight } from 'lucide-react';
 
 import ParticleCanvas from './components/ParticleCanvas';
@@ -17,11 +20,19 @@ import TestimonialsSection from './components/TestimonialsSection';
 import BookingModal from './components/BookingModal';
 import VideoModal from './components/VideoModal';
 import ProjectCaseStudyModal from './components/ProjectCaseStudyModal';
+import ThumbnailShowcase from './components/ThumbnailShowcase';
+import ThumbnailGallery from './components/ThumbnailGallery';
+import Reels from './components/Reels';
 import Footer from './components/Footer';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
-  const [activePage, setActivePage] = useState('home'); // 'home' | 'work' | 'about' | 'process' | 'contact'
+  const [morphingLogo, setMorphingLogo] = useState(false);
+  const [activePage, setActivePage] = useState(() => {
+    const hash = window.location.hash.replace('#', '');
+    const validPages = ['home', 'work', 'about', 'process', 'contact', 'thumbnails', 'reels'];
+    return validPages.includes(hash) ? hash : 'home';
+  });
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [activeVideo, setActiveVideo] = useState({ isOpen: false, url: '', title: '' });
   const [activeCaseStudy, setActiveCaseStudy] = useState({ isOpen: false, project: null });
@@ -56,32 +67,7 @@ export default function App() {
     }
     requestAnimationFrame(raf);
 
-    // Global Magnetic Button Logic
-    const magneticElements = document.querySelectorAll('.magnetic');
-    
-    magneticElements.forEach((el) => {
-      el.addEventListener('mousemove', (e) => {
-        const rect = el.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-        
-        gsap.to(el, {
-          x: x * 0.3,
-          y: y * 0.3,
-          duration: 0.4,
-          ease: 'power2.out'
-        });
-      });
-
-      el.addEventListener('mouseleave', () => {
-        gsap.to(el, {
-          x: 0,
-          y: 0,
-          duration: 0.8,
-          ease: 'elastic.out(1, 0.3)'
-        });
-      });
-    });
+    // Magnetic logic is now handled by CustomCursor's dedicated physics engine.
 
     // Keyboard Easter Egg: Press 'P' for Cinema Dark Mode
     const handleKeyDown = (e) => {
@@ -97,12 +83,59 @@ export default function App() {
     };
   }, []);
 
+  // Morphing Logo FLIP Animation Logic
+  useEffect(() => {
+    if (morphingLogo) {
+      const target = document.getElementById('hero-logo-target');
+      const globalLogo = document.getElementById('global-logo');
+      const trueLogo = document.getElementById('hero-logo-true');
+      
+      if (target && globalLogo && trueLogo) {
+        // Instant morph without any delay
+        const targetRect = target.getBoundingClientRect();
+        
+        gsap.to(globalLogo, {
+          top: targetRect.top + targetRect.height / 2, // center X
+          left: targetRect.left + targetRect.width / 2, // center Y
+          width: targetRect.width,
+          height: targetRect.height,
+          duration: 0.8, // Fast snappy morph
+          ease: 'power3.inOut',
+          onComplete: () => {
+            gsap.to(globalLogo, { 
+              opacity: 0, 
+              duration: 0.2, 
+              onComplete: () => setMorphingLogo(false) 
+            });
+            gsap.to(trueLogo, { opacity: 1, duration: 0.2 });
+          }
+        });
+      } else {
+        setMorphingLogo(false);
+      }
+    }
+  }, [morphingLogo]);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      const validPages = ['home', 'work', 'about', 'process', 'contact', 'thumbnails', 'reels'];
+      setActivePage(validPages.includes(hash) ? hash : 'home');
+    };
+    
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
   const handleToggleDarkMode = () => {
     setDarkMode((prev) => !prev);
   };
 
   const handleNavigate = (page) => {
-    setActivePage(page);
+    // Instead of setting activePage directly, we update the hash.
+    // The hashchange listener will catch this and update activePage automatically.
+    window.location.hash = page === 'home' ? '' : page;
+
     if (window.lenis) {
       window.lenis.scrollTo(0, { duration: 1.2 });
     } else {
@@ -113,7 +146,16 @@ export default function App() {
     gsap.fromTo(
       'main',
       { opacity: 0.4, y: 15 },
-      { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }
+      { 
+        opacity: 1, 
+        y: 0, 
+        duration: 0.4, 
+        ease: 'power2.out',
+        onComplete: () => {
+          // Fixes the GSAP pin-spacer blank space issue when routing
+          ScrollTrigger.refresh();
+        }
+      }
     );
   };
 
@@ -142,16 +184,48 @@ export default function App() {
   };
 
   return (
-    <div style={{ position: 'relative', minHeight: '100vh' }}>
+    <div className="app-container" style={{ position: 'relative' }}>
+      <CustomCursor />
       
+      {loading && (
+        <CinematicLoader onComplete={() => {
+          setLoading(false);
+          setMorphingLogo(true);
+        }} />
+      )}
+
+      {/* Global FLIP Logo */}
+      {(loading || morphingLogo) && (
+        <div 
+          id="global-logo"
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            width: '450px',
+            height: '450px',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 9999999,
+            pointerEvents: 'none',
+          }}
+        >
+          <img 
+            src="/assets/logo-3d.png" 
+            alt="3D Logo" 
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              animation: 'spin3D 3s linear infinite', // Same fast spin as preloader
+              transformStyle: 'preserve-3d',
+              filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.4))'
+            }}
+          />
+        </div>
+      )}
+
       {/* 0. Floating Dust Particle Canvas & Render */}
       <ParticleCanvas darkMode={darkMode} />
-
-      {/* 1. Cinematic Studio Loader */}
-      {loading && <CinematicLoader onComplete={() => setLoading(false)} />}
-
-      {/* 2. Custom Cursor & 3D Physics Engine */}
-      <CustomCursor />
 
       {/* 3. Live Premiere Pro Editing Scrubber Bar (Press 'T' to toggle) */}
 
@@ -185,9 +259,9 @@ export default function App() {
         {/* PAGE 1: STREAMLINED HOME FLOW */}
         {activePage === 'home' && (
           <div>
-            <Hero onOpenBooking={handleOpenBooking} onPlayVideo={handlePlayVideo} />
+            <Hero onOpenBooking={handleOpenBooking} onPlayVideo={handlePlayVideo} onNavigate={handleNavigate} />
             <SelectedWork onPlayVideo={handlePlayVideo} onOpenCaseStudy={handleOpenCaseStudy} />
-            <ServicesSection onOpenBooking={handleOpenBooking} />
+            <ServicesSection onOpenBooking={handleOpenBooking} onNavigate={handleNavigate} />
             <CreativeProcess onOpenBooking={handleOpenBooking} />
             <About />
             <TestimonialsSection />
@@ -224,6 +298,21 @@ export default function App() {
             </div>
 
             <SelectedWork onPlayVideo={handlePlayVideo} onOpenCaseStudy={handleOpenCaseStudy} />
+          </div>
+        )}
+
+        {/* PAGE 3: THUMBNAILS */}
+        {activePage === 'thumbnails' && (
+          <div style={{ paddingTop: '100px' }}>
+            <ThumbnailShowcase />
+            <ThumbnailGallery />
+          </div>
+        )}
+
+        {/* PAGE 4: REELS */}
+        {activePage === 'reels' && (
+          <div style={{ paddingTop: '100px' }}>
+            <Reels onOpenVideo={handlePlayVideo} />
           </div>
         )}
 
@@ -290,7 +379,7 @@ export default function App() {
             </div>
 
             <CreativeProcess onOpenBooking={handleOpenBooking} />
-            <ServicesSection onOpenBooking={handleOpenBooking} />
+            <ServicesSection onOpenBooking={handleOpenBooking} onNavigate={handleNavigate} />
           </div>
         )}
 

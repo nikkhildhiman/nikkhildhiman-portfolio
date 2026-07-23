@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { ArrowUpRight, Play, ArrowDown } from 'lucide-react';
 import gsap from 'gsap';
 
-export default function Hero({ onOpenVideo }) {
+export default function Hero({ onOpenVideo, onNavigate }) {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const heroRef = useRef(null);
   const headlineRef = useRef(null);
@@ -72,9 +72,47 @@ export default function Hero({ onOpenVideo }) {
               transition: 'transform 0.1s ease-out'
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: 'var(--bg-main)', border: '1px solid var(--glass-border)', borderRadius: '9999px', width: 'fit-content', marginBottom: '32px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--color-success)', boxShadow: '0 0 10px var(--color-success)', animation: 'pulse 2s infinite' }}></span>
-              <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-heading)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--color-black)' }}>Accepting Projects for Q4</span>
+            {/* 3D Logo (Stable Target Anchor for FLIP Animation) */}
+            <div id="hero-logo-target" style={{
+              position: 'relative',
+              width: '120px',
+              height: '120px',
+              marginBottom: '12px', // Reduced margin so it sits closer to the text
+              top: '20px', // Pushed down slightly
+              left: '-16px', // Shifted left to perfectly align the visual edge of the logo with the "I"
+              zIndex: 20,
+              pointerEvents: 'none'
+            }}>
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                transform: `perspective(1000px) rotateX(${mousePos.y * -40}deg) rotateY(${mousePos.x * 40}deg)`,
+                transition: 'transform 0.15s ease-out',
+                transformStyle: 'preserve-3d',
+              }}>
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%)',
+                  filter: 'blur(20px)',
+                  zIndex: -1,
+                  animation: 'pulse 4s infinite'
+                }} />
+                <img 
+                  id="hero-logo-true"
+                  src="/assets/logo-3d.png" 
+                  alt="3D Logo" 
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    animation: 'spin3D 15s linear infinite', 
+                    transformStyle: 'preserve-3d',
+                    filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.2))',
+                    opacity: 0 // Hidden initially, revealed when global morph finishes
+                  }}
+                />
+              </div>
             </div>
 
             <h1 ref={headlineRef} style={{ 
@@ -87,12 +125,12 @@ export default function Hero({ onOpenVideo }) {
               fontWeight: 800
             }}>
               <div style={{ overflow: 'hidden' }}><span style={{ display: 'block' }}>I CREATE</span></div>
-              <div style={{ overflow: 'hidden' }}><span style={{ color: 'var(--accent-blue)', display: 'block' }}>VISUAL</span></div>
+              <div style={{ overflow: 'hidden' }}><span className="stair-text" style={{ color: 'var(--accent-blue)', display: 'block' }}>VISUAL</span></div>
               <div style={{ overflow: 'hidden' }}><span style={{ display: 'block' }}>STORIES.</span></div>
             </h1>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-              <button className="btn-lime magnetic" onClick={() => document.getElementById('work').scrollIntoView({ behavior: 'smooth' })}>
+            <div className="hero-buttons-container" style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
+              <button className="btn-lime magnetic" onClick={() => onNavigate('work')}>
                 Explore Work <ArrowUpRight size={18} />
               </button>
               
@@ -205,17 +243,18 @@ export default function Hero({ onOpenVideo }) {
       </div>
 
       <style>{`
+        .stair-text { padding-left: 40px; }
         @media (max-width: 992px) {
-          #hero { padding-top: 120px !important; }
-          .hero-text-block { grid-column: span 12 !important; text-align: center; display: flex; flexDirection: column; align-items: center; }
-          .hero-text-block h1 { font-size: clamp(3.5rem, 12vw, 5rem) !important; margin-bottom: 40px !important; }
-          .hero-text-block h1 span { padding-left: 0 !important; }
-          .hero-text-block > div:last-child { justify-content: center !important; flex-wrap: wrap; }
-          .hero-visual-block { grid-column: span 12 !important; height: 500px !important; margin-top: 20px; }
-          .hero-visual-block > div { width: 280px !important; height: 180px !important; left: 50% !important; transform-origin: center center !important; }
-          .hero-visual-block > div:nth-child(1) { top: 10% !important; margin-left: -140px !important; }
-          .hero-visual-block > div:nth-child(2) { top: 35% !important; margin-left: -120px !important; }
-          .hero-visual-block > div:nth-child(3) { top: 60% !important; margin-left: -160px !important; }
+          #hero { padding-top: 140px !important; min-height: auto !important; padding-bottom: 60px !important; }
+          .hero-text-block { grid-column: span 12 !important; text-align: left !important; align-items: flex-start !important; padding-left: 12px !important; }
+          .hero-text-block h1 { font-size: clamp(2.8rem, 11vw, 5rem) !important; margin-bottom: 32px !important; }
+          .stair-text { padding-left: 24px !important; }
+          .hero-text-block > div:last-child { justify-content: flex-start !important; flex-wrap: wrap !important; gap: 16px !important; width: 100%; padding-left: 4px !important; }
+          .hero-visual-block { grid-column: span 12 !important; height: 440px !important; margin-top: 40px; transform: none !important; }
+          .hero-visual-block > div { width: min(280px, 85vw) !important; height: 180px !important; left: 50% !important; margin: 0 !important; }
+          .hero-visual-block > div:nth-child(1) { top: 0% !important; transform: translateX(-55%) rotate(-4deg) !important; }
+          .hero-visual-block > div:nth-child(2) { top: 25% !important; transform: translateX(-40%) rotate(4deg) !important; }
+          .hero-visual-block > div:nth-child(3) { top: 50% !important; transform: translateX(-55%) rotate(-2deg) !important; }
         }
       `}</style>
     </section>

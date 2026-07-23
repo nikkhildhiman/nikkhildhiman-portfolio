@@ -17,23 +17,32 @@ export default function Footer({ onNavigate, onOpenBooking }) {
             <span style={{ color: 'var(--accent-blue)' }}>WORTH REMEMBERING.</span>
           </h2>
 
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
-            <button className="btn-lime" onClick={onOpenBooking} style={{ borderRadius: '9999px', padding: '14px 32px' }}>
+          <div className="footer-actions" style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
+            <button className="btn-lime" onClick={onOpenBooking} style={{ borderRadius: '9999px' }}>
               <Calendar size={18} />
               <span>Book Project</span>
             </button>
 
-            <a href="mailto:nikhil@studio.com" className="btn-primary" style={{ borderRadius: '9999px', padding: '14px 32px', backgroundColor: 'transparent', borderColor: '#ffffff', color: '#ffffff' }}>
+            <a href="mailto:nikhil@studio.com" className="btn-primary" style={{ borderRadius: '9999px', backgroundColor: 'transparent', borderColor: '#ffffff', color: '#ffffff' }}>
               <Mail size={18} />
               <span>Email Direct</span>
             </a>
 
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="btn-primary" style={{ borderRadius: '9999px', padding: '14px 32px', backgroundColor: 'transparent', borderColor: '#ffffff', color: '#ffffff' }}>
+            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="btn-primary" style={{ borderRadius: '9999px', backgroundColor: 'transparent', borderColor: '#ffffff', color: '#ffffff' }}>
               <span>Instagram</span>
               <ArrowUpRight size={16} />
             </a>
           </div>
         </div>
+
+        <style>{`
+          @media (max-width: 640px) {
+            .footer-actions {
+              flex-direction: column !important;
+              width: 100%;
+            }
+          }
+        `}</style>
 
         {/* Minimal Footer Row */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', fontSize: '0.88rem', fontFamily: 'var(--font-heading)', color: '#888888' }}>

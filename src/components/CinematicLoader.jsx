@@ -15,7 +15,7 @@ export default function CinematicLoader({ onComplete }) {
   ];
 
   useEffect(() => {
-    const duration = 2000; // 2 seconds
+    const duration = 1000; // 1 second (faster animation)
     const intervalTime = 25;
     const totalSteps = duration / intervalTime;
     let currentStep = 0;
@@ -71,69 +71,22 @@ export default function CinematicLoader({ onComplete }) {
         }}
       />
 
-      <div style={{ maxWidth: '440px', width: '100%', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-        
-        {/* Studio Branding Tag */}
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '28px', backgroundColor: 'rgba(0,0,0,0.04)', padding: '6px 16px', borderRadius: '9999px', border: '1px solid rgba(0,0,0,0.08)' }}>
-          <Film size={16} color="#5B8CFF" />
-          <span style={{ fontFamily: 'var(--font-heading)', fontSize: '0.8rem', letterSpacing: '0.08em', color: '#111111', textTransform: 'uppercase', fontWeight: 800 }}>
-            NIKHIL DHIMAN STUDIO
-          </span>
-        </div>
-
-        {/* Progress % Display */}
-        <div
-          style={{
-            fontFamily: 'var(--font-heading)',
-            fontSize: 'clamp(3.5rem, 8vw, 5.5rem)',
-            fontWeight: 800,
-            lineHeight: 1,
-            color: '#5B8CFF',
-            marginBottom: '16px',
-            letterSpacing: '-0.04em'
-          }}
-        >
-          {progress}%
-        </div>
-
-        {/* Step Label */}
-        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '0.85rem', letterSpacing: '0.08em', color: '#6D6D6D', textTransform: 'uppercase', marginBottom: '24px', height: '24px', fontWeight: 700 }}>
-          [ 0{stepIndex + 1} / 05 ] {steps[stepIndex]}
-        </div>
-
-        {/* Progress Bar */}
-        <div
-          style={{
-            width: '100%',
-            height: '4px',
-            backgroundColor: 'rgba(0,0,0,0.08)',
-            borderRadius: '2px',
-            position: 'relative',
-            overflow: 'hidden',
-            marginBottom: '16px'
-          }}
-        >
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              bottom: 0,
-              width: `${progress}%`,
-              backgroundColor: '#5B8CFF',
-              transition: 'width 0.05s linear'
-            }}
-          />
-        </div>
-
-        {/* Timecode Ticks */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', color: '#888888', fontSize: '0.7rem', fontFamily: 'var(--font-heading)', fontWeight: 600 }}>
-          <span>00:00:00:00</span>
-          <span>00:00:15:00</span>
-          <span>00:00:30:00</span>
-          <span>00:01:00:00</span>
-        </div>
-
+      {/* Ultra Minimal Preloader Content */}
+      {/* (The massive 450px 3D logo from App.jsx is rendered over this screen automatically) */}
+      
+      {/* Minimal Progress % Display at the bottom */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '8vh', // Keep it near the bottom away from the huge logo
+          fontFamily: 'var(--font-heading)',
+          fontSize: '1rem',
+          fontWeight: 700,
+          color: '#111111',
+          letterSpacing: '0.1em'
+        }}
+      >
+        LOADING {progress}%
       </div>
     </div>
   );

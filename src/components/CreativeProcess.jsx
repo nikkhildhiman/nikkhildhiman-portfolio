@@ -95,20 +95,23 @@ export default function CreativeProcess() {
       <div className="container">
         
         <div style={{ marginBottom: '64px' }}>
-          <h2 style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', color: 'var(--color-black)', margin: 0, lineHeight: 1 }}>
-            POST-PRODUCTION <span style={{ color: 'var(--text-muted)' }}>PIPELINE</span>
+          <h2 style={{ fontSize: 'clamp(2rem, 8vw, 4rem)', color: 'var(--color-black)', margin: 0, lineHeight: 1.1, wordBreak: 'break-word' }}>
+            POST-PRODUCTION <br className="show-mobile" />
+            <span style={{ color: 'var(--text-muted)' }}>PIPELINE</span>
           </h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', marginTop: '16px' }}>Scroll to scrub the timeline or click a clip to jump.</p>
         </div>
 
-        <div 
-          ref={timelineRef}
-          style={{
-            backgroundColor: NLE.bg, borderRadius: '8px', border: `1px solid ${NLE.border}`,
-            boxShadow: '0 24px 64px rgba(0,0,0,0.4)', overflow: 'hidden', fontFamily: "'Inter', -apple-system, sans-serif",
-            display: 'flex', flexDirection: 'column'
-          }}
-        >
+        <div style={{ width: '100%' }}>
+          <div 
+            ref={timelineRef}
+            style={{
+              width: '100%',
+              backgroundColor: NLE.bg, borderRadius: '8px', border: `1px solid ${NLE.border}`,
+              boxShadow: '0 24px 64px rgba(0,0,0,0.4)', overflow: 'hidden', fontFamily: "'Inter', -apple-system, sans-serif",
+              display: 'flex', flexDirection: 'column'
+            }}
+          >
           {/* OS Header */}
           <div style={{ display: 'flex', backgroundColor: NLE.panelBg, borderBottom: `1px solid ${NLE.border}`, padding: '8px 16px', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -124,10 +127,10 @@ export default function CreativeProcess() {
           </div>
 
           {/* Top Half: Program Monitor & Details */}
-          <div style={{ display: 'flex', height: '300px', borderBottom: `1px solid ${NLE.border}`, backgroundColor: '#111' }}>
+          <div className="nle-top-half" style={{ display: 'flex', borderBottom: `1px solid ${NLE.border}`, backgroundColor: '#111' }}>
             
             {/* Left Panel: Project Bin / Description */}
-            <div style={{ width: '30%', minWidth: '250px', borderRight: `1px solid ${NLE.border}`, backgroundColor: NLE.panelBg, padding: '16px', display: 'flex', flexDirection: 'column' }}>
+            <div className="nle-project-bin" style={{ width: '30%', minWidth: '250px', borderRight: `1px solid ${NLE.border}`, backgroundColor: NLE.panelBg, padding: '24px', display: 'flex', flexDirection: 'column' }}>
               <div style={{ color: '#888', fontSize: '0.7rem', textTransform: 'uppercase', marginBottom: '16px', letterSpacing: '0.1em' }}>Project Bin // Active Stage</div>
               <h3 style={{ color: '#fff', fontSize: '1.5rem', margin: '0 0 8px 0' }}>{STAGES_DATA[activeStage]?.name}</h3>
               <div style={{ color: NLE.playhead, fontSize: '0.8rem', fontFamily: "'SF Mono', monospace", marginBottom: '16px' }}>{STAGES_DATA[activeStage]?.file}</div>
@@ -135,7 +138,7 @@ export default function CreativeProcess() {
             </div>
 
             {/* Right Panel: Program Monitor */}
-            <div style={{ flex: 1, backgroundColor: '#000', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+            <div className="nle-monitor" style={{ flex: 1, height: '320px', backgroundColor: '#000', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
               <img 
                 src={STAGES_DATA[activeStage]?.image} 
                 alt="Stage Preview" 
@@ -150,6 +153,9 @@ export default function CreativeProcess() {
             </div>
           </div>
 
+          {/* Bottom Half: Scrollable Timeline Area */}
+          <div style={{ width: '100%', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+            <div style={{ minWidth: '850px', display: 'flex', flexDirection: 'column' }}>
           {/* Sequence Toolbar & Timecode */}
           <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 16px', backgroundColor: NLE.bg, borderBottom: `1px solid ${NLE.border}` }}>
             <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
@@ -271,6 +277,12 @@ export default function CreativeProcess() {
 
               </div>
             </div>
+
+            {/* End of Bottom Half Wrappers */}
+            </div>
+          </div>
+
+          </div>
           </div>
         </div>
       </div>
@@ -287,13 +299,41 @@ export default function CreativeProcess() {
           z-index: 10;
         }
         .clip-header {
-          border-bottom: 1px solid rgba(0,0,0,0.3); padding: 2px 6px; fontSize: 0.6rem;
+          border-bottom: 1px solid rgba(0,0,0,0.3); padding: 2px 6px; font-size: 0.6rem;
           color: #fff; background-color: rgba(0,0,0,0.1); white-space: nowrap; text-overflow: ellipsis; overflow: hidden;
         }
         .clip-title {
           padding: 4px 6px; font-size: 0.65rem; color: #fff; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;
         }
+        
+        /* Custom Scrollbar for NLE Wrapper */
+        .nle-responsive-wrapper::-webkit-scrollbar {
+          height: 8px;
+        }
+        .nle-responsive-wrapper::-webkit-scrollbar-track {
+          background: rgba(0,0,0,0.05);
+          border-radius: 4px;
+        }
+        .nle-responsive-wrapper::-webkit-scrollbar-thumb {
+          background: rgba(0,0,0,0.2);
+          border-radius: 4px;
+        }
+        
         @media (max-width: 768px) {
+          .nle-top-half {
+            flex-direction: column-reverse !important;
+            height: auto !important;
+          }
+          .nle-project-bin {
+            width: 100% !important;
+            border-right: none !important;
+            border-bottom: 1px solid #333 !important;
+            padding: 16px !important;
+          }
+          .nle-monitor {
+            height: 220px !important;
+            border-bottom: 1px solid #333 !important;
+          }
           .clip-header { display: none !important; }
           .nle-clip div:not(.clip-header) { font-size: 0.5rem !important; padding: 2px !important; }
         }

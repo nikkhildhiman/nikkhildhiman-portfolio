@@ -62,7 +62,7 @@ export default function About() {
         }}>
           {[...Array(5)].map((_, i) => (
             <h2 key={i} style={{ 
-              fontSize: 'clamp(4rem, 10vw, 12rem)', 
+              fontSize: 'clamp(2.5rem, 10vw, 12rem)', 
               lineHeight: 0.85, 
               margin: 0, 
               color: i % 2 === 0 ? 'transparent' : 'rgba(0,0,0,0.03)', 
@@ -121,7 +121,7 @@ export default function About() {
           <div style={{
             position: 'absolute',
             top: '5%',
-            left: '0%',
+            left: '5%',
             background: 'var(--color-black)',
             color: '#fff',
             padding: '12px 24px',
@@ -139,7 +139,7 @@ export default function About() {
           <div style={{
             position: 'absolute',
             bottom: '10%',
-            right: '0%',
+            right: '5%',
             background: 'var(--accent-blue)',
             color: '#fff',
             padding: '12px 24px',
@@ -158,7 +158,7 @@ export default function About() {
       {/* =========================================
           PART 2: THE READABLE PHILOSOPHY
           ========================================= */}
-      <div className="container" style={{ position: 'relative', zIndex: 10, padding: '80px 24px' }}>
+      <div className="container" style={{ position: 'relative', zIndex: 10, padding: '80px 0' }}>
         
         <div style={{ 
           display: 'grid', 
