@@ -14,7 +14,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import SelectedWork from './components/SelectedWork';
 import ServicesSection from './components/ServicesSection';
-import CreativeProcess from './components/CreativeProcess';
+
 import About from './components/About';
 import TestimonialsSection from './components/TestimonialsSection';
 import BookingModal from './components/BookingModal';
@@ -30,7 +30,7 @@ export default function App() {
   const [morphingLogo, setMorphingLogo] = useState(false);
   const [activePage, setActivePage] = useState(() => {
     const hash = window.location.hash.replace('#', '');
-    const validPages = ['home', 'work', 'about', 'process', 'contact', 'thumbnails', 'reels'];
+    const validPages = ['home', 'work', 'about', 'contact', 'thumbnails', 'reels'];
     return validPages.includes(hash) ? hash : 'home';
   });
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -119,7 +119,7 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
-      const validPages = ['home', 'work', 'about', 'process', 'contact', 'thumbnails', 'reels'];
+      const validPages = ['home', 'work', 'about', 'contact', 'thumbnails', 'reels'];
       setActivePage(validPages.includes(hash) ? hash : 'home');
     };
     
@@ -261,7 +261,6 @@ export default function App() {
             <Hero onOpenBooking={handleOpenBooking} onPlayVideo={handlePlayVideo} onNavigate={handleNavigate} />
             <SelectedWork onPlayVideo={handlePlayVideo} onOpenCaseStudy={handleOpenCaseStudy} />
             <ServicesSection onOpenBooking={handleOpenBooking} onNavigate={handleNavigate} />
-            <CreativeProcess onOpenBooking={handleOpenBooking} />
             <About />
             <TestimonialsSection />
           </div>
@@ -401,39 +400,7 @@ export default function App() {
           </div>
         )}
 
-        {/* PAGE 4: PROCESS */}
-        {activePage === 'process' && (
-          <div style={{ paddingTop: '100px' }}>
-            <div style={{ 
-              height: '50vh', 
-              display: 'flex', 
-              flexDirection: 'column', 
-              justifyContent: 'center', 
-              padding: '0 4vw',
-              borderBottom: '2px solid var(--color-black)',
-              marginBottom: '40px'
-            }}>
-              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>
-                [ PAGE / THE WORKFLOW ]
-              </div>
-              <h1 style={{ 
-                fontSize: 'clamp(2.5rem, 10vw, 8rem)', 
-                fontFamily: 'var(--font-heading)',
-                fontWeight: 900,
-                color: 'transparent',
-                WebkitTextStroke: '2px var(--color-black)',
-                lineHeight: 0.9,
-                margin: 0,
-                textTransform: 'uppercase'
-              }}>
-                CREATIVE <br/><span style={{ color: 'var(--color-black)', WebkitTextStroke: 'none' }}>BLUEPRINT</span>
-              </h1>
-            </div>
 
-            <CreativeProcess onOpenBooking={handleOpenBooking} />
-            <ServicesSection onOpenBooking={handleOpenBooking} onNavigate={handleNavigate} />
-          </div>
-        )}
 
         {/* PAGE 5: CONTACT */}
         {activePage === 'contact' && (

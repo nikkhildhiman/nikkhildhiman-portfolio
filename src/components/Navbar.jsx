@@ -27,7 +27,6 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
     { label: 'Reels', page: 'reels' },
     { label: 'Thumbnails', page: 'thumbnails' },
     { label: 'About', page: 'about' },
-    { label: 'Process', page: 'process' },
     { label: 'Contact', page: 'contact' },
   ];
 

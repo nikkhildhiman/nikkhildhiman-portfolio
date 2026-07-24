@@ -33,7 +33,6 @@ export default function PremiereTimelineBar({ activePage, onNavigate }) {
   const timelineMarkers = [
     { label: 'WORK', targetId: 'work', page: 'work', pos: 15 },
     { label: 'SERVICES', targetId: 'services', page: 'process', pos: 38 },
-    { label: 'PROCESS', targetId: 'process', page: 'process', pos: 58 },
     { label: 'ABOUT', targetId: 'about', page: 'about', pos: 78 },
     { label: 'CONTACT', targetId: 'contact', page: 'contact', pos: 100 },
   ];
