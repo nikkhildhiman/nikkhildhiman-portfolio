@@ -112,8 +112,8 @@ export default function Hero({ onOpenVideo, onNavigate }) {
 
   const CARDS = [
     { id: 0, video: '/assets/Nikhil_x_Khushal.mp4', title: 'COMMERCIAL' },
-    { id: 1, video: '/assets/instagranstory-2.mp4', title: 'VERTICAL EDITING' },
-    { id: 2, img: 'https://images.unsplash.com/photo-1535016120720-40c746a47ce4?q=80&w=2070&auto=format&fit=crop', title: 'COLOR GRADE' }
+    { id: 1, video: '/assets/YEH_DIL_FOR_JECRC.mp4', title: 'UNIVERSITY' },
+    { id: 2, video: '/assets/concept-jecrc.mp4', title: 'CONCEPTUAL' }
   ];
 
   return (
