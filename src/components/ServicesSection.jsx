@@ -44,8 +44,8 @@ export default function ServicesSection({ onOpenBooking, onNavigate }) {
       
       <div className="container">
         
-        {/* Clean, Legible Header */}
-        <div style={{ marginBottom: '64px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+        {/* Clean, Legible Header - Centered */}
+        <div style={{ marginBottom: '64px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <div style={{ fontFamily: 'var(--font-heading)', fontSize: '0.85rem', color: 'var(--accent-blue)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '12px', letterSpacing: '0.05em' }}>
             Studio Capabilities
           </div>
@@ -54,165 +54,107 @@ export default function ServicesSection({ onOpenBooking, onNavigate }) {
           </h2>
         </div>
 
-        <div style={{ display: 'flex', gap: '64px', flexDirection: 'row', alignItems: 'center' }} className="services-layout">
+        <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '16px' }} className="services-layout">
           
-          {/* Left: Clean Interactive List */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {CREATION_CATEGORIES.map((cat, idx) => {
-              const isActive = activeIdx === idx;
-              
-              return (
+          {/* Interactive List */}
+          {CREATION_CATEGORIES.map((cat, idx) => {
+            const isActive = activeIdx === idx;
+            
+            return (
+              <div 
+                key={idx}
+                onMouseEnter={() => setActiveIdx(idx)}
+                onClick={() => {
+                  if (onNavigate && cat.action) {
+                    onNavigate(cat.action);
+                  }
+                }}
+                className="magnetic service-item" // Custom cursor hook
+                style={{
+                  padding: '32px 40px',
+                  borderRadius: '16px',
+                  backgroundColor: isActive ? 'var(--bg-main)' : 'transparent',
+                  boxShadow: isActive ? '0 12px 24px rgba(0,0,0,0.05)' : 'none',
+                  border: isActive ? '1px solid var(--glass-border)' : '1px solid transparent',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '24px',
+                  transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                  opacity: isActive ? 1 : 0.6,
+                  transform: isActive ? 'translateX(12px)' : 'translateX(0)'
+                }}
+              >
+                <span className="service-num" style={{ 
+                  fontSize: '1.2rem', 
+                  fontFamily: 'var(--font-heading)', 
+                  fontWeight: 700, 
+                  color: isActive ? 'var(--accent-blue)' : 'var(--text-muted)',
+                  marginTop: '4px' // align with heading
+                }}>
+                  {cat.num}
+                </span>
+                
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ 
+                    margin: 0, 
+                    fontSize: 'clamp(1.5rem, 2.5vw, 2.5rem)', 
+                    fontFamily: 'var(--font-heading)',
+                    fontWeight: 800,
+                    color: 'var(--color-black)',
+                    letterSpacing: '-0.01em',
+                    lineHeight: 1.2
+                  }}>
+                    {cat.title}
+                  </h3>
+                  
+                  {/* Smooth Expandable Description */}
+                  <div className="service-desc" style={{
+                    height: isActive ? 'auto' : 0,
+                    overflow: 'hidden',
+                    opacity: isActive ? 1 : 0,
+                    transition: 'opacity 0.4s ease',
+                    marginTop: isActive ? '12px' : 0
+                  }}>
+                    <p style={{ margin: 0, fontSize: '1.05rem', color: 'var(--text-muted)', maxWidth: '500px', lineHeight: 1.6 }}>
+                      {cat.desc}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Clean Start Project Arrow */}
                 <div 
-                  key={idx}
-                  onMouseEnter={() => setActiveIdx(idx)}
-                  onClick={() => {
+                  className="arrow-btn"
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
                     if (onNavigate && cat.action) {
                       onNavigate(cat.action);
                     }
                   }}
-                  className="magnetic service-item" // Custom cursor hook
                   style={{
-                    padding: '24px 32px',
-                    borderRadius: '16px',
-                    backgroundColor: isActive ? 'var(--bg-main)' : 'transparent',
-                    boxShadow: isActive ? '0 12px 24px rgba(0,0,0,0.05)' : 'none',
-                    border: isActive ? '1px solid var(--glass-border)' : '1px solid transparent',
-                    cursor: 'pointer',
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    backgroundColor: isActive ? 'var(--accent-blue)' : 'var(--bg-main)',
+                    border: isActive ? 'none' : '1px solid var(--glass-border)',
                     display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '24px',
-                    transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-                    opacity: isActive ? 1 : 0.6,
-                    transform: isActive ? 'translateX(12px)' : 'translateX(0)'
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.3s ease',
+                    transform: isActive ? 'scale(1)' : 'scale(0.8)',
+                    opacity: isActive ? 1 : 0,
+                    flexShrink: 0
                   }}
                 >
-                  <span className="service-num" style={{ 
-                    fontSize: '1.2rem', 
-                    fontFamily: 'var(--font-heading)', 
-                    fontWeight: 700, 
-                    color: isActive ? 'var(--accent-blue)' : 'var(--text-muted)',
-                    marginTop: '4px' // align with heading
-                  }}>
-                    {cat.num}
-                  </span>
-                  
-                  <div style={{ flex: 1 }}>
-                    <h3 style={{ 
-                      margin: 0, 
-                      fontSize: 'clamp(1.5rem, 2.5vw, 2.5rem)', 
-                      fontFamily: 'var(--font-heading)',
-                      fontWeight: 800,
-                      color: 'var(--color-black)',
-                      letterSpacing: '-0.01em',
-                      lineHeight: 1.2
-                    }}>
-                      {cat.title}
-                    </h3>
-                    
-                    {/* Smooth Expandable Description */}
-                    <div className="service-desc" style={{
-                      height: isActive ? 'auto' : 0,
-                      overflow: 'hidden',
-                      opacity: isActive ? 1 : 0,
-                      transition: 'opacity 0.4s ease',
-                      marginTop: isActive ? '12px' : 0
-                    }}>
-                      <p style={{ margin: 0, fontSize: '1.05rem', color: 'var(--text-muted)', maxWidth: '420px', lineHeight: 1.6 }}>
-                        {cat.desc}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Clean Start Project Arrow */}
-                  <div 
-                    className="arrow-btn"
-                    onClick={(e) => { 
-                      e.stopPropagation(); 
-                      if (onNavigate && cat.action) {
-                        onNavigate(cat.action);
-                      }
-                    }}
-                    style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '50%',
-                      backgroundColor: isActive ? 'var(--accent-blue)' : 'var(--bg-main)',
-                      border: isActive ? 'none' : '1px solid var(--glass-border)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'all 0.3s ease',
-                      transform: isActive ? 'scale(1)' : 'scale(0.8)',
-                      opacity: isActive ? 1 : 0,
-                      flexShrink: 0
-                    }}
-                  >
-                    <ArrowUpRight size={20} color={isActive ? "#fff" : "var(--color-black)"} />
-                  </div>
+                  <ArrowUpRight size={20} color={isActive ? "#fff" : "var(--color-black)"} />
                 </div>
-              );
-            })}
-          </div>
-
-          {/* Right: Elegant Visual Stage */}
-          <div className="services-stage" style={{ 
-            flex: 1, 
-            height: '600px', 
-            position: 'relative', 
-            borderRadius: '24px', 
-            overflow: 'hidden',
-            boxShadow: '0 24px 48px rgba(0,0,0,0.08)'
-          }}>
-            {CREATION_CATEGORIES.map((cat, idx) => (
-              <img 
-                key={idx}
-                src={cat.image}
-                alt={cat.title}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  opacity: activeIdx === idx ? 1 : 0,
-                  transform: activeIdx === idx ? 'scale(1)' : 'scale(1.05)',
-                  transition: 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
-                  zIndex: activeIdx === idx ? 1 : 0
-                }}
-              />
-            ))}
-            
-            {/* Soft Gradient Overlay for depth, not overpowering */}
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'linear-gradient(to top, rgba(0,0,0,0.2) 0%, transparent 40%)',
-              zIndex: 2,
-              pointerEvents: 'none'
-            }}></div>
-          </div>
-
+              </div>
+            );
+          })}
         </div>
       </div>
 
       <style>{`
-        @media (max-width: 1024px) {
-          .services-layout {
-            flex-direction: column-reverse !important;
-          }
-          .services-stage {
-            width: 100% !important;
-            height: 400px !important;
-            flex: none !important;
-            margin-bottom: 24px;
-          }
-        }
-        @media (max-width: 768px) {
-          .services-stage {
-            height: 300px !important;
-          }
-        }
         @media (max-width: 640px) {
           .service-item {
             padding: 16px !important;
