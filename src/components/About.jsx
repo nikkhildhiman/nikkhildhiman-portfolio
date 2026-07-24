@@ -100,7 +100,7 @@ export default function About() {
               width: '100%', 
               height: '100%', 
               objectFit: 'cover',
-              filter: 'contrast(1.1) grayscale(10%)'
+              filter: 'contrast(1.05)'
             }}
           />
         </div>
@@ -172,7 +172,7 @@ export default function About() {
             </div>
           </div>
 
-          <div style={{ gridColumn: 'span 12', '@media (min-width: 992px)': { gridColumn: 'span 7' } }} className="about-text-left">
+          <div style={{ gridColumn: 'span 12' }} className="about-text-left">
             <h3 style={{ 
               fontSize: 'clamp(2.5rem, 5vw, 4rem)', 
               color: 'var(--color-black)', 
@@ -186,7 +186,7 @@ export default function About() {
             </h3>
           </div>
 
-          <div style={{ gridColumn: 'span 12', '@media (min-width: 992px)': { gridColumn: 'span 5' } }} className="about-text-right">
+          <div style={{ gridColumn: 'span 12' }} className="about-text-right">
             <p style={{ fontSize: '1.2rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0' }}>
               With over 2 years of active directorial and studio experience, my approach is hyper-focused on visual psychology. By obsessing over narrative rhythm, DaVinci Resolve color grading, and high-CTR thumbnail design, I ensure every frame drives measurable retention.
             </p>
