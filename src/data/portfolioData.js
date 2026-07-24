@@ -359,7 +359,7 @@ export const ABOUT_DATA = {
   viewsGenerated: "50M+",
   bio: "I am a Senior Creative Director and Video Editor specializing in high-converting visual experiences for top-tier creators, marketing agencies, and brands.",
   philosophy: "Visual storytelling is built at the intersection of narrative rhythm, color psychology, and precision sound architecture.",
-  portrait: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80"
+  portrait: "/assets/DSC_7738.jpg"
 };
 
 export const TESTIMONIALS_DATA = [
