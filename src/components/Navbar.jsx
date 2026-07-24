@@ -85,7 +85,12 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
                 position: 'relative'
               }}
             >
-              <span id="hero-logo-true" style={{ opacity: 0 }}>N</span>
+              <img 
+                id="hero-logo-true" 
+                src="/assets/logo-3d.png" 
+                alt="Logo" 
+                style={{ opacity: 0, width: '28px', height: '28px', objectFit: 'contain' }} 
+              />
             </div>
             <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '1.2rem', color: darkMode ? '#ffffff' : 'var(--color-black)', letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span>NIKHIL</span>
