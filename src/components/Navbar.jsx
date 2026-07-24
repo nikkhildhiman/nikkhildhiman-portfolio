@@ -75,6 +75,8 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
                 height: '40px',
                 borderRadius: '50%',
                 backgroundColor: '#ffffff',
+                border: '1px solid rgba(0,0,0,0.1)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
                 color: darkMode ? '#ffffff' : 'var(--accent-blue)',
                 display: 'flex',
                 alignItems: 'center',
