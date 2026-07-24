@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ArrowUpRight, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { staggeredReveal } from '../utils/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -143,8 +144,13 @@ const CustomVideoCard = ({ project, isArchive = false }) => {
     if (videoRef.current) {
       if (videoRef.current.requestFullscreen) {
         videoRef.current.requestFullscreen();
+      } else if (videoRef.current.webkitEnterFullscreen) {
+        // iOS Safari specifically for video elements
+        videoRef.current.webkitEnterFullscreen();
       } else if (videoRef.current.webkitRequestFullscreen) {
         videoRef.current.webkitRequestFullscreen();
+      } else if (videoRef.current.msRequestFullscreen) {
+        videoRef.current.msRequestFullscreen();
       }
     }
   };
@@ -202,8 +208,10 @@ const CustomVideoCard = ({ project, isArchive = false }) => {
         overflow: 'hidden',
         position: 'relative',
         backgroundColor: '#111',
-        boxShadow: '0 12px 32px rgba(0,0,0,0.08)',
-        border: '1px solid var(--glass-border)',
+        boxShadow: isHovered ? '0 20px 40px rgba(0,0,0,0.3)' : '0 12px 32px rgba(0,0,0,0.08)',
+        border: isHovered ? '1px solid rgba(255,255,255,0.15)' : '1px solid var(--glass-border)',
+        transform: isHovered ? 'scale(1.02) translateY(-4px)' : 'scale(1) translateY(0)',
+        transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
         cursor: 'pointer'
       }}
       onClick={togglePlay}
@@ -261,11 +269,11 @@ const CustomVideoCard = ({ project, isArchive = false }) => {
         </div>
       )}
 
-      {/* Persistent Controls (Fade out when playing and not hovered) */}
+      {/* Persistent Controls (Fade out when playing and not hovered/on mobile) */}
       <div style={{
-        opacity: (isPlaying && !isHovered) ? 0.5 : 1,
+        opacity: (isPlaying && (!isHovered || (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches))) ? 0.5 : 1,
         transition: 'opacity 0.4s ease',
-        pointerEvents: (isPlaying && !isHovered) ? 'none' : 'auto'
+        pointerEvents: (isPlaying && (!isHovered || (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches))) ? 'none' : 'auto'
       }}>
         {hasStarted && (
           <>
@@ -439,22 +447,7 @@ export default function SelectedWork({ onOpenVideo, isWorkPage = false }) {
     // Elegant fade-in animation for cards as you scroll down normally
     const ctx = gsap.context(() => {
       const cards = gsap.utils.toArray('.main-card');
-      
-      gsap.fromTo(cards, 
-        { y: 60, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: gridRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none reverse'
-          }
-        }
-      );
+      staggeredReveal(cards, 0.1, 0);
     }, sectionRef);
 
     return () => ctx.revert();

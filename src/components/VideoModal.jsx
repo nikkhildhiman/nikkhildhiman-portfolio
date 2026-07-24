@@ -81,7 +81,7 @@ export default function VideoModal({ isOpen, videoUrl, title, onClose }) {
 
         {/* Modal Footer Info */}
         <div style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', fontFamily: 'var(--font-heading)', color: '#888888', backgroundColor: '#111111' }}>
-          <span>4K ULTRA HD MASTER • NIKHIL DHIMAN STUDIO</span>
+          <span>4K ULTRA HD MASTER • NIKHIL DHIMAN</span>
           <span style={{ color: 'var(--accent-blue)', fontWeight: 700 }}>PRESS 'ESC' TO CLOSE</span>
         </div>
       </div>

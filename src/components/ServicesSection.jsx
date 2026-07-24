@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowUpRight } from 'lucide-react';
+import gsap from 'gsap';
+import { staggeredReveal } from '../utils/motion';
 
 const CREATION_CATEGORIES = [
   {
@@ -28,6 +30,8 @@ const CREATION_CATEGORIES = [
 export default function ServicesSection({ onOpenBooking, onNavigate }) {
   const [activeIdx, setActiveIdx] = useState(0);
 
+  const sectionRef = useRef(null);
+
   useEffect(() => {
     // Auto-cycle the background image on mobile/tablet since the cards don't require hover
     const interval = setInterval(() => {
@@ -39,15 +43,23 @@ export default function ServicesSection({ onOpenBooking, onNavigate }) {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const elements = gsap.utils.toArray('.service-reveal');
+      staggeredReveal(elements, 0.15, 0);
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="services" style={{ backgroundColor: 'var(--color-surface)', paddingTop: '120px', paddingBottom: '120px', position: 'relative' }}>
+    <section ref={sectionRef} id="services" style={{ backgroundColor: 'var(--color-surface)', paddingTop: '120px', paddingBottom: '120px', position: 'relative' }}>
       
       <div className="container">
         
         {/* Clean, Legible Header - Centered */}
-        <div style={{ marginBottom: '64px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+        <div className="service-reveal" style={{ marginBottom: '64px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <div style={{ fontFamily: 'var(--font-heading)', fontSize: '0.85rem', color: 'var(--accent-blue)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '12px', letterSpacing: '0.05em' }}>
-            Studio Capabilities
+            Capabilities
           </div>
           <h2 style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', color: 'var(--color-black)', textTransform: 'uppercase', margin: 0, lineHeight: 1.1, fontWeight: 800, letterSpacing: '-0.02em' }}>
             WHAT WE <span style={{ color: 'var(--text-muted)' }}>CREATE</span>
@@ -62,7 +74,8 @@ export default function ServicesSection({ onOpenBooking, onNavigate }) {
             
             return (
               <div 
-                key={idx}
+                key={cat.num}
+                className="service-reveal magnetic service-item" // Custom cursor hook
                 onMouseEnter={() => setActiveIdx(idx)}
                 onClick={() => {
                   if (onNavigate && cat.action) {

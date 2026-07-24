@@ -107,21 +107,34 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
                 <button
                   key={link.page}
                   onClick={() => onNavigate(link.page)}
-                  className="nav-link"
+                  className={`nav-link magnetic ${isActive ? 'active' : ''}`}
                   style={{
-                    backgroundColor: isActive ? (darkMode ? '#ffffff' : 'var(--color-black)') : 'transparent',
-                    color: isActive ? (darkMode ? '#111111' : '#ffffff') : (darkMode ? '#ffffff' : 'var(--color-black)'),
+                    backgroundColor: 'transparent',
+                    color: isActive ? (darkMode ? '#ffffff' : 'var(--color-black)') : (darkMode ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)'),
                     border: 'none',
-                    borderRadius: '9999px',
                     fontFamily: 'var(--font-heading)',
                     fontSize: '0.85rem',
-                    fontWeight: 700,
+                    fontWeight: isActive ? 800 : 600,
                     padding: '8px 16px',
                     cursor: 'pointer',
+                    position: 'relative',
                     transition: 'all 0.3s ease'
                   }}
                 >
                   {link.label}
+                  {isActive && (
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '4px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: '12px',
+                      height: '2px',
+                      backgroundColor: darkMode ? '#ffffff' : 'var(--color-black)',
+                      borderRadius: '2px',
+                      animation: 'navUnderline 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+                    }} />
+                  )}
                 </button>
               );
             })}
@@ -154,12 +167,12 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
 
             {/* Book Project Button (Hidden on Mobile) */}
             <button
-              className="btn-lime hide-mobile"
+              className="btn-lime magnetic hide-mobile"
               onClick={onOpenBooking}
               style={{ padding: '10px 24px', fontSize: '0.9rem', borderRadius: '9999px', display: 'flex', alignItems: 'center', gap: '6px' }}
             >
               <span>Book Project</span>
-              <ArrowUpRight size={16} />
+              <ArrowUpRight size={16} style={{ transition: 'transform 0.3s ease' }} className="btn-icon" />
             </button>
 
             {/* Mobile Menu Toggle */}
@@ -187,22 +200,26 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
       </div>
 
       {/* Premium Full-Screen Mobile Menu */}
-      {mobileMenuOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 8999,
-            backgroundColor: darkMode ? 'rgba(11, 11, 13, 0.98)' : 'rgba(248, 248, 246, 0.98)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            padding: '120px 24px max(40px, env(safe-area-inset-bottom)) 24px',
-            gap: '16px',
-            overflowY: 'auto',
-            WebkitOverflowScrolling: 'touch'
-          }}
-          className="show-mobile"
+      <div
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 8999,
+          backgroundColor: darkMode ? 'rgba(11, 11, 13, 0.98)' : 'rgba(248, 248, 246, 0.98)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          padding: '100px 24px max(40px, env(safe-area-inset-bottom)) 24px',
+          gap: '4px',
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          opacity: mobileMenuOpen ? 1 : 0,
+          visibility: mobileMenuOpen ? 'visible' : 'hidden',
+          transform: mobileMenuOpen ? 'translateY(0)' : 'translateY(-20px)',
+          transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+        }}
+          className="show-mobile-flex"
         >
           {navLinks.map((link, idx) => (
             <button
@@ -218,8 +235,8 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
                 fontFamily: 'var(--font-heading)',
                 fontSize: 'clamp(2.5rem, 10vw, 3.5rem)',
                 fontWeight: 800,
-                textAlign: 'left',
-                padding: '8px 0',
+                textAlign: 'center',
+                padding: '2px 0',
                 textTransform: 'uppercase',
                 letterSpacing: '-0.02em',
                 transition: 'color 0.3s ease'
@@ -235,7 +252,16 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
             </button>
           </div>
         </div>
-      )}
+      {/* CSS for specific interactions */}
+      <style>{`
+        @keyframes navUnderline {
+          from { width: 0px; opacity: 0; }
+          to { width: 12px; opacity: 1; }
+        }
+        .btn-lime:hover .btn-icon {
+          transform: translate(2px, -2px) rotate(15deg);
+        }
+      `}</style>
     </header>
   );
 }

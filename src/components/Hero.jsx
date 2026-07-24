@@ -10,17 +10,25 @@ export default function Hero({ onOpenVideo, onNavigate }) {
   const [hoveredCard, setHoveredCard] = useState(null);
 
   useEffect(() => {
-    // Entrance Animation
+    // Entrance Animation - Awwwards Style
     const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
     
-    tl.fromTo(headlineRef.current.children, 
-      { y: 100, opacity: 0 },
-      { y: 0, opacity: 1, stagger: 0.1, duration: 1.2, delay: 0.1 }
+    // Mask reveal for text lines
+    const textLines = headlineRef.current.querySelectorAll('.text-layer > span');
+    gsap.set(textLines, { y: '120%', opacity: 0 }); // Initial state
+    
+    tl.to(textLines, 
+      { y: '0%', opacity: 1, stagger: 0.15, duration: 1.4, delay: 0.2, ease: 'expo.out' }
+    )
+    .fromTo('.hero-buttons-container',
+      { y: 30, opacity: 0, filter: 'blur(10px)' },
+      { y: 0, opacity: 1, filter: 'blur(0px)', duration: 1.2 },
+      "-=1.0"
     )
     .fromTo(cardsRef.current.children,
-      { y: 60, opacity: 0, scale: 0.8, rotation: 5 },
-      { y: 0, opacity: 1, scale: 1, rotation: (i) => [-6, 4, -2][i], stagger: 0.15, duration: 1.4 },
-      "-=0.8"
+      { y: 80, opacity: 0, filter: 'blur(15px)' },
+      { y: 0, opacity: 1, filter: 'blur(0px)', stagger: 0.15, duration: 1.6 },
+      "-=1.2"
     );
 
     // Parallax tracking for Hero Cards
@@ -37,9 +45,14 @@ export default function Hero({ onOpenVideo, onNavigate }) {
     
     const handleTextMouseMove = (e) => {
       if (!h1Node) return;
+      
+      // Support both mouse and touch events
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
       const rect = h1Node.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-      const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+      const x = ((clientX - rect.left) / rect.width - 0.5) * 2;
+      const y = ((clientY - rect.top) / rect.height - 0.5) * 2;
       
       // Subtle 3D tilt
       gsap.to(h1Node, {
@@ -56,8 +69,8 @@ export default function Hero({ onOpenVideo, onNavigate }) {
         const charRect = char.getBoundingClientRect();
         const charX = charRect.left + charRect.width / 2;
         const charY = charRect.top + charRect.height / 2;
-        const dx = e.clientX - charX;
-        const dy = e.clientY - charY;
+        const dx = clientX - charX;
+        const dy = clientY - charY;
         const distance = Math.sqrt(dx * dx + dy * dy);
         const maxDist = 120; // Repulsion radius
         
@@ -96,6 +109,8 @@ export default function Hero({ onOpenVideo, onNavigate }) {
     if (h1Node) {
       h1Node.addEventListener('mousemove', handleTextMouseMove);
       h1Node.addEventListener('mouseleave', handleTextMouseLeave);
+      h1Node.addEventListener('touchmove', handleTextMouseMove, { passive: true });
+      h1Node.addEventListener('touchend', handleTextMouseLeave);
     }
 
     return () => {
@@ -103,6 +118,8 @@ export default function Hero({ onOpenVideo, onNavigate }) {
       if (h1Node) {
         h1Node.removeEventListener('mousemove', handleTextMouseMove);
         h1Node.removeEventListener('mouseleave', handleTextMouseLeave);
+        h1Node.removeEventListener('touchmove', handleTextMouseMove);
+        h1Node.removeEventListener('touchend', handleTextMouseLeave);
       }
     };
   }, []);
@@ -149,23 +166,25 @@ export default function Hero({ onOpenVideo, onNavigate }) {
             <h1 ref={headlineRef} style={{ 
               position: 'relative',
               zIndex: 40,
-              fontSize: 'clamp(4rem, 7.5vw, 8rem)', 
+              fontSize: 'clamp(1.5rem, 12vw, 8rem)',
+              fontFamily: 'var(--font-heading)',
               lineHeight: 0.9, 
-              letterSpacing: '-0.03em', 
+              letterSpacing: '-0.02em', 
               color: 'var(--color-black)', 
               margin: '0 0 32px 0', 
               textTransform: 'uppercase',
               fontWeight: 800,
               transformStyle: 'preserve-3d',
-              cursor: 'default'
+              cursor: 'default',
+              whiteSpace: 'nowrap'
             }}>
-              <div className="text-layer" style={{ padding: '10px 0' }}><span style={{ display: 'block' }}>
+              <div className="text-layer" style={{ padding: '10px 0', overflow: 'hidden' }}><span style={{ display: 'block' }}>
                 {'I CREATE'.split('').map((c, i) => <span key={i} className="char" style={{ display: 'inline-block', transformOrigin: 'center' }}>{c === ' ' ? '\u00A0' : c}</span>)}
               </span></div>
-              <div className="text-layer" style={{ padding: '10px 0' }}><span className="stair-text" style={{ color: 'var(--accent-blue)', display: 'block' }}>
+              <div className="text-layer" style={{ padding: '10px 0', overflow: 'hidden' }}><span className="stair-text" style={{ color: 'var(--accent-blue)', display: 'block' }}>
                 {'VISUAL'.split('').map((c, i) => <span key={i} className="char" style={{ display: 'inline-block', transformOrigin: 'center' }}>{c}</span>)}
               </span></div>
-              <div className="text-layer" style={{ padding: '10px 0' }}><span style={{ display: 'block' }}>
+              <div className="text-layer" style={{ padding: '10px 0', overflow: 'hidden' }}><span style={{ display: 'block' }}>
                 {'STORIES.'.split('').map((c, i) => <span key={i} className="char" style={{ display: 'inline-block', transformOrigin: 'center' }}>{c}</span>)}
               </span></div>
             </h1>

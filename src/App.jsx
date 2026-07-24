@@ -10,6 +10,7 @@ import ParticleCanvas from './components/ParticleCanvas';
 import CinematicLoader from './components/CinematicLoader';
 
 import CustomCursor from './components/CustomCursor';
+import { pageTransitionOut, pageTransitionIn } from './utils/motion';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import SelectedWork from './components/SelectedWork';
@@ -33,6 +34,7 @@ export default function App() {
     const validPages = ['home', 'work', 'about', 'contact', 'thumbnails', 'reels'];
     return validPages.includes(hash) ? hash : 'home';
   });
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [activeVideo, setActiveVideo] = useState({ isOpen: false, url: '', title: '' });
   const [activeCaseStudy, setActiveCaseStudy] = useState({ isOpen: false, project: null });
@@ -52,10 +54,9 @@ export default function App() {
   // Initialize Lenis Smooth Scroll & GSAP Global Timelines
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      lerp: 0.08,
       smoothWheel: true,
-      wheelMultiplier: 1.1,
+      wheelMultiplier: 1,
       touchMultiplier: 2,
     });
 
@@ -94,20 +95,31 @@ export default function App() {
         // Instant morph without any delay
         const targetRect = target.getBoundingClientRect();
         
+        // Calculate deltas from screen center to target center
+        const targetCenterX = targetRect.left + targetRect.width / 2;
+        const targetCenterY = targetRect.top + targetRect.height / 2;
+        const startCenterX = window.innerWidth / 2;
+        const startCenterY = window.innerHeight / 2;
+        
+        const deltaX = targetCenterX - startCenterX;
+        const deltaY = targetCenterY - startCenterY;
+        const scale = targetRect.width / 450; // Original width is 450px
+        
+        gsap.set(globalLogo, { xPercent: -50, yPercent: -50, transformOrigin: 'center center' });
+        
         gsap.to(globalLogo, {
-          top: targetRect.top + targetRect.height / 2, // center X
-          left: targetRect.left + targetRect.width / 2, // center Y
-          width: targetRect.width,
-          height: targetRect.height,
-          duration: 1.4, // Cinematic, buttery smooth morph
-          ease: 'expo.inOut',
+          x: deltaX,
+          y: deltaY,
+          scale: scale,
+          duration: 0.8, // Faster, snappier morph
+          ease: 'power3.inOut',
           onComplete: () => {
             gsap.to(globalLogo, { 
               opacity: 0, 
-              duration: 0.4, 
+              duration: 0.3, 
               onComplete: () => setMorphingLogo(false) 
             });
-            gsap.to(trueLogo, { opacity: 1, duration: 0.4 });
+            gsap.to(trueLogo, { opacity: 1, duration: 0.3 });
           }
         });
       } else {
@@ -120,43 +132,39 @@ export default function App() {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
       const validPages = ['home', 'work', 'about', 'contact', 'thumbnails', 'reels'];
-      setActivePage(validPages.includes(hash) ? hash : 'home');
+      const targetPage = validPages.includes(hash) ? hash : 'home';
+      
+      if (targetPage !== activePage && !isTransitioning) {
+        setIsTransitioning(true);
+        const mainContainer = document.querySelector('main');
+        if (mainContainer) {
+          pageTransitionOut(mainContainer, () => {
+            setActivePage(targetPage);
+            window.scrollTo(0, 0);
+            if (window.lenis) window.lenis.scrollTo(0, { immediate: true });
+            
+            setTimeout(() => {
+              setIsTransitioning(false);
+              pageTransitionIn(mainContainer);
+              ScrollTrigger.refresh();
+            }, 50);
+          });
+        } else {
+          setActivePage(targetPage);
+        }
+      }
     };
     
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [activePage, isTransitioning]);
 
   const handleToggleDarkMode = () => {
     setDarkMode((prev) => !prev);
   };
 
   const handleNavigate = (page) => {
-    // Instead of setting activePage directly, we update the hash.
-    // The hashchange listener will catch this and update activePage automatically.
     window.location.hash = page === 'home' ? '' : page;
-
-    if (window.lenis) {
-      window.lenis.scrollTo(0, { duration: 1.2 });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // GSAP Page Transition Fade
-    gsap.fromTo(
-      'main',
-      { opacity: 0.4, y: 15 },
-      { 
-        opacity: 1, 
-        y: 0, 
-        duration: 0.4, 
-        ease: 'power2.out',
-        onComplete: () => {
-          // Fixes the GSAP pin-spacer blank space issue when routing
-          ScrollTrigger.refresh();
-        }
-      }
-    );
   };
 
   const handleOpenBooking = () => {
@@ -207,6 +215,7 @@ export default function App() {
             transform: 'translate(-50%, -50%)',
             zIndex: 9999999,
             pointerEvents: 'none',
+            willChange: 'transform, opacity'
           }}
         >
           <img 
@@ -370,31 +379,6 @@ export default function App() {
         {/* PAGE 3: ABOUT */}
         {activePage === 'about' && (
           <div style={{ paddingTop: '100px' }}>
-            <div style={{ 
-              height: '50vh', 
-              display: 'flex', 
-              flexDirection: 'column', 
-              justifyContent: 'center', 
-              padding: '0 4vw',
-              borderBottom: '2px solid var(--color-black)'
-            }}>
-              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>
-                [ PAGE / BEHIND THE CRAFT ]
-              </div>
-              <h1 style={{ 
-                fontSize: 'clamp(2.5rem, 10vw, 8rem)', 
-                fontFamily: 'var(--font-heading)',
-                fontWeight: 900,
-                color: 'transparent',
-                WebkitTextStroke: '2px var(--color-black)',
-                lineHeight: 0.9,
-                margin: 0,
-                textTransform: 'uppercase'
-              }}>
-                BEHIND THE <br/><span style={{ color: 'var(--color-black)', WebkitTextStroke: 'none' }}>CRAFT</span>
-              </h1>
-            </div>
-
             <About />
             <TestimonialsSection />
           </div>

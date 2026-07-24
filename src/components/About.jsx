@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
+import gsap from 'gsap';
 import { ABOUT_DATA } from '../data/portfolioData';
+import { staggeredReveal } from '../utils/motion';
 
 export default function About() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -26,8 +28,19 @@ export default function About() {
     };
   }, []);
 
+  const sectionRef = useRef(null);
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const elements = gsap.utils.toArray('.about-reveal');
+      if (elements.length) {
+        staggeredReveal(elements, 0.15, 0);
+      }
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="about" style={{ backgroundColor: 'var(--color-surface)', position: 'relative' }}>
+    <section ref={sectionRef} id="about" style={{ backgroundColor: 'var(--color-surface)', position: 'relative' }}>
       
       {/* =========================================
           PART 1: THE INTERACTIVE SANDBOX
@@ -51,7 +64,7 @@ export default function About() {
           top: '50%',
           left: '50%',
           width: '150%', // Wider to allow movement
-          transform: `translate(-50%, -50%) translate(${mousePos.x * -40}px, ${mousePos.y * -40}px)`,
+          transform: `translate(-50%, -50%) translate(${mousePos.x * -16}px, ${mousePos.y * -16}px)`,
           transition: 'transform 0.1s ease-out',
           zIndex: 0,
           pointerEvents: 'none',
@@ -82,7 +95,7 @@ export default function About() {
           position: 'absolute',
           top: '50%',
           left: '50%',
-          transform: `translate(-50%, -50%) translate(${mousePos.x * 25}px, ${mousePos.y * 25}px)`,
+          transform: `translate(-50%, -50%) translate(${mousePos.x * 12}px, ${mousePos.y * 12}px)`,
           transition: 'transform 0.1s ease-out',
           zIndex: 2,
           width: 'min(70vw, 360px)',
@@ -132,7 +145,7 @@ export default function About() {
             letterSpacing: '0.05em',
             fontSize: '0.85rem'
           }}>
-            2+ Years Studio
+            2+ Years
           </div>
           
           {/* Badge 2 */}
@@ -158,37 +171,31 @@ export default function About() {
       {/* =========================================
           PART 2: THE READABLE PHILOSOPHY
           ========================================= */}
-      <div className="container" style={{ position: 'relative', zIndex: 10, padding: '80px 0' }}>
+      <div className="container" style={{ position: 'relative', zIndex: 10, paddingTop: '120px', paddingBottom: '120px' }}>
         
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(12, 1fr)', 
-          gap: '40px'
-        }}>
+        <div className="grid-12" style={{ gap: 'max(40px, 8vw)' }}>
           
-          <div style={{ gridColumn: 'span 12' }}>
-            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '0.9rem', color: 'var(--color-black)', fontWeight: 800, textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.1em' }}>
-              [ BEHIND THE CRAFT ]
-            </div>
-          </div>
 
-          <div style={{ gridColumn: 'span 12' }} className="about-text-left">
+
+          <div style={{ gridColumn: 'span 12' }} className="about-text-left about-reveal">
             <h3 style={{ 
-              fontSize: 'clamp(2.5rem, 5vw, 4rem)', 
+              fontSize: 'clamp(1rem, 8vw, 4rem)', 
               color: 'var(--color-black)', 
               fontWeight: 900, 
-              lineHeight: 1.1,
-              letterSpacing: '-0.02em',
+              lineHeight: 1.3,
+              wordSpacing: '0.1em',
               margin: '0',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-word',
               textTransform: 'uppercase'
             }}>
               "I build high-converting narrative engines for top creators."
             </h3>
           </div>
 
-          <div style={{ gridColumn: 'span 12' }} className="about-text-right">
+          <div style={{ gridColumn: 'span 12' }} className="about-text-right about-reveal">
             <p style={{ fontSize: '1.2rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0' }}>
-              With over 2 years of active directorial and studio experience, my approach is hyper-focused on visual psychology. By obsessing over narrative rhythm, DaVinci Resolve color grading, and high-CTR thumbnail design, I ensure every frame drives measurable retention.
+              With over 2 years of active directorial experience, my approach is hyper-focused on visual psychology. By obsessing over narrative rhythm, DaVinci Resolve color grading, and high-CTR thumbnail design, I ensure every frame drives measurable retention.
             </p>
           </div>
 

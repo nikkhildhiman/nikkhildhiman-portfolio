@@ -84,8 +84,13 @@ const ReelCard = ({ reel }) => {
     if (videoRef.current) {
       if (videoRef.current.requestFullscreen) {
         videoRef.current.requestFullscreen();
+      } else if (videoRef.current.webkitEnterFullscreen) {
+        // iOS Safari specifically for video elements
+        videoRef.current.webkitEnterFullscreen();
       } else if (videoRef.current.webkitRequestFullscreen) {
         videoRef.current.webkitRequestFullscreen();
+      } else if (videoRef.current.msRequestFullscreen) {
+        videoRef.current.msRequestFullscreen();
       }
     }
   };
@@ -148,12 +153,12 @@ const ReelCard = ({ reel }) => {
       }}
       onMouseLeave={(e) => {
         setIsHovered(false);
-        gsap.to(e.currentTarget, { scale: 1, rotateX: 0, rotateY: 0, duration: 0.6, ease: 'power3.out', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' });
+        gsap.to(e.currentTarget, { scale: 1, rotateX: 0, rotateY: 0, duration: 0.6, ease: 'power3.out', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', borderColor: 'rgba(255,255,255,0.05)' });
       }}
       onMouseEnter={(e) => {
         setIsHovered(true);
         if (!isPlaying) {
-          gsap.to(e.currentTarget, { scale: 1.05, duration: 0.4, ease: 'power2.out', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', transformPerspective: 1000 });
+          gsap.to(e.currentTarget, { scale: 1.02, duration: 0.4, ease: 'power2.out', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', borderColor: 'rgba(255,255,255,0.2)', transformPerspective: 1000 });
         }
       }}
       style={{
@@ -252,22 +257,21 @@ const ReelCard = ({ reel }) => {
             </svg>
           </div>
 
-          {/* Progress Bar Container - Apple Premium Glass Style */}
-          <div 
-            style={{ 
-              position: 'absolute', 
-              bottom: '32px', 
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: '85%', 
-              display: 'flex', 
-              flexDirection: 'column',
-              gap: '8px',
-              zIndex: 20,
-              opacity: (isPlaying && !isHovered) ? 0.5 : 1,
-              transition: 'opacity 0.4s ease',
-              pointerEvents: (isPlaying && !isHovered) ? 'none' : 'auto'
-            }}
+          {/* Persistent Controls (Fade out when playing and not hovered/on mobile) */}
+          <div style={{ 
+            position: 'absolute', 
+            bottom: '32px', 
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '85%', 
+            display: 'flex', 
+            flexDirection: 'column',
+            gap: '8px',
+            zIndex: 20,
+            opacity: (isPlaying && (!isHovered || (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches))) ? 0.5 : 1,
+            transition: 'opacity 0.4s ease',
+            pointerEvents: (isPlaying && (!isHovered || (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches))) ? 'none' : 'auto'
+          }}
             onClick={(e) => e.stopPropagation()} 
           >
             {/* Small Timing Above (Left Side Only) */}
