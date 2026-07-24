@@ -99,15 +99,15 @@ export default function App() {
           left: targetRect.left + targetRect.width / 2, // center Y
           width: targetRect.width,
           height: targetRect.height,
-          duration: 0.8, // Fast snappy morph
-          ease: 'power3.inOut',
+          duration: 1.4, // Cinematic, buttery smooth morph
+          ease: 'expo.inOut',
           onComplete: () => {
             gsap.to(globalLogo, { 
               opacity: 0, 
-              duration: 0.2, 
+              duration: 0.4, 
               onComplete: () => setMorphingLogo(false) 
             });
-            gsap.to(trueLogo, { opacity: 1, duration: 0.2 });
+            gsap.to(trueLogo, { opacity: 1, duration: 0.4 });
           }
         });
       } else {

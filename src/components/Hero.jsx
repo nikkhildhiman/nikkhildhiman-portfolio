@@ -145,47 +145,6 @@ export default function Hero({ onOpenVideo, onNavigate }) {
               transition: 'transform 0.1s ease-out'
             }}
           >
-            {/* 3D Logo (Stable Target Anchor for FLIP Animation) */}
-            <div id="hero-logo-target" style={{
-              position: 'relative',
-              width: '120px',
-              height: '120px',
-              marginBottom: '12px', // Reduced margin so it sits closer to the text
-              top: '20px', // Pushed down slightly
-              left: '-16px', // Shifted left to perfectly align the visual edge of the logo with the "I"
-              zIndex: 20,
-              pointerEvents: 'none'
-            }}>
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                transform: `perspective(1000px) rotateX(${mousePos.y * -40}deg) rotateY(${mousePos.x * 40}deg)`,
-                transition: 'transform 0.15s ease-out',
-                transformStyle: 'preserve-3d',
-              }}>
-                <div style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%)',
-                  filter: 'blur(20px)',
-                  zIndex: -1,
-                  animation: 'pulse 4s infinite'
-                }} />
-                <img 
-                  id="hero-logo-true"
-                  src="/assets/logo-3d.png" 
-                  alt="3D Logo" 
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                    animation: 'spin3D 15s linear infinite', 
-                    transformStyle: 'preserve-3d',
-                    opacity: 0 // Hidden initially, revealed when global morph finishes
-                  }}
-                />
-              </div>
-            </div>
 
             <h1 ref={headlineRef} style={{ 
               position: 'relative',

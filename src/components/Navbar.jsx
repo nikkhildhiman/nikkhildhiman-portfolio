@@ -69,6 +69,7 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
             style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px' }}
           >
             <div
+              id="hero-logo-target"
               style={{
                 width: '40px',
                 height: '40px',
@@ -80,10 +81,11 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking, darkMode
                 justifyContent: 'center',
                 fontFamily: 'var(--font-heading)',
                 fontWeight: 800,
-                fontSize: '1rem'
+                fontSize: '1rem',
+                position: 'relative'
               }}
             >
-              N
+              <span id="hero-logo-true" style={{ opacity: 0 }}>N</span>
             </div>
             <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '1.2rem', color: darkMode ? '#ffffff' : 'var(--color-black)', letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span>NIKHIL</span>
