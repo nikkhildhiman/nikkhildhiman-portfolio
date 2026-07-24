@@ -213,6 +213,7 @@ const CustomVideoCard = ({ project, isArchive = false }) => {
       <video 
         ref={videoRef}
         src={project.videoUrl || 'https://www.w3schools.com/html/mov_bbb.mp4'}
+        poster={project.videoUrl ? project.videoUrl.replace('.mp4', '.jpg') : undefined}
         playsInline
         preload="metadata"
         muted={isMuted}

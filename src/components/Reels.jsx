@@ -171,6 +171,7 @@ const ReelCard = ({ reel }) => {
       <video
         ref={videoRef}
         src={reel.src}
+        poster={reel.src.replace('.mp4', '.jpg')}
         playsInline
         preload="metadata"
         muted={isMuted}
