@@ -12,7 +12,7 @@ const PORTFOLIO_DATA = [
     title: 'Nike Air Max - Defy Gravity',
     category: 'COMMERCIAL',
     client: 'Nike Global',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070&auto=format&fit=crop',
+    thumbnailUrl: '/assets/concept-jecrc.jpg',
     metric: '12M+ Views',
     videoUrl: '/assets/concept-jecrc.mp4'
   },
@@ -21,25 +21,43 @@ const PORTFOLIO_DATA = [
     title: 'The Art of Coffee',
     category: 'DOCUMENTARY',
     client: 'Blue Bottle',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=2071&auto=format&fit=crop',
+    thumbnailUrl: '/assets/YEH_DIL_FOR_JECRC.jpg',
     metric: 'Staff Pick',
     videoUrl: '/assets/YEH_DIL_FOR_JECRC.mp4'
   },
   {
     id: 3,
+    title: 'Dynamic Sequence 01',
+    category: 'REELS',
+    client: 'Creator',
+    thumbnailUrl: '/assets/Sequence_01_25.jpg',
+    metric: 'High Retention',
+    videoUrl: '/assets/Sequence_01_25.mp4'
+  },
+  {
+    id: 4,
+    title: 'Socialz 2',
+    category: 'REELS',
+    client: 'Nikhil x Socialz',
+    thumbnailUrl: '/assets/Nikkhil_x_socialz_2.jpg',
+    metric: 'High Engagement',
+    videoUrl: '/assets/Nikkhil_x_socialz_2.MP4'
+  },
+  {
+    id: 5,
     title: 'Tech Review Hook',
     category: 'REELS',
     client: 'Creator MKBHD',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1926&auto=format&fit=crop',
+    thumbnailUrl: '/assets/Nikhil_x_Khushal.jpg',
     metric: '92% Retention',
     videoUrl: '/assets/Nikhil_x_Khushal.mp4'
   },
   {
-    id: 4,
+    id: 6,
     title: 'Midnight Run',
     category: 'SHORT FILM',
     client: 'Independent',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1535016120720-40c746a47ce4?q=80&w=2070&auto=format&fit=crop',
+    thumbnailUrl: '/assets/girls-ree-4k.jpg',
     metric: 'Award Winner',
     videoUrl: '/assets/girls-ree-4k.mp4'
   }
