@@ -1,314 +1,337 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { ArrowUpRight, Play, ArrowDown } from 'lucide-react';
-import gsap from 'gsap';
+import React, { useRef, useEffect, useState } from 'react';
 
-export default function Hero({ onOpenVideo, onNavigate }) {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const heroRef = useRef(null);
-  const headlineRef = useRef(null);
-  const cardsRef = useRef(null);
-  const [hoveredCard, setHoveredCard] = useState(null);
+// ==========================================
+// REAL PROJECT DATA
+// ==========================================
+const baseProjects = [
+  { id: '01', title: 'SEQUENCE 01', category: 'FILM', video: '/assets/Sequence_01_25.mp4', poster: '/assets/Sequence_01_25.jpg' },
+  { id: '02', title: 'SOCIALZ PROMO', category: 'SHORT-FORM', video: '/assets/Nikkhil_x_socialz_2.MP4', poster: '/assets/Nikkhil_x_socialz_2.jpg' },
+  { id: '03', title: 'JECRC CONCEPT', category: 'GRAPHICS', video: '', poster: '/assets/concept-jecrc.jpg' },
+  { id: '04', title: 'KHUSHAL COLLAB', category: 'THUMBNAIL', video: '', poster: '/assets/Nikhil_x_Khushal.jpg' },
+  { id: '05', title: 'GIRLS REE 4K', category: 'SHORT-FORM', video: '', poster: '/assets/girls-ree-4k.jpg' },
+  { id: '06', title: 'YEH DIL', category: 'CAMPAIGN', video: '', poster: '/assets/YEH_DIL_FOR_JECRC.jpg' },
+  { id: '07', title: 'SHOOT BTS', category: 'CINEMATOGRAPHY', video: '', poster: '/assets/DSC_7738.jpg' },
+];
+
+export const orbitProjects = Array.from({ length: 10 }).map((_, i) => ({
+  ...baseProjects[i % baseProjects.length],
+  uid: `orb-${i}`
+}));
+
+// ==========================================
+// ORBIT CARD COMPONENT
+// ==========================================
+const OrbitCard = ({ project, isHovered, onHover, onLeave }) => {
+  const videoRef = useRef(null);
 
   useEffect(() => {
-    // Entrance Animation - Awwwards Style
-    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-    
-    // Mask reveal for text lines
-    const textLines = headlineRef.current.querySelectorAll('.text-layer > span');
-    gsap.set(textLines, { y: '120%', opacity: 0 }); // Initial state
-    
-    tl.to(textLines, 
-      { y: '0%', opacity: 1, stagger: 0.15, duration: 1.4, delay: 0.2, ease: 'expo.out' }
-    )
-    .fromTo('.hero-buttons-container',
-      { y: 30, opacity: 0, filter: 'blur(10px)' },
-      { y: 0, opacity: 1, filter: 'blur(0px)', duration: 1.2 },
-      "-=1.0"
-    )
-    .fromTo(cardsRef.current.children,
-      { y: 80, opacity: 0, filter: 'blur(15px)' },
-      { y: 0, opacity: 1, filter: 'blur(0px)', stagger: 0.15, duration: 1.6 },
-      "-=1.2"
-    );
-
-    // Parallax tracking for Hero Cards
-    const handleMouseMove = (e) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 2; // -1 to 1
-      const y = (e.clientY / window.innerHeight - 0.5) * 2; // -1 to 1
-      setMousePos({ x, y });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    
-    // Interactive 3D Text Effect for Headline
-    const h1Node = headlineRef.current;
-    
-    const handleTextMouseMove = (e) => {
-      if (!h1Node) return;
-      
-      // Support both mouse and touch events
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-      const rect = h1Node.getBoundingClientRect();
-      const x = ((clientX - rect.left) / rect.width - 0.5) * 2;
-      const y = ((clientY - rect.top) / rect.height - 0.5) * 2;
-      
-      // Subtle 3D tilt
-      gsap.to(h1Node, {
-        rotateX: y * -10,
-        rotateY: x * 10,
-        transformPerspective: 1000,
-        ease: 'power2.out',
-        duration: 0.5
-      });
-      
-      // Letter Repulsion Physics
-      const chars = h1Node.querySelectorAll('.char');
-      chars.forEach(char => {
-        const charRect = char.getBoundingClientRect();
-        const charX = charRect.left + charRect.width / 2;
-        const charY = charRect.top + charRect.height / 2;
-        const dx = clientX - charX;
-        const dy = clientY - charY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        const maxDist = 120; // Repulsion radius
-        
-        if (distance < maxDist) {
-          const force = (maxDist - distance) / maxDist;
-          gsap.to(char, {
-            x: -(dx / distance) * force * 50,
-            y: -(dy / distance) * force * 50,
-            scale: 1 + (force * 0.4),
-            rotate: (dx / distance) * force * 30,
-            color: 'var(--color-hover)', // Light up lime
-            duration: 0.3,
-            ease: 'power2.out'
-          });
-        } else {
-          gsap.to(char, { 
-            x: 0, y: 0, scale: 1, rotate: 0, color: '', 
-            duration: 0.8, ease: 'elastic.out(1, 0.3)' 
-          });
-        }
-      });
-    };
-
-    const handleTextMouseLeave = () => {
-      gsap.to(h1Node, {
-        rotateX: 0, rotateY: 0,
-        ease: 'elastic.out(1, 0.3)', duration: 1.2
-      });
-      const chars = h1Node.querySelectorAll('.char');
-      gsap.to(chars, {
-        x: 0, y: 0, scale: 1, rotate: 0, color: '',
-        ease: 'elastic.out(1, 0.3)', duration: 1.2
-      });
-    };
-
-    if (h1Node) {
-      h1Node.addEventListener('mousemove', handleTextMouseMove);
-      h1Node.addEventListener('mouseleave', handleTextMouseLeave);
-      h1Node.addEventListener('touchmove', handleTextMouseMove, { passive: true });
-      h1Node.addEventListener('touchend', handleTextMouseLeave);
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
     }
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      if (h1Node) {
-        h1Node.removeEventListener('mousemove', handleTextMouseMove);
-        h1Node.removeEventListener('mouseleave', handleTextMouseLeave);
-        h1Node.removeEventListener('touchmove', handleTextMouseMove);
-        h1Node.removeEventListener('touchend', handleTextMouseLeave);
-      }
-    };
   }, []);
 
-  const handleCardHover = (idx) => setHoveredCard(idx);
-  const handleCardLeave = () => setHoveredCard(null);
+  return (
+    <div
+      className="portfolio-orbit-card"
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
+      style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        width: '190px',
+        height: '260px',
+        marginTop: '-130px',
+        marginLeft: '-95px',
+        transformStyle: 'preserve-3d',
+        willChange: 'transform, opacity, z-index',
+        opacity: 0,
+        transition: 'z-index 0.4s ease'
+      }}
+    >
+      <div 
+        className="orbit-card-inner"
+        style={{
+          width: '100%',
+          height: '100%',
+          borderRadius: '24px',
+          overflow: 'hidden',
+          backgroundColor: '#FFFFFF',
+          border: '1px solid rgba(0,0,0,0.10)',
+          transition: 'transform 450ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 450ms ease',
+          // Hover pops card forward without breaking the fisheye base transform applied by parent
+          transform: isHovered ? 'translateZ(30px) scale(1.02)' : 'translateZ(0px) scale(1)',
+          boxShadow: isHovered ? '0 25px 60px rgba(0,0,0,0.14)' : '0 15px 35px rgba(0,0,0,0.07)'
+        }}
+      >
+        {project.video ? (
+          <video
+            ref={videoRef}
+            src={project.video}
+            poster={project.poster}
+            muted
+            loop
+            playsInline
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        ) : (
+          <img 
+            src={project.poster} 
+            alt={project.title} 
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+          />
+        )}
+      </div>
+    </div>
+  );
+};
 
-  const CARDS = [
-    { id: 0, video: '/assets/Nikhil_x_Khushal.mp4', title: 'COMMERCIAL' },
-    { id: 1, video: '/assets/YEH_DIL_FOR_JECRC.mp4', title: 'UNIVERSITY' },
-    { id: 2, video: '/assets/concept-jecrc.mp4', title: 'CONCEPTUAL' }
-  ];
+// ==========================================
+// MAIN HERO SECTION
+// ==========================================
+export default function Hero() {
+  const containerRef = useRef(null);
+  const animState = useRef({ progress: 0, speed: 1 });
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+
+  const ORBIT_DURATION = 36000;
+
+  useEffect(() => {
+    let reqId;
+    let lastTime = performance.now();
+
+    const render = (time) => {
+      const dt = time - lastTime;
+      lastTime = time;
+
+      animState.current.progress += (dt / ORBIT_DURATION) * animState.current.speed;
+      if (animState.current.progress > 1) animState.current.progress -= 1;
+
+      const cards = containerRef.current.querySelectorAll('.portfolio-orbit-card');
+      const total = cards.length; 
+
+      cards.forEach((card, i) => {
+        let p = (animState.current.progress + (i / total)) % 1;
+        let v = (p - 0.5) * total;
+        const absV = Math.abs(v);
+        
+        // --- POSITION ---
+        const x = v * 220; 
+        const y = Math.pow(absV, 2) * 5; 
+
+        // --- FISHEYE & PERSPECTIVE SPEC ---
+        // Center: rotZ(0), rotY(0), scale(1)
+        // Outer: rotZ(9), rotY(18), scale(0.93), scaleX(1.14)
+        const rotateZ = v * 3;
+        const rotateY = v * 6;
+        
+        const overallScale = 1.0 - (absV * 0.023); // 1.0 -> ~0.93
+        const scaleX = 1.0 + (Math.pow(absV, 2) * 0.015); // 1.0 -> ~1.14
+
+        // --- DEPTH HIERARCHY ---
+        let opacity = 1;
+        let zIndex = 10;
+        
+        if (absV < 0.5) {
+          zIndex = 10;
+        } else if (absV < 1.5) {
+          zIndex = 8;
+        } else if (absV < 2.5) {
+          zIndex = 6;
+        } else if (absV < 3.5) {
+          zIndex = 4;
+        } else {
+          // Fade hidden cards
+          opacity = Math.max(0, 1 - (absV - 3.5));
+          zIndex = 1;
+        }
+
+        const isHovered = card.classList.contains('is-hovered');
+        
+        // Combine the fisheye scaleX with the overall scale
+        card.style.transform = `translate3d(${x}px, ${y}px, 0px) rotateZ(${rotateZ}deg) rotateY(${rotateY}deg) scale(${overallScale}) scaleX(${scaleX})`;
+        card.style.opacity = opacity;
+        card.style.zIndex = isHovered ? 20 : zIndex;
+
+        if (!isHovered) {
+          const inner = card.querySelector('.orbit-card-inner');
+          if (inner) {
+            inner.style.boxShadow = absV < 0.5 ? '0 20px 50px rgba(0,0,0,0.10)' : '0 15px 35px rgba(0,0,0,0.07)';
+          }
+        }
+
+        const vid = card.querySelector('video');
+        if (vid) {
+          if (opacity < 0.1) {
+            if (!vid.paused) vid.pause();
+          } else {
+            if (vid.paused) vid.play().catch(()=>{});
+          }
+        }
+      });
+
+      reqId = requestAnimationFrame(render);
+    };
+
+    reqId = requestAnimationFrame(render);
+    return () => cancelAnimationFrame(reqId);
+  }, []);
 
   return (
     <section 
-      id="hero" 
-      ref={heroRef}
-      style={{ 
-        minHeight: '100vh', 
-        display: 'flex', 
-        alignItems: 'center', 
-        position: 'relative', 
-        paddingTop: '80px',
-        backgroundColor: 'var(--color-surface)',
-        overflow: 'hidden'
+      style={{
+        minHeight: '100svh',
+        width: '100vw',
+        position: 'relative',
+        overflow: 'hidden',
+        backgroundColor: '#F7F5F2',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center', // Naturally centers everything within viewport
+        paddingTop: '80px', // Breathing room below Navbar
+        paddingBottom: '40px'
       }}
     >
-      
-      <div className="container" style={{ position: 'relative', zIndex: 10 }}>
+      {/* AMBIENT BACKGROUND LIGHTING */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        pointerEvents: 'none',
+        zIndex: 0,
+        background: `
+          radial-gradient(circle at 50% 60%, rgba(255, 190, 150, 0.22), transparent 45%),
+          radial-gradient(circle at 20% 50%, rgba(170, 205, 255, 0.16), transparent 40%),
+          radial-gradient(circle at 80% 45%, rgba(210, 180, 255, 0.14), transparent 40%)
+        `
+      }} />
+
+      {/* 1. SEPARATE TEXT LAYER (Standard flow, guarantees NO overlap) */}
+      <div 
+        className="hero-content" 
+        style={{ 
+          position: 'relative', 
+          zIndex: 20, 
+          textAlign: 'center',
+          width: '100%',
+          flexShrink: 0
+        }}
+      >
+        <div style={{
+          fontFamily: 'var(--font-heading)',
+          fontSize: '11px',
+          fontWeight: 700,
+          letterSpacing: '0.15em',
+          color: '#666',
+          textTransform: 'uppercase',
+          marginBottom: '20px'
+        }}>
+          BEHIND THE WORK
+        </div>
+
+        <h1 style={{
+          fontFamily: 'var(--font-heading)',
+          fontSize: 'clamp(48px, 5.5vw, 88px)',
+          fontWeight: 650,
+          letterSpacing: '-0.045em',
+          lineHeight: 0.94,
+          color: '#111',
+          maxWidth: '1100px',
+          margin: '0 auto'
+        }}>
+          CURIOUS WHAT I'VE BEEN<br />CREATING?
+        </h1>
         
-        {/* Brutalist Asymmetrical Grid */}
-        <div className="grid-12" style={{ alignItems: 'center' }}>
-          
-          {/* LEFT: Massive Parallax Typography */}
-          <div 
-            className="hero-text-block" 
-            style={{ 
-              gridColumn: 'span 7',
-              transform: `translate(${mousePos.x * -15}px, ${mousePos.y * -15}px)`,
-              transition: 'transform 0.1s ease-out'
-            }}
-          >
+        <p style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: '15px',
+          lineHeight: 1.45,
+          color: 'rgba(20,20,20,0.60)',
+          maxWidth: '650px',
+          margin: '30px auto 0 auto' // 30px gap
+        }}>
+          Films, short-form content, graphics and visual work<br />created for creators, brands and institutions.
+        </p>
 
-            <h1 ref={headlineRef} style={{ 
-              position: 'relative',
-              zIndex: 40,
-              fontSize: 'clamp(1.5rem, 12vw, 8rem)',
-              fontFamily: 'var(--font-heading)',
-              lineHeight: 0.9, 
-              letterSpacing: '-0.02em', 
-              color: 'var(--color-black)', 
-              margin: '0 0 32px 0', 
-              textTransform: 'uppercase',
-              fontWeight: 800,
-              transformStyle: 'preserve-3d',
-              cursor: 'default',
-              whiteSpace: 'nowrap'
-            }}>
-              <div className="text-layer" style={{ padding: '10px 0', overflow: 'hidden' }}><span style={{ display: 'block' }}>
-                {'I CREATE'.split('').map((c, i) => <span key={i} className="char" style={{ display: 'inline-block', transformOrigin: 'center' }}>{c === ' ' ? '\u00A0' : c}</span>)}
-              </span></div>
-              <div className="text-layer" style={{ padding: '10px 0', overflow: 'hidden' }}><span className="stair-text" style={{ color: 'var(--accent-blue)', display: 'block' }}>
-                {'VISUAL'.split('').map((c, i) => <span key={i} className="char" style={{ display: 'inline-block', transformOrigin: 'center' }}>{c}</span>)}
-              </span></div>
-              <div className="text-layer" style={{ padding: '10px 0', overflow: 'hidden' }}><span style={{ display: 'block' }}>
-                {'STORIES.'.split('').map((c, i) => <span key={i} className="char" style={{ display: 'inline-block', transformOrigin: 'center' }}>{c}</span>)}
-              </span></div>
-            </h1>
-
-            <div className="hero-buttons-container" style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
-              <button className="btn-lime magnetic" onClick={() => onNavigate('work')}>
-                Explore Work <ArrowUpRight size={18} />
-              </button>
-            </div>
-          </div>
-
-          {/* RIGHT: Floating Interactive Video Cards */}
-          <div 
-            ref={cardsRef}
-            className="hero-visual-block" 
-            style={{ 
-              gridColumn: 'span 5', 
-              position: 'relative', 
-              height: '600px', 
-              display: 'flex', 
-              justifyContent: 'center', 
-              alignItems: 'center',
-              transform: `translate(${mousePos.x * 20}px, ${mousePos.y * 20}px)`,
-              transition: 'transform 0.1s ease-out',
-              perspective: '1000px'
-            }}
-          >
-            
-            {CARDS.map((card, idx) => {
-              const isHovered = hoveredCard === idx;
-              const isOtherHovered = hoveredCard !== null && hoveredCard !== idx;
-              
-              // Base transforms for the messy, stacked look
-              const baseTransforms = [
-                { top: '10%', left: '0%', rotation: -6, zIndex: 1 },
-                { top: '35%', left: '20%', rotation: 4, zIndex: 2 },
-                { top: '60%', left: '10%', rotation: -2, zIndex: 3 }
-              ];
-
-              return (
-                <div 
-                  key={card.id}
-                  onMouseEnter={() => handleCardHover(idx)}
-                  onMouseLeave={handleCardLeave}
-                  onClick={() => onOpenVideo(card.video ? card.video : '/assets/instagranstory-2.mp4')}
-                  style={{
-                    position: 'absolute',
-                    top: baseTransforms[idx].top,
-                    left: baseTransforms[idx].left,
-                    width: '320px',
-                    height: '200px',
-                    borderRadius: '12px',
-                    overflow: 'hidden',
-                    cursor: 'pointer',
-                    boxShadow: isHovered ? '0 32px 64px rgba(0,0,0,0.3)' : '0 16px 32px rgba(0,0,0,0.1)',
-                    zIndex: isHovered ? 10 : baseTransforms[idx].zIndex,
-                    transform: `rotate(${baseTransforms[idx].rotation}deg) scale(${isHovered ? 1.15 : (isOtherHovered ? 0.9 : 1)}) ${isHovered ? 'translateY(-20px)' : ''}`,
-                    transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
-                    border: '1px solid rgba(255,255,255,0.2)'
-                  }}
-                >
-                  {card.video ? (
-                    <video src={card.video} autoPlay muted loop playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <img src={card.img} alt={card.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  )}
-                  
-                  {/* Overlay Title */}
-                  <div style={{
-                    position: 'absolute',
-                    top: 0, left: 0, right: 0,
-                    padding: '16px',
-                    color: '#fff',
-                    textShadow: '0 2px 10px rgba(0,0,0,0.5)',
-                    fontFamily: 'var(--font-heading)',
-                    fontWeight: 700,
-                    fontSize: '1rem',
-                    letterSpacing: '0.05em',
-                    transform: 'translateY(0)',
-                    opacity: 1,
-                    transition: 'all 0.4s ease'
-                  }}>
-                    {card.title}
-                  </div>
-
-                  {/* Hover Play Button */}
-                  <div style={{
-                    position: 'absolute',
-                    top: '50%', left: '50%',
-                    transform: `translate(-50%, -50%) scale(${isHovered ? 1 : 0.5})`,
-                    opacity: isHovered ? 1 : 0,
-                    width: '64px', height: '64px',
-                    borderRadius: '50%',
-                    backgroundColor: 'rgba(255,255,255,0.2)',
-                    backdropFilter: 'blur(8px)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-                    border: '1px solid rgba(255,255,255,0.4)'
-                  }}>
-                    <Play size={24} color="#fff" fill="#fff" style={{ marginLeft: '4px' }} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
+        <div style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: '13px',
+          fontWeight: 600,
+          letterSpacing: '0.05em',
+          color: '#111',
+          cursor: 'pointer',
+          display: 'inline-block',
+          marginTop: '28px', // 28px gap
+          transition: 'opacity 0.2s ease',
+          textTransform: 'uppercase'
+        }}
+        onMouseEnter={(e) => e.target.style.opacity = 0.6}
+        onMouseLeave={(e) => e.target.style.opacity = 1}
+        >
+          EXPLORE THE WORK ↗
         </div>
       </div>
 
-      <style>{`
-        .stair-text { padding-left: 40px; }
-        @media (max-width: 992px) {
-          #hero { padding-top: 140px !important; min-height: auto !important; padding-bottom: 60px !important; }
-          .hero-text-block { grid-column: span 12 !important; text-align: left !important; align-items: flex-start !important; padding-left: 12px !important; }
-          .hero-text-block h1 { font-size: clamp(2.8rem, 11vw, 5rem) !important; margin-bottom: 32px !important; }
-          .stair-text { padding-left: 24px !important; }
-          .hero-text-block > div:last-child { justify-content: flex-start !important; flex-wrap: wrap !important; gap: 16px !important; width: 100%; padding-left: 4px !important; }
-          .hero-visual-block { grid-column: span 12 !important; height: 440px !important; margin-top: 40px; transform: none !important; }
-          .hero-visual-block > div { width: min(280px, 85vw) !important; height: 180px !important; left: 50% !important; margin: 0 !important; }
-          .hero-visual-block > div:nth-child(1) { top: 0% !important; transform: translateX(-55%) rotate(-4deg) !important; }
-          .hero-visual-block > div:nth-child(2) { top: 25% !important; transform: translateX(-40%) rotate(4deg) !important; }
-          .hero-visual-block > div:nth-child(3) { top: 50% !important; transform: translateX(-55%) rotate(-2deg) !important; }
-        }
-      `}</style>
+      {/* GAP BETWEEN CONTENT AND ORBIT */}
+      <div style={{ height: '80px', flexShrink: 0 }} />
+
+      {/* 2. DEDICATED ORBIT CONTAINER (Occupies separate vertical region) */}
+      <div 
+        className="hero-orbit"
+        ref={containerRef}
+        style={{
+          position: 'relative',
+          width: '100vw',
+          height: '300px',
+          perspective: '1200px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0
+        }}
+      >
+        {orbitProjects.map((proj, idx) => (
+          <OrbitCard
+            key={proj.uid}
+            project={proj}
+            isHovered={hoveredIndex === idx}
+            onHover={() => setHoveredIndex(idx)}
+            onLeave={() => setHoveredIndex(null)}
+          />
+        ))}
+      </div>
+
+      {/* GAP BETWEEN ORBIT AND METADATA */}
+      <div style={{ height: '45px', flexShrink: 0 }} />
+
+      {/* 3. BOTTOM METADATA (Flows naturally below orbit) */}
+      <div style={{
+        width: '100%',
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '0 40px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        fontFamily: 'var(--font-heading)',
+        fontSize: '11px',
+        fontWeight: 600,
+        letterSpacing: '0.08em',
+        color: '#666',
+        textTransform: 'uppercase',
+        flexShrink: 0
+      }}>
+        <div style={{ flex: 1, textAlign: 'left' }}>
+          FILM / SHORT-FORM / GRAPHICS / THUMBNAILS
+        </div>
+        
+        <div style={{ flex: 1, textAlign: 'center', color: '#111' }}>
+          SCROLL TO EXPLORE ↓
+        </div>
+        
+        <div style={{ flex: 1, textAlign: 'right' }}>
+          07 SELECTED WORKS
+        </div>
+      </div>
     </section>
   );
 }

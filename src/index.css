@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 /* ==========================================================================
    GENEROUS EDITORIAL SPACING & HIGH-CONTRAST VISIBILITY TOKENS
@@ -6,8 +6,8 @@
 
 :root {
   /* Light Mode Tokens */
-  --bg-main: #F8F8F6;
-  --bg-soft-gradient: #F8F8F6;
+  --bg-main: #F7F5F2;
+  --bg-soft-gradient: #F7F5F2;
   --color-glass: rgba(255, 255, 255, 0.4);
   --color-surface: transparent;
   --glass-border: rgba(0, 0, 0, 0.04);
@@ -16,15 +16,15 @@
   --color-black: #111111;
   --color-ink: #111111;
   --text-main: #111111;
-  --text-muted: #4A4A4A;
+  --text-muted: #666666;
   
-  --accent-blue: #5B8CFF;
-  --color-hover: #7AA5FF;
+  --accent-blue: #B5462A; /* Reusing var name but setting to Terracotta to avoid breaking existing usages until refactored */
+  --color-hover: #D45B3A;
   --color-success: #7BC47F;
 
   /* Typography Stack */
-  --font-heading: 'Space Grotesk', system-ui, -apple-system, sans-serif;
-  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'SF Pro Display', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-body: 'SF Pro Text', 'Inter', system-ui, -apple-system, sans-serif;
 
   /* Easing & Physics */
   --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);

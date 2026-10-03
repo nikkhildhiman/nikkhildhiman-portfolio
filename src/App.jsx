@@ -7,8 +7,6 @@ gsap.registerPlugin(ScrollTrigger);
 import { Layers, Compass, User, Mail, Calendar, ArrowUpRight } from 'lucide-react';
 
 import ParticleCanvas from './components/ParticleCanvas';
-import CinematicLoader from './components/CinematicLoader';
-
 import CustomCursor from './components/CustomCursor';
 import { pageTransitionOut, pageTransitionIn } from './utils/motion';
 import Navbar from './components/Navbar';
@@ -84,49 +82,7 @@ export default function App() {
     };
   }, []);
 
-  // Morphing Logo FLIP Animation Logic
-  useEffect(() => {
-    if (morphingLogo) {
-      const target = document.getElementById('hero-logo-target');
-      const globalLogo = document.getElementById('global-logo');
-      const trueLogo = document.getElementById('hero-logo-true');
-      
-      if (target && globalLogo && trueLogo) {
-        // Instant morph without any delay
-        const targetRect = target.getBoundingClientRect();
-        
-        // Calculate deltas from screen center to target center
-        const targetCenterX = targetRect.left + targetRect.width / 2;
-        const targetCenterY = targetRect.top + targetRect.height / 2;
-        const startCenterX = window.innerWidth / 2;
-        const startCenterY = window.innerHeight / 2;
-        
-        const deltaX = targetCenterX - startCenterX;
-        const deltaY = targetCenterY - startCenterY;
-        const scale = targetRect.width / 450; // Original width is 450px
-        
-        gsap.set(globalLogo, { xPercent: -50, yPercent: -50, transformOrigin: 'center center' });
-        
-        gsap.to(globalLogo, {
-          x: deltaX,
-          y: deltaY,
-          scale: scale,
-          duration: 0.8, // Faster, snappier morph
-          ease: 'power3.inOut',
-          onComplete: () => {
-            gsap.to(globalLogo, { 
-              opacity: 0, 
-              duration: 0.3, 
-              onComplete: () => setMorphingLogo(false) 
-            });
-            gsap.to(trueLogo, { opacity: 1, duration: 0.3 });
-          }
-        });
-      } else {
-        setMorphingLogo(false);
-      }
-    }
-  }, [morphingLogo]);
+  // Morphing Logo FLIP Animation Logic Removed for New NDLandingPreloader
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -195,43 +151,6 @@ export default function App() {
     <div className="app-container" style={{ position: 'relative' }}>
       <CustomCursor />
       
-      {loading && (
-        <CinematicLoader onComplete={() => {
-          setLoading(false);
-          setMorphingLogo(true);
-        }} />
-      )}
-
-      {/* Global FLIP Logo */}
-      {(loading || morphingLogo) && (
-        <div 
-          id="global-logo"
-          style={{
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            width: '450px',
-            height: '450px',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 9999999,
-            pointerEvents: 'none',
-            willChange: 'transform, opacity'
-          }}
-        >
-          <img 
-            src="/assets/logo-3d.png" 
-            alt="3D Logo" 
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              animation: 'spin3D 3s linear infinite', // Same fast spin as preloader
-              transformStyle: 'preserve-3d'
-            }}
-          />
-        </div>
-      )}
-
       {/* 0. Floating Dust Particle Canvas & Render */}
       <ParticleCanvas darkMode={darkMode} />
 
