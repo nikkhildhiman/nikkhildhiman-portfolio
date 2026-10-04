@@ -327,12 +327,20 @@ export default function Hero() {
           fontSize: 'clamp(48px, 5.5vw, 88px)',
           fontWeight: 650,
           letterSpacing: '-0.045em',
+          wordSpacing: '0.15em',
           lineHeight: 0.94,
           color: '#E4FF00', // Palette: Sun Glare
           maxWidth: '1100px',
           margin: '0 auto'
         }}>
-          CURIOUS WHAT I'VE BEEN CREATING?
+          <span style={{ 
+            fontFamily: "'Melodrama', serif", 
+            fontWeight: 600, 
+            fontStyle: 'italic',
+            letterSpacing: '0em',
+            marginRight: '12px'
+          }}>Curious</span>
+          WHAT I'VE BEEN CREATING?
         </h1>
 
         <div style={{
@@ -419,6 +427,8 @@ export default function Hero() {
         <style>
           {`
             @import url('https://fonts.googleapis.com/css2?family=Silkscreen&display=swap');
+            @import url('https://api.fontshare.com/v2/css?f[]=melodrama@400,500,600,700&display=swap');
+            
             .pixel-scroll-text {
               font-family: 'Silkscreen', monospace;
               font-size: 9px;

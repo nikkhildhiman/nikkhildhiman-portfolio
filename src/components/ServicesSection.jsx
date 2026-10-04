@@ -1,207 +1,230 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowUpRight } from 'lucide-react';
-import gsap from 'gsap';
-import { staggeredReveal } from '../utils/motion';
+import { ArrowRight } from 'lucide-react';
 
-const CREATION_CATEGORIES = [
+const CATEGORIES = [
   {
-    num: '01',
-    title: 'Commercial Films',
-    desc: 'High-velocity 4K commercial films engineered to drive direct customer acquisition.',
+    id: '01',
+    title: 'VIDEO / FILMS',
+    desc: 'Commercial films, event films & cinematic videos',
     image: 'https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?q=80&w=2070&auto=format&fit=crop',
     action: 'work'
   },
   {
-    num: '02',
-    title: '9:16 Viral Shorts',
-    desc: 'Short-form content for TikTok and Reels with aggressive pattern interrupts.',
-    image: 'https://images.unsplash.com/photo-1596726268958-38cbcd577a79?q=80&w=1964&auto=format&fit=crop',
+    id: '02',
+    title: 'REELS & SHORT-FORM',
+    desc: 'Cinematic reels, social content & short-form films',
+    image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1974&auto=format&fit=crop',
     action: 'reels'
   },
   {
-    num: '03',
-    title: 'Thumbnails & Design',
-    desc: '3D lighting cutouts and psychological click drivers built to scale your CTR.',
+    id: '03',
+    title: 'THUMBNAILS',
+    desc: 'YouTube thumbnails, podcast covers & CTR-focused design',
     image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=2071&auto=format&fit=crop',
     action: 'thumbnails'
   }
 ];
 
-export default function ServicesSection({ onOpenBooking, onNavigate }) {
-  const [activeIdx, setActiveIdx] = useState(0);
-
+export default function ServicesSection({ onNavigate }) {
+  const [hoveredIdx, setHoveredIdx] = useState(null);
+  const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
 
   useEffect(() => {
-    // Auto-cycle the background image on mobile/tablet since the cards don't require hover
-    const interval = setInterval(() => {
-      if (window.innerWidth <= 1024) {
-        setActiveIdx((prev) => (prev + 1) % CREATION_CATEGORIES.length);
-      }
-    }, 2000); // 2 seconds per image
-
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const elements = gsap.utils.toArray('.service-reveal');
-      staggeredReveal(elements, 0.15, 0);
-    }, sectionRef);
-    return () => ctx.revert();
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.4 } // Trigger when 40% of the section is in view
+    );
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
   }, []);
 
   return (
-    <section ref={sectionRef} id="services" style={{ backgroundColor: 'var(--color-surface)', paddingTop: '120px', paddingBottom: '120px', position: 'relative' }}>
-      
-      <div className="container">
-        
-        {/* Clean, Legible Header - Centered */}
-        <div className="service-reveal" style={{ marginBottom: '64px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-          <div style={{ fontFamily: 'var(--font-heading)', fontSize: '0.85rem', color: 'var(--accent-blue)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '12px', letterSpacing: '0.05em' }}>
-            Capabilities
-          </div>
-          <h2 style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', color: 'var(--color-black)', textTransform: 'uppercase', margin: 0, lineHeight: 1.1, fontWeight: 800, letterSpacing: '-0.02em' }}>
-            WHAT WE <span style={{ color: 'var(--text-muted)' }}>CREATE</span>
-          </h2>
-        </div>
+    <section 
+      id="services" 
+      ref={sectionRef}
+      style={{ 
+        backgroundColor: '#0b0b0d', 
+        minHeight: '100svh',
+        width: '100vw',
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '120px 0',
+        overflow: 'hidden'
+      }}
+    >
+      {/* Background Image Previews Removed as per user request */}
 
-        <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '16px' }} className="services-layout">
+      <div className="container" style={{ position: 'relative', zIndex: 2, width: '100%' }}>
+        <div className="services-grid" style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1.5fr',
+          gap: '80px',
+          alignItems: 'flex-start'
+        }}>
           
-          {/* Interactive List */}
-          {CREATION_CATEGORIES.map((cat, idx) => {
-            const isActive = activeIdx === idx;
-            
-            return (
-              <div 
-                key={cat.num}
-                className="service-reveal magnetic service-item" // Custom cursor hook
-                onMouseEnter={() => setActiveIdx(idx)}
-                onClick={() => {
-                  if (onNavigate && cat.action) {
-                    onNavigate(cat.action);
-                  }
-                }}
-                className="magnetic service-item" // Custom cursor hook
-                style={{
-                  padding: '32px 40px',
-                  borderRadius: '16px',
-                  backgroundColor: isActive ? 'var(--bg-main)' : 'transparent',
-                  boxShadow: isActive ? '0 12px 24px rgba(0,0,0,0.05)' : 'none',
-                  border: isActive ? '1px solid var(--glass-border)' : '1px solid transparent',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '24px',
-                  transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-                  opacity: isActive ? 1 : 0.6,
-                  transform: isActive ? 'translateX(12px)' : 'translateX(0)'
-                }}
-              >
-                <span className="service-num" style={{ 
-                  fontSize: '1.2rem', 
-                  fontFamily: 'var(--font-heading)', 
-                  fontWeight: 700, 
-                  color: isActive ? 'var(--accent-blue)' : 'var(--text-muted)',
-                  marginTop: '4px' // align with heading
-                }}>
-                  {cat.num}
-                </span>
-                
-                <div style={{ flex: 1 }}>
-                  <h3 style={{ 
-                    margin: 0, 
-                    fontSize: 'clamp(1.5rem, 2.5vw, 2.5rem)', 
-                    fontFamily: 'var(--font-heading)',
-                    fontWeight: 800,
-                    color: 'var(--color-black)',
-                    letterSpacing: '-0.01em',
-                    lineHeight: 1.2
+          {/* Left Column: Typography & Context */}
+          <div style={{ position: 'sticky', top: '120px' }}>
+
+            <h2 style={{ 
+              fontSize: 'clamp(3.5rem, 8vw, 7rem)', 
+              color: 'var(--text-main)', 
+              margin: '0 0 32px 0', 
+              lineHeight: 0.9, 
+              textTransform: 'uppercase', 
+              letterSpacing: '-0.04em', 
+              fontWeight: 800,
+              fontFamily: 'var(--font-heading)'
+            }}>
+              <span style={{ 
+                display: 'block',
+                opacity: isVisible ? 1 : 0, 
+                transform: isVisible ? 'translateY(0)' : 'translateY(60px)', 
+                transition: 'opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)' 
+              }}>
+                WHAT I
+              </span>
+              <span className={isVisible ? "glitch-in-view" : "glitch-hidden"} style={{ 
+                fontFamily: "'Melodrama', serif", 
+                fontStyle: 'italic', 
+                color: '#E4FF00', 
+                fontWeight: 600, 
+                textTransform: 'none',
+                display: 'block',
+                paddingLeft: '8%',
+              }}>
+                Create
+              </span>
+            </h2>
+
+          </div>
+
+          {/* Right Column: Interactive Rows */}
+          <div style={{ display: 'flex', flexDirection: 'column', width: '100%', marginTop: '20px' }}>
+            {CATEGORIES.map((cat, idx) => {
+              const isHovered = hoveredIdx === idx;
+              const isOtherHovered = hoveredIdx !== null && hoveredIdx !== idx;
+
+              const baseOpacity = isOtherHovered ? 0.3 : 1;
+              const targetOpacity = isVisible ? baseOpacity : 0;
+              
+              const baseTransform = isHovered ? 'translateX(20px)' : 'translateX(0)';
+              const targetTransform = isVisible ? baseTransform : 'translateY(40px)';
+              
+              const delay = isVisible && hoveredIdx === null ? `${idx * 0.15 + 0.3}s` : '0s';
+
+              return (
+                <div 
+                  key={cat.id}
+                  onMouseEnter={() => setHoveredIdx(idx)}
+                  onMouseLeave={() => setHoveredIdx(null)}
+                  onClick={() => {
+                    if (cat.action && onNavigate) onNavigate(cat.action);
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '40px 0',
+                    borderBottom: '1px solid rgba(255,255,255,0.1)',
+                    cursor: 'pointer',
+                    transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                    transitionDelay: delay,
+                    opacity: targetOpacity,
+                    transform: targetTransform,
+                  }}
+                  className="service-row"
+                >
+                  {/* Number */}
+                  <div style={{ 
+                    fontFamily: 'var(--font-heading)', 
+                    fontSize: '1rem', 
+                    fontWeight: 700, 
+                    color: isHovered ? '#E4FF00' : 'var(--text-muted)',
+                    marginRight: '40px',
+                    transition: 'color 0.4s ease'
                   }}>
-                    {cat.title}
-                  </h3>
+                    {cat.id}
+                  </div>
                   
-                  {/* Smooth Expandable Description */}
-                  <div className="service-desc" style={{
-                    height: isActive ? 'auto' : 0,
-                    overflow: 'hidden',
-                    opacity: isActive ? 1 : 0,
-                    transition: 'opacity 0.4s ease',
-                    marginTop: isActive ? '12px' : 0
-                  }}>
-                    <p style={{ margin: 0, fontSize: '1.05rem', color: 'var(--text-muted)', maxWidth: '500px', lineHeight: 1.6 }}>
+                  {/* Title & Desc */}
+                  <div style={{ flex: 1 }}>
+                    <h3 style={{
+                      fontFamily: 'var(--font-heading)',
+                      fontSize: 'clamp(1.5rem, 3vw, 2.5rem)',
+                      fontWeight: 800,
+                      margin: '0 0 8px 0',
+                      color: isHovered ? '#E4FF00' : 'var(--text-main)',
+                      transition: 'color 0.4s ease',
+                      textTransform: 'uppercase',
+                      letterSpacing: '-0.01em'
+                    }}>
+                      {cat.title}
+                    </h3>
+                    <p style={{
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '1.1rem',
+                      color: 'var(--text-muted)',
+                      margin: 0,
+                      transition: 'color 0.4s ease'
+                    }}>
                       {cat.desc}
                     </p>
                   </div>
+                  
+                  {/* Arrow */}
+                  <div style={{
+                    transform: isHovered ? 'translateX(10px)' : 'translateX(0)',
+                    transition: 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+                    color: isHovered ? '#E4FF00' : 'var(--text-muted)'
+                  }}>
+                    <ArrowRight size={28} strokeWidth={2} />
+                  </div>
                 </div>
+              );
+            })}
+          </div>
 
-                {/* Clean Start Project Arrow */}
-                <div 
-                  className="arrow-btn"
-                  onClick={(e) => { 
-                    e.stopPropagation(); 
-                    if (onNavigate && cat.action) {
-                      onNavigate(cat.action);
-                    }
-                  }}
-                  style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    backgroundColor: isActive ? 'var(--accent-blue)' : 'var(--bg-main)',
-                    border: isActive ? 'none' : '1px solid var(--glass-border)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'all 0.3s ease',
-                    transform: isActive ? 'scale(1)' : 'scale(0.8)',
-                    opacity: isActive ? 1 : 0,
-                    flexShrink: 0
-                  }}
-                >
-                  <ArrowUpRight size={20} color={isActive ? "#fff" : "var(--color-black)"} />
-                </div>
-              </div>
-            );
-          })}
         </div>
       </div>
 
       <style>{`
-        @media (max-width: 640px) {
-          .service-item {
-            padding: 16px !important;
-            gap: 12px !important;
+        .glitch-hidden {
+          opacity: 0;
+        }
+        .glitch-in-view {
+          animation: pixel-glitch 1.5s steps(1) both;
+          animation-delay: 0.15s;
+        }
+
+        @keyframes pixel-glitch {
+          0% { opacity: 0; transform: translateY(60px); }
+          4% { opacity: 1; transform: translate(-20px, 15px) skewX(50deg) scale(1.1); clip-path: inset(10% 0 80% 0); text-shadow: 15px 0 #ff003c, -15px 0 #00e5ff; }
+          8% { opacity: 1; transform: translate(20px, -10px) skewX(-40deg) scale(0.9); clip-path: inset(80% 0 10% 0); text-shadow: -15px 0 #ff003c, 15px 0 #00e5ff; }
+          12% { opacity: 1; transform: translate(-10px, 20px) skewX(20deg) scale(1.05); clip-path: inset(30% 0 50% 0); text-shadow: 8px 0 #E4FF00, -8px 0 #ff003c; }
+          16% { opacity: 1; transform: translate(15px, -15px) skewX(-30deg) scale(0.95); clip-path: inset(50% 0 20% 0); text-shadow: -10px 0 #E4FF00, 10px 0 #00e5ff; }
+          20% { opacity: 1; transform: translate(-5px, 5px) skewX(10deg); clip-path: inset(20% 0 70% 0); text-shadow: 10px 0 #ff003c, -10px 0 #00e5ff; }
+          24% { opacity: 1; transform: translate(5px, -5px) skewX(-10deg); clip-path: inset(70% 0 20% 0); text-shadow: -5px 0 #E4FF00, 5px 0 #ff003c; }
+          28% { opacity: 1; transform: translate(-10px, 10px) skewX(30deg); clip-path: inset(40% 0 40% 0); text-shadow: 10px 0 #00e5ff, -10px 0 #E4FF00; }
+          32% { opacity: 1; transform: translate(10px, -10px) skewX(-20deg); clip-path: inset(10% 0 10% 0); text-shadow: -10px 0 #ff003c, 10px 0 #00e5ff; }
+          36% { opacity: 1; transform: translate(0, 0) skewX(0); clip-path: inset(0 0 0 0); text-shadow: none; filter: hue-rotate(90deg); }
+          40% { opacity: 1; transform: translateY(0) rotate(0deg); clip-path: inset(0 0 0 0); filter: hue-rotate(0deg); }
+          100% { opacity: 1; transform: translateY(0) rotate(0deg); clip-path: inset(0 0 0 0); }
+        }
+
+        @media (max-width: 900px) {
+          .services-grid {
+            grid-template-columns: 1fr !important;
+            gap: 60px !important;
+          }
+          .service-row {
+            padding: 32px 0 !important;
             transform: none !important;
-            border-radius: 12px !important;
-            opacity: 1 !important;
           }
-          .service-item h3 {
-            font-size: 1.3rem !important;
-          }
-          .service-item p {
-            font-size: 0.95rem !important;
-          }
-          .service-desc {
-            height: auto !important;
-            opacity: 1 !important;
-            margin-top: 8px !important;
-          }
-          .service-num {
-            color: var(--accent-blue) !important;
-          }
-          .service-item .arrow-btn {
-            width: 36px !important;
-            height: 36px !important;
-            opacity: 1 !important;
-            transform: scale(1) !important;
-            background-color: var(--bg-main) !important;
-            border: 1px solid var(--glass-border) !important;
-          }
-          .service-item .arrow-btn svg {
-            width: 16px !important;
-            height: 16px !important;
-            stroke: var(--color-black) !important;
+          .service-row:hover {
+            transform: translateX(10px) !important;
           }
         }
       `}</style>

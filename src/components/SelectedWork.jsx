@@ -456,10 +456,387 @@ const CustomVideoCard = ({ project, isArchive = false }) => {
   );
 };
 
+const AccordionVideoItem = ({ project, isActive, onActivate, onOpenVideo, shouldAutoUnmute }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const videoRef = useRef(null);
+  const progressRef = useRef(null);
+  const isDragging = useRef(false);
+  const [isIdle, setIsIdle] = useState(false);
+  const idleTimer = useRef(null);
+
+  const resetIdle = () => {
+    setIsIdle(false);
+    clearTimeout(idleTimer.current);
+    idleTimer.current = setTimeout(() => setIsIdle(true), 3000);
+  };
+
+  useEffect(() => {
+    if (isActive) {
+      resetIdle();
+      if (shouldAutoUnmute) {
+        setIsMuted(false);
+      }
+      if (videoRef.current) {
+        videoRef.current.currentTime = 0;
+        if (shouldAutoUnmute) {
+          videoRef.current.muted = false;
+        }
+        videoRef.current.play().catch(e => console.log(e));
+        setIsPlaying(true);
+      }
+    } else {
+      clearTimeout(idleTimer.current);
+      setIsIdle(false);
+      setIsMuted(true);
+      if (videoRef.current) {
+        videoRef.current.muted = true;
+        videoRef.current.pause();
+        setIsPlaying(false);
+      }
+    }
+    return () => clearTimeout(idleTimer.current);
+  }, [isActive, shouldAutoUnmute]);
+
+  const formatTime = (time) => {
+    if (!time || isNaN(time)) return "0:00";
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
+
+  const togglePlay = (e) => {
+    e.stopPropagation();
+    if (!isActive) {
+      onActivate();
+      return;
+    }
+    if (videoRef.current) {
+      if (videoRef.current.paused) {
+        setIsPlaying(true);
+        videoRef.current.play().catch(e => console.log(e));
+      } else {
+        videoRef.current.pause();
+        setIsPlaying(false);
+      }
+    }
+  };
+
+  const toggleFullscreen = (e) => {
+    e.stopPropagation();
+    if (videoRef.current) {
+      if (videoRef.current.requestFullscreen) {
+        videoRef.current.requestFullscreen();
+      } else if (videoRef.current.webkitEnterFullscreen) {
+        videoRef.current.webkitEnterFullscreen();
+      }
+    }
+  };
+
+  const handleTimeUpdate = () => {
+    if (videoRef.current) {
+      const current = videoRef.current.currentTime;
+      const total = videoRef.current.duration;
+      setCurrentTime(current);
+      setDuration(total);
+      if (total > 0) {
+        setProgress((current / total) * 100);
+      }
+    }
+  };
+
+  const handleSeek = (e) => {
+    if (e.stopPropagation) e.stopPropagation();
+    if (progressRef.current && videoRef.current) {
+      const rect = progressRef.current.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const percentage = Math.max(0, Math.min(1, clickX / rect.width));
+      videoRef.current.currentTime = percentage * videoRef.current.duration;
+      setProgress(percentage * 100);
+    }
+  };
+
+  const handlePointerDown = (e) => {
+    e.stopPropagation();
+    isDragging.current = true;
+    handleSeek(e);
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e) => {
+    if (!isDragging.current) return;
+    e.stopPropagation();
+    handleSeek(e);
+  };
+
+  const handlePointerUp = (e) => {
+    if (!isDragging.current) return;
+    e.stopPropagation();
+    isDragging.current = false;
+    e.currentTarget.releasePointerCapture(e.pointerId);
+  };
+
+  return (
+    <div 
+      onClick={(e) => {
+        if (!isActive) {
+          onActivate();
+        }
+      }}
+      onMouseMove={isActive ? resetIdle : undefined}
+      onMouseLeave={() => {
+        if (isActive) {
+          setIsIdle(true);
+        }
+      }}
+      style={{
+        position: 'relative',
+        flex: isActive ? 6 : 1,
+        height: '100%',
+        borderRadius: '24px',
+        overflow: 'hidden',
+        cursor: 'pointer',
+        transition: 'flex 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+        border: isActive ? '1px solid var(--color-black)' : '1px solid var(--glass-border)'
+      }}
+    >
+      {/* Background Video with Overlay */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 0
+      }}>
+        <video 
+          ref={videoRef}
+          src={project.videoUrl} 
+          autoPlay 
+          muted={isMuted} 
+          loop 
+          playsInline
+          onTimeUpdate={handleTimeUpdate}
+          onClick={togglePlay}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: isActive ? 'contain' : 'cover',
+            backgroundColor: '#000',
+            transform: isActive ? 'scale(1)' : 'scale(1.2)',
+            transition: 'transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)',
+            filter: isActive ? 'grayscale(0%)' : 'grayscale(100%) brightness(0.4)'
+          }}
+        />
+        {/* Gradient Overlay for Text Readability */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(to top, rgba(17,17,17,0.9) 0%, rgba(17,17,17,0.4) 40%, transparent 100%)',
+          opacity: isActive ? (isIdle ? 0 : 1) : 0.6,
+          transition: 'opacity 0.8s ease',
+          pointerEvents: 'none'
+        }} />
+      </div>
+
+      {/* Content Overlay */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        padding: '32px 32px 80px 32px', // Pushed bottom text up to make room for progress bar
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        zIndex: 1,
+        opacity: isActive ? (isIdle ? 0 : 1) : 0.4,
+        transition: 'opacity 0.8s ease',
+        pointerEvents: 'none' // Let clicks pass through to video/controls
+      }}>
+        
+        {/* Category */}
+        <div style={{
+          fontFamily: "'Melodrama', serif",
+          fontSize: '1rem',
+          fontWeight: 600,
+          fontStyle: 'italic',
+          letterSpacing: '0.05em',
+          color: '#E4FF00',
+          textTransform: 'lowercase',
+          transition: 'all 0.4s ease',
+          writingMode: isActive ? 'horizontal-tb' : 'vertical-rl',
+          alignSelf: 'center',
+          textAlign: 'center'
+        }}>
+          {project.category}
+        </div>
+
+        {/* Bottom Content - Text made smaller and pushed down */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
+          opacity: isActive ? 1 : 0,
+          transform: isActive ? 'translateY(0)' : 'translateY(20px)',
+          transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s'
+        }}>
+          <h3 style={{
+            fontFamily: "'Melodrama', serif",
+            fontSize: 'clamp(1.2rem, 2vw, 1.8rem)',
+            fontWeight: 600,
+            lineHeight: 1.1,
+            margin: 0,
+            color: 'var(--color-black)'
+          }}>
+            {project.title}
+          </h3>
+          <p style={{
+            margin: 0,
+            color: 'var(--text-main)',
+            fontSize: '0.85rem',
+            fontWeight: 500,
+            opacity: 0.9
+          }}>
+            {project.client} &bull; {project.metric}
+          </p>
+        </div>
+      </div>
+
+      {/* Video Controls (Only show when active) */}
+      <div style={{
+        position: 'absolute',
+        bottom: '24px',
+        left: '32px',
+        right: '32px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '16px',
+        zIndex: 10,
+        opacity: isActive ? (isIdle ? 0 : 1) : 0,
+        pointerEvents: isActive ? (isIdle ? 'none' : 'auto') : 'none',
+        transition: 'opacity 0.6s ease'
+      }}>
+        {/* Play/Pause Button */}
+        <div 
+          onClick={togglePlay}
+          style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            flexShrink: 0
+          }}
+        >
+          {isPlaying ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#E4FF00" stroke="#E4FF00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#E4FF00" stroke="#E4FF00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '2px' }}><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          )}
+        </div>
+
+        {/* Progress Bar Container */}
+        <div 
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+          style={{ 
+            flex: 1,
+            display: 'flex', 
+            alignItems: 'center', 
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)', 
+            border: '1px solid rgba(255,255,255,0.2)', 
+            borderRadius: '24px',
+            padding: '12px 16px',
+            cursor: 'pointer',
+            touchAction: 'none'
+          }}
+        >
+          <div style={{ flex: 1, height: '4px', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: '4px', position: 'relative' }} ref={progressRef}>
+            <div style={{ 
+              width: `${progress}%`, 
+              height: '100%', 
+              backgroundColor: '#E4FF00',
+              transition: 'width 0.1s linear',
+              borderRadius: '4px',
+              position: 'relative'
+            }}>
+              <div style={{
+                position: 'absolute',
+                right: '-6px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '12px',
+                height: '12px',
+                backgroundColor: '#E4FF00',
+                borderRadius: '50%',
+              }} />
+            </div>
+          </div>
+        </div>
+
+        {/* Mute Toggle */}
+        <div 
+          onClick={(e) => { e.stopPropagation(); setIsMuted(!isMuted); }}
+          style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            flexShrink: 0
+          }}
+        >
+          {isMuted ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+          )}
+        </div>
+
+        {/* Fullscreen Button */}
+        <div 
+          onClick={toggleFullscreen}
+          style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            flexShrink: 0
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"></path><path d="M21 8V5a2 2 0 0 0-2-2h-3"></path><path d="M3 16v3a2 2 0 0 0 2 2h3"></path><path d="M16 21h3a2 2 0 0 0 2-2v-3"></path></svg>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function SelectedWork({ onOpenVideo, isWorkPage = false }) {
   const sectionRef = useRef(null);
   const gridRef = useRef(null);
   const [showArchive, setShowArchive] = useState(false);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [userHasInteracted, setUserHasInteracted] = useState(false);
 
   useEffect(() => {
     // Elegant fade-in animation for cards as you scroll down normally
@@ -513,21 +890,44 @@ export default function SelectedWork({ onOpenVideo, isWorkPage = false }) {
           </h2>
         </div>
 
-        {/* Normal Vertical CSS Grid */}
-        <div 
-          ref={gridRef}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '40px',
+        {isWorkPage ? (
+          <div 
+            ref={gridRef}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '40px',
+              width: '100%',
+            }}
+            className="portfolio-normal-grid"
+          >
+            {PORTFOLIO_DATA.map((project) => (
+              <CustomVideoCard key={project.id} project={project} />
+            ))}
+          </div>
+        ) : (
+          <div style={{
+            flex: 1,
+            display: 'flex',
             width: '100%',
-          }}
-          className="portfolio-normal-grid"
-        >
-          {PORTFOLIO_DATA.map((project) => (
-            <CustomVideoCard key={project.id} project={project} />
-          ))}
-        </div>
+            height: '75vh',
+            gap: '12px'
+          }}>
+            {PORTFOLIO_DATA.slice(0, 5).map((project, idx) => (
+              <AccordionVideoItem 
+                key={project.id}
+                project={project}
+                isActive={activeIdx === idx}
+                shouldAutoUnmute={userHasInteracted}
+                onActivate={() => {
+                  setUserHasInteracted(true);
+                  setActiveIdx(idx);
+                }}
+                onOpenVideo={onOpenVideo}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Expandable Archive Section (Only on Work Page) */}
         {isWorkPage && (
