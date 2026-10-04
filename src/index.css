@@ -5,22 +5,22 @@
    ========================================================================== */
 
 :root {
-  /* Light Mode Tokens */
-  --bg-main: #F7F5F2;
-  --bg-soft-gradient: #F7F5F2;
-  --color-glass: rgba(255, 255, 255, 0.4);
-  --color-surface: transparent;
-  --glass-border: rgba(0, 0, 0, 0.04);
-  --card-border: rgba(0, 0, 0, 0.04);
+  /* Global Theme Tokens (Black & Neon Green) */
+  --bg-main: #111111;
+  --bg-soft-gradient: #111111;
+  --color-glass: rgba(228, 255, 0, 0.03);
+  --color-surface: #111111;
+  --glass-border: rgba(228, 255, 0, 0.1);
+  --card-border: rgba(228, 255, 0, 0.1);
   
-  --color-black: #111111;
-  --color-ink: #111111;
-  --text-main: #111111;
-  --text-muted: #666666;
+  --color-black: #E4FF00;
+  --color-ink: #E4FF00;
+  --text-main: #F1F0E8;
+  --text-muted: #A0A0A0;
   
-  --accent-blue: #B5462A; /* Reusing var name but setting to Terracotta to avoid breaking existing usages until refactored */
-  --color-hover: #D45B3A;
-  --color-success: #7BC47F;
+  --accent-blue: #E4FF00; /* Swapped to Sun Glare Neon Green */
+  --color-hover: #111111; /* Darkest Hour Black */
+  --color-success: #E4FF00;
 
   /* Typography Stack */
   --font-heading: 'SF Pro Display', 'Inter', system-ui, -apple-system, sans-serif;
@@ -46,8 +46,8 @@
   --text-main: #FFFFFF;
   --text-muted: #D4D4D9;
 
-  --accent-blue: #5B8CFF;
-  --color-hover: #7AA5FF;
+  --accent-blue: #E4FF00;
+  --color-hover: #111111;
 }
 
 /* Base Reset */
@@ -154,8 +154,8 @@ p {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  background-color: var(--color-black) !important;
-  color: var(--bg-main) !important;
+  background-color: #E4FF00 !important;
+  color: #111111 !important;
   padding: 16px 36px;
   font-family: var(--font-heading);
   font-size: 0.95rem;
@@ -166,14 +166,14 @@ p {
   border: none;
   cursor: pointer;
   text-decoration: none;
-  transition: transform 0.3s var(--ease-expo), background-color 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s var(--ease-expo), background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
 }
 
 .btn-lime:hover, .btn-primary:hover {
-  background-color: var(--accent-blue) !important;
-  color: #ffffff !important;
+  background-color: #111111 !important;
+  color: #E4FF00 !important;
   transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(91, 140, 255, 0.4);
+  box-shadow: 0 12px 32px rgba(228, 255, 0, 0.4);
 }
 
 .btn-secondary {
@@ -193,11 +193,13 @@ p {
   border: 1px solid var(--glass-border) !important;
   cursor: pointer;
   text-decoration: none;
-  transition: transform 0.3s var(--ease-expo), border-color 0.3s ease, color 0.3s ease;
+  transition: transform 0.3s var(--ease-expo), border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease;
 }
 
 .btn-secondary:hover {
-  border-color: var(--color-black) !important;
+  border-color: #E4FF00 !important;
+  background-color: #E4FF00 !important;
+  color: #111111 !important;
   transform: translateY(-3px);
 }
 
@@ -207,8 +209,9 @@ p {
   align-items: center;
   gap: 8px;
   padding: 8px 20px;
-  background-color: var(--color-black) !important;
-  color: var(--bg-main) !important;
+  background-color: #111111 !important;
+  color: #E4FF00 !important;
+  border: 1px solid rgba(228, 255, 0, 0.2);
   border-radius: 9999px;
   font-family: var(--font-heading);
   font-size: 0.82rem;
@@ -242,7 +245,7 @@ p {
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  background: radial-gradient(700px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(91, 140, 255, 0.12), transparent 80%);
+  background: radial-gradient(700px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(228, 255, 0, 0.12), transparent 80%);
 }
 
 /* ==========================================================================
