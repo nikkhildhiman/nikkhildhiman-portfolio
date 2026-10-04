@@ -13,57 +13,74 @@ const baseProjects = [
   { id: '07', title: 'SHOOT BTS', category: 'CINEMATOGRAPHY', video: '', poster: '/assets/DSC_7738.jpg' },
 ];
 
-export const orbitProjects = Array.from({ length: 10 }).map((_, i) => ({
+// Use 9 cards to fill the wide cinematic lens and ensure smooth edge recycling
+export const orbitProjects = Array.from({ length: 9 }).map((_, i) => ({
   ...baseProjects[i % baseProjects.length],
-  uid: `orb-${i}`
+  uid: `orb-${i}`,
 }));
 
 // ==========================================
 // ORBIT CARD COMPONENT
 // ==========================================
-const OrbitCard = ({ project, isHovered, onHover, onLeave }) => {
+const OrbitCard = ({ project, transformData, isHovered, onHover, onLeave }) => {
   const videoRef = useRef(null);
 
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.play().catch(() => {});
+      if (transformData.opacity > 0.1) {
+        videoRef.current.play().catch(() => {});
+      } else {
+        videoRef.current.pause();
+      }
     }
-  }, []);
+  }, [transformData.opacity]);
+
+  const finalZIndex = isHovered ? 60 : transformData.zIndex;
+  const innerBlur = isHovered ? 0 : transformData.blur;
+  
+  const shadow = isHovered 
+    ? '0 18px 40px rgba(0,0,0,0.25)' 
+    : (transformData.isCenter ? '0 12px 30px rgba(0,0,0,0.12)' : '0 6px 20px rgba(0,0,0,0.08)');
 
   return (
     <div
-      className="portfolio-orbit-card"
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
       style={{
         position: 'absolute',
         top: '50%',
         left: '50%',
-        width: '190px',
-        height: '260px',
-        marginTop: '-130px',
-        marginLeft: '-95px',
-        transformStyle: 'preserve-3d',
-        willChange: 'transform, opacity, z-index',
-        opacity: 0,
-        transition: 'z-index 0.4s ease'
+        width: '164px',
+        height: '221px',
+        marginTop: '-110.5px', // Half of height
+        marginLeft: '-82px', // Half of width
+        cursor: 'pointer',
+        zIndex: finalZIndex,
+        
+        // OUTER WRAPPER: Pure mathematical 60fps continuous animation.
+        // NO CSS TRANSITIONS HERE. This stops the blur lag and prevents 
+        // ghost cards from flying across the screen when they recycle/wrap.
+        willChange: 'transform, opacity, filter',
+        transformOrigin: 'center center',
+        transform: `translate3d(${transformData.x}px, ${transformData.y}px, ${transformData.z}px) rotateZ(${transformData.rotZ}deg) rotateY(${transformData.rotY}deg) scale(${transformData.scale})`,
+        opacity: transformData.opacity,
+        filter: `blur(${innerBlur}px)`,
       }}
     >
-      <div 
-        className="orbit-card-inner"
-        style={{
-          width: '100%',
-          height: '100%',
-          borderRadius: '24px',
-          overflow: 'hidden',
-          backgroundColor: '#FFFFFF',
-          border: '1px solid rgba(0,0,0,0.10)',
-          transition: 'transform 450ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 450ms ease',
-          // Hover pops card forward without breaking the fisheye base transform applied by parent
-          transform: isHovered ? 'translateZ(30px) scale(1.02)' : 'translateZ(0px) scale(1)',
-          boxShadow: isHovered ? '0 25px 60px rgba(0,0,0,0.14)' : '0 15px 35px rgba(0,0,0,0.07)'
-        }}
-      >
+      {/* INNER WRAPPER: Handles the physical hover lift with CSS transitions */}
+      <div style={{
+        width: '100%',
+        height: '100%',
+        borderRadius: '18px',
+        backgroundColor: '#111', 
+        boxShadow: shadow,
+        overflow: 'hidden',
+        willChange: 'transform, box-shadow',
+        transition: 'transform 450ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 450ms cubic-bezier(0.16, 1, 0.3, 1)',
+        // Hover: Lift from the physical deck +50px Z, -10px Y, scale 1.04
+        transform: isHovered ? `translate3d(0, -10px, 50px) scale(1.04)` : `translate3d(0, 0, 0) scale(1)`,
+      }}>
+        {/* 100% OPACITY CRISP MEDIA */}
         {project.video ? (
           <video
             ref={videoRef}
@@ -90,92 +107,115 @@ const OrbitCard = ({ project, isHovered, onHover, onLeave }) => {
 // MAIN HERO SECTION
 // ==========================================
 export default function Hero() {
-  const containerRef = useRef(null);
-  const animState = useRef({ progress: 0, speed: 1 });
   const [hoveredIndex, setHoveredIndex] = useState(null);
-
-  const ORBIT_DURATION = 36000;
+  const [isMobile, setIsMobile] = useState(false);
+  const stageRef = useRef(null);
+  const [timeProgress, setTimeProgress] = useState(0);
 
   useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Continuous linear left-to-right orbit engine
+  useEffect(() => {
     let reqId;
-    let lastTime = performance.now();
+    let startTime = performance.now();
+    
+    // Smooth cinematic morphing duration (24 seconds)
+    const DURATION = 24000;
 
-    const render = (time) => {
-      const dt = time - lastTime;
-      lastTime = time;
-
-      animState.current.progress += (dt / ORBIT_DURATION) * animState.current.speed;
-      if (animState.current.progress > 1) animState.current.progress -= 1;
-
-      const cards = containerRef.current.querySelectorAll('.portfolio-orbit-card');
-      const total = cards.length; 
-
-      cards.forEach((card, i) => {
-        let p = (animState.current.progress + (i / total)) % 1;
-        let v = (p - 0.5) * total;
-        const absV = Math.abs(v);
-        
-        // --- POSITION ---
-        const x = v * 220; 
-        const y = Math.pow(absV, 2) * 5; 
-
-        // --- FISHEYE & PERSPECTIVE SPEC ---
-        // Center: rotZ(0), rotY(0), scale(1)
-        // Outer: rotZ(9), rotY(18), scale(0.93), scaleX(1.14)
-        const rotateZ = v * 3;
-        const rotateY = v * 6;
-        
-        const overallScale = 1.0 - (absV * 0.023); // 1.0 -> ~0.93
-        const scaleX = 1.0 + (Math.pow(absV, 2) * 0.015); // 1.0 -> ~1.14
-
-        // --- DEPTH HIERARCHY ---
-        let opacity = 1;
-        let zIndex = 10;
-        
-        if (absV < 0.5) {
-          zIndex = 10;
-        } else if (absV < 1.5) {
-          zIndex = 8;
-        } else if (absV < 2.5) {
-          zIndex = 6;
-        } else if (absV < 3.5) {
-          zIndex = 4;
-        } else {
-          // Fade hidden cards
-          opacity = Math.max(0, 1 - (absV - 3.5));
-          zIndex = 1;
-        }
-
-        const isHovered = card.classList.contains('is-hovered');
-        
-        // Combine the fisheye scaleX with the overall scale
-        card.style.transform = `translate3d(${x}px, ${y}px, 0px) rotateZ(${rotateZ}deg) rotateY(${rotateY}deg) scale(${overallScale}) scaleX(${scaleX})`;
-        card.style.opacity = opacity;
-        card.style.zIndex = isHovered ? 20 : zIndex;
-
-        if (!isHovered) {
-          const inner = card.querySelector('.orbit-card-inner');
-          if (inner) {
-            inner.style.boxShadow = absV < 0.5 ? '0 20px 50px rgba(0,0,0,0.10)' : '0 15px 35px rgba(0,0,0,0.07)';
-          }
-        }
-
-        const vid = card.querySelector('video');
-        if (vid) {
-          if (opacity < 0.1) {
-            if (!vid.paused) vid.pause();
-          } else {
-            if (vid.paused) vid.play().catch(()=>{});
-          }
-        }
-      });
-
+    const render = (now) => {
+      const elapsed = now - startTime;
+      const progress = (elapsed / DURATION) % 1;
+      setTimeProgress(progress);
       reqId = requestAnimationFrame(render);
     };
 
     reqId = requestAnimationFrame(render);
     return () => cancelAnimationFrame(reqId);
   }, []);
+
+  const getCardTransforms = () => {
+    const total = orbitProjects.length;
+    
+    return orbitProjects.map((proj, idx) => {
+      // p tracks infinite left-to-right movement
+      let p = (timeProgress + (idx / total)) % 1;
+      let v = (p - 0.5) * total; 
+      
+      // Normalize position (-1 is extreme left, +1 is extreme right)
+      const xNormal = v / 3.0;
+      const absX = Math.abs(xNormal);
+
+      // Neighbor separation on hover
+      let neighborOffset = 0;
+      if (hoveredIndex !== null && hoveredIndex !== idx) {
+        let diff = idx - hoveredIndex;
+        if (diff > total / 2) diff -= total;
+        if (diff < -total / 2) diff += total;
+        if (Math.abs(diff) < 1.8) {
+          neighborOffset = Math.sign(diff) * 8; 
+        }
+      }
+
+      // --- PREMIUM CINEMATIC LENS GEOMETRY (SCALED DOWN ADDITIONAL 10%) ---
+      
+      const centerSwell = Math.exp(-(absX * absX) * 14);
+
+      // --- SMOOTH CORNER ENTRY / EXIT ANIMATION ---
+      let opacity = 1;
+      let edgeShrink = 1;
+      let edgeZ = 0;
+      let edgeBlur = 0;
+      
+      if (absX > 1.15) {
+        // Exit progress goes from 0 to 1 as the card moves from 1.15 to 1.45
+        const exitProgress = Math.min(1, (absX - 1.15) * 3.33); 
+        
+        opacity = 1 - exitProgress;
+        edgeShrink = 1 - (exitProgress * 0.4); 
+        edgeZ = -exitProgress * 180; // Plunges backward 
+        edgeBlur = exitProgress * 12; // Smoothly blurs out to 12px
+      }
+
+      // X: Fluid repulsion.
+      const baseSpread = absX * 277;
+      const centerRepulsion = 122 * (1 - Math.exp(-absX * 4.5));
+      const x = Math.sign(xNormal) * (baseSpread + centerRepulsion) + neighborOffset;
+      
+      // Y: Morphing curve (U -> ∩ -> U). 
+      const yMorph = Math.sin(timeProgress * Math.PI * 2); 
+      const y = yMorph * 50 * Math.pow(absX, 1.7);
+      
+      // Z: Deep lens curve
+      const z = -113 * Math.pow(absX, 1.6) + (centerSwell * 9) + edgeZ;
+      
+      // RotateY: Fisheye stretch
+      const rotY = -xNormal * 42; 
+      
+      // RotateZ: Slight banking
+      const rotZ = xNormal * 4;
+
+      // Scale: Center card swells by +30%
+      const scaleBase = (0.98 - (absX * 0.05) + (centerSwell * 0.32)) * edgeShrink;
+
+      // Depth hierarchy
+      let zIndex = 10;
+      if (absX < 0.25) zIndex = 50;
+      else if (absX < 0.6) zIndex = 40;
+      else if (absX < 1.0) zIndex = 30;
+      else zIndex = 20;
+
+      return {
+        x, y, z, rotY, rotZ, scale: scaleBase, opacity, blur: edgeBlur, zIndex, isCenter: absX < 0.25
+      };
+    });
+  };
+
+  const transforms = getCardTransforms();
 
   return (
     <section 
@@ -184,28 +224,15 @@ export default function Hero() {
         width: '100vw',
         position: 'relative',
         overflow: 'hidden',
-        backgroundColor: '#F7F5F2',
+        backgroundColor: '#F7F5F2', // Pure clean background
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center', // Naturally centers everything within viewport
-        paddingTop: '80px', // Breathing room below Navbar
+        alignItems: 'center',
+        paddingTop: '110px', 
         paddingBottom: '40px'
       }}
     >
-      {/* AMBIENT BACKGROUND LIGHTING */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        pointerEvents: 'none',
-        zIndex: 0,
-        background: `
-          radial-gradient(circle at 50% 60%, rgba(255, 190, 150, 0.22), transparent 45%),
-          radial-gradient(circle at 20% 50%, rgba(170, 205, 255, 0.16), transparent 40%),
-          radial-gradient(circle at 80% 45%, rgba(210, 180, 255, 0.14), transparent 40%)
-        `
-      }} />
-
-      {/* 1. SEPARATE TEXT LAYER (Standard flow, guarantees NO overlap) */}
+      {/* 1. SEPARATE TEXT LAYER */}
       <div 
         className="hero-content" 
         style={{ 
@@ -223,9 +250,10 @@ export default function Hero() {
           letterSpacing: '0.15em',
           color: '#666',
           textTransform: 'uppercase',
-          marginBottom: '20px'
+          marginBottom: '20px',
+          visibility: 'hidden'
         }}>
-          BEHIND THE WORK
+          &nbsp;
         </div>
 
         <h1 style={{
@@ -238,19 +266,8 @@ export default function Hero() {
           maxWidth: '1100px',
           margin: '0 auto'
         }}>
-          CURIOUS WHAT I'VE BEEN<br />CREATING?
+          CURIOUS WHAT I'VE BEEN CREATING?
         </h1>
-        
-        <p style={{
-          fontFamily: 'var(--font-body)',
-          fontSize: '15px',
-          lineHeight: 1.45,
-          color: 'rgba(20,20,20,0.60)',
-          maxWidth: '650px',
-          margin: '30px auto 0 auto' // 30px gap
-        }}>
-          Films, short-form content, graphics and visual work<br />created for creators, brands and institutions.
-        </p>
 
         <div style={{
           fontFamily: 'var(--font-body)',
@@ -260,7 +277,7 @@ export default function Hero() {
           color: '#111',
           cursor: 'pointer',
           display: 'inline-block',
-          marginTop: '28px', // 28px gap
+          marginTop: '24px',
           transition: 'opacity 0.2s ease',
           textTransform: 'uppercase'
         }}
@@ -271,67 +288,49 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* GAP BETWEEN CONTENT AND ORBIT */}
-      <div style={{ height: '80px', flexShrink: 0 }} />
+      {/* COMPACT GAP */}
+      <div style={{ height: '40px', flexShrink: 0 }} />
 
-      {/* 2. DEDICATED ORBIT CONTAINER (Occupies separate vertical region) */}
+      {/* 2. CINEMATIC 3D LENS CONTAINER */}
       <div 
-        className="hero-orbit"
-        ref={containerRef}
+        className="hero-orbit-stage"
+        ref={stageRef}
         style={{
           position: 'relative',
           width: '100vw',
-          height: '300px',
-          perspective: '1200px',
+          height: '380px',
+          perspective: '1800px', // Stronger cinematic perspective
+          perspectiveOrigin: '50% 50%',
+          transformStyle: 'preserve-3d',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           flexShrink: 0
         }}
       >
-        {orbitProjects.map((proj, idx) => (
-          <OrbitCard
-            key={proj.uid}
-            project={proj}
-            isHovered={hoveredIndex === idx}
-            onHover={() => setHoveredIndex(idx)}
-            onLeave={() => setHoveredIndex(null)}
-          />
-        ))}
-      </div>
-
-      {/* GAP BETWEEN ORBIT AND METADATA */}
-      <div style={{ height: '45px', flexShrink: 0 }} />
-
-      {/* 3. BOTTOM METADATA (Flows naturally below orbit) */}
-      <div style={{
-        width: '100%',
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '0 40px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        fontFamily: 'var(--font-heading)',
-        fontSize: '11px',
-        fontWeight: 600,
-        letterSpacing: '0.08em',
-        color: '#666',
-        textTransform: 'uppercase',
-        flexShrink: 0
-      }}>
-        <div style={{ flex: 1, textAlign: 'left' }}>
-          FILM / SHORT-FORM / GRAPHICS / THUMBNAILS
-        </div>
-        
-        <div style={{ flex: 1, textAlign: 'center', color: '#111' }}>
-          SCROLL TO EXPLORE ↓
-        </div>
-        
-        <div style={{ flex: 1, textAlign: 'right' }}>
-          07 SELECTED WORKS
+        <div style={{
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          transformStyle: 'preserve-3d',
+          pointerEvents: 'auto'
+        }}>
+          {orbitProjects.map((proj, idx) => (
+            <OrbitCard
+              key={proj.uid}
+              project={proj}
+              transformData={transforms[idx]}
+              isHovered={hoveredIndex === idx}
+              onHover={() => setHoveredIndex(idx)}
+              onLeave={() => setHoveredIndex(null)}
+            />
+          ))}
         </div>
       </div>
+
     </section>
   );
 }
