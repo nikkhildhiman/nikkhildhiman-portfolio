@@ -70,10 +70,9 @@ export default function ServicesSection({ onNavigate }) {
           <div style={{ position: 'sticky', top: '120px' }}>
 
             <h2 style={{ 
-              fontSize: 'clamp(3.5rem, 8vw, 7rem)', 
-              color: 'var(--text-main)', 
+              fontSize: 'clamp(3rem, 7vw, 6rem)', 
               margin: '0 0 32px 0', 
-              lineHeight: 0.9, 
+              lineHeight: 0.85, 
               textTransform: 'uppercase', 
               letterSpacing: '-0.04em', 
               fontWeight: 800,
@@ -81,11 +80,13 @@ export default function ServicesSection({ onNavigate }) {
             }}>
               <span style={{ 
                 display: 'block',
+                color: 'transparent',
+                WebkitTextStroke: '2px var(--text-main)',
                 opacity: isVisible ? 1 : 0, 
                 transform: isVisible ? 'translateY(0)' : 'translateY(60px)', 
                 transition: 'opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)' 
               }}>
-                WHAT I
+                WHAT <span style={{ fontFamily: "'Melodrama', serif", fontStyle: 'italic', WebkitTextStroke: 'none', color: 'var(--text-main)' }}>I</span>
               </span>
               <span className={isVisible ? "glitch-in-view" : "glitch-hidden"} style={{ 
                 fontFamily: "'Melodrama', serif", 
@@ -94,7 +95,9 @@ export default function ServicesSection({ onNavigate }) {
                 fontWeight: 600, 
                 textTransform: 'none',
                 display: 'block',
-                paddingLeft: '8%',
+                paddingLeft: '12%',
+                marginTop: '-0.08em',
+                fontSize: '1.15em',
               }}>
                 Create
               </span>

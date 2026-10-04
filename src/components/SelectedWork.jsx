@@ -833,6 +833,7 @@ const AccordionVideoItem = ({ project, isActive, onActivate, onOpenVideo, should
 
 export default function SelectedWork({ onOpenVideo, isWorkPage = false }) {
   const sectionRef = useRef(null);
+  const titleRef = useRef(null);
   const gridRef = useRef(null);
   const [showArchive, setShowArchive] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
@@ -843,6 +844,24 @@ export default function SelectedWork({ onOpenVideo, isWorkPage = false }) {
     const ctx = gsap.context(() => {
       const cards = gsap.utils.toArray('.main-card');
       staggeredReveal(cards, 0.1, 0);
+
+      // Letter Flip Animation
+      gsap.fromTo('.title-char',
+        { y: 30, rotationX: -90, opacity: 0 },
+        {
+          y: 0,
+          rotationX: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.04,
+          ease: 'back.out(2)',
+          scrollTrigger: {
+            trigger: titleRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          }
+        }
+      );
     }, sectionRef);
 
     return () => ctx.revert();
@@ -881,12 +900,28 @@ export default function SelectedWork({ onOpenVideo, isWorkPage = false }) {
       <div className="container">
         
         {/* Intro Text Block */}
-        <div style={{ marginBottom: '64px' }}>
-          <div style={{ fontFamily: 'var(--font-heading)', fontSize: '0.85rem', color: 'var(--accent-blue)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '12px', letterSpacing: '0.05em' }}>
-            Portfolio Showcase
-          </div>
-          <h2 style={{ fontSize: 'clamp(3rem, 6vw, 5rem)', color: 'var(--color-black)', margin: 0, lineHeight: 1, textTransform: 'uppercase', letterSpacing: '-0.02em', fontWeight: 800 }}>
-            SELECTED <br/><span style={{ color: 'var(--text-muted)' }}>WORK</span>
+        <div ref={titleRef} style={{ marginBottom: '40px', overflow: 'hidden', paddingBottom: '10px', perspective: '800px' }}>
+          <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', margin: 0, lineHeight: 1.1, letterSpacing: '-0.02em', fontWeight: 700, display: 'flex', gap: '12px' }}>
+            <span style={{ 
+              display: 'inline-block', 
+              color: 'var(--color-black)'
+            }}>
+              {"Selected".split("").map((char, i) => (
+                <span key={`t1-${i}`} className="title-char" style={{ display: 'inline-block' }}>{char}</span>
+              ))}
+            </span>
+            
+            <span style={{ 
+              display: 'inline-block', 
+              color: '#ffffff',
+              fontFamily: '"Instrument Serif", "Playfair Display", serif',
+              fontStyle: 'italic',
+              fontWeight: 400
+            }}>
+              {"works".split("").map((char, i) => (
+                <span key={`t2-${i}`} className="title-char" style={{ display: 'inline-block' }}>{char}</span>
+              ))}
+            </span>
           </h2>
         </div>
 

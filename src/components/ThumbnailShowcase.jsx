@@ -119,15 +119,16 @@ export default function ThumbnailShowcase() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="section-padding tile-light" style={{ backgroundColor: '#F8F8F6' }}>
+    <section ref={sectionRef} className="section-padding" style={{ backgroundColor: 'var(--color-surface)', color: 'var(--text-main)' }}>
       <div className="container">
         
         <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-          <div className="apple-pill-tag" style={{ marginBottom: '16px', display: 'inline-block' }}>
+          <div style={{ marginBottom: '16px', display: 'inline-block', border: '1px solid rgba(255,255,255,0.2)', padding: '8px 16px', borderRadius: '9999px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
             <span>Thumbnail Design Archive</span>
           </div>
-          <h2 className="display-lg" style={{ marginBottom: '16px' }}>
-            High-CTR Engine.
+          <h2 className="display-lg" style={{ marginBottom: '16px', textTransform: 'uppercase', lineHeight: 0.9 }}>
+            HIGH-CTR <br />
+            <span style={{ fontFamily: "'Melodrama', serif", fontStyle: 'italic', fontWeight: 300, color: '#E4FF00', textTransform: 'none' }}>engine.</span>
           </h2>
           <p className="lead" style={{ maxWidth: '640px', margin: '0 auto' }}>
             A curated archive of high-converting thumbnails engineered through color psychology, deep contrast, and narrative curiosity.

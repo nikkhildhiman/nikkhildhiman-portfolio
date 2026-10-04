@@ -40,163 +40,160 @@ export default function About() {
   }, []);
 
   return (
-    <section ref={sectionRef} id="about" style={{ backgroundColor: 'var(--color-surface)', position: 'relative' }}>
-      
-      {/* =========================================
-          PART 1: THE INTERACTIVE SANDBOX
-          ========================================= */}
-      <div 
-        ref={sandboxRef}
-        style={{ 
-          position: 'relative',
-          height: '100vh',
-          width: '100%',
-          overflow: 'hidden',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderBottom: '2px solid var(--color-black)'
-        }}
-      >
-        {/* 1. Massive Typography Background (Parallax Layer - Far Back) */}
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          width: '150%', // Wider to allow movement
-          transform: `translate(-50%, -50%) translate(${mousePos.x * -16}px, ${mousePos.y * -16}px)`,
-          transition: 'transform 0.1s ease-out',
-          zIndex: 0,
-          pointerEvents: 'none',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '0px'
-        }}>
-          {[...Array(5)].map((_, i) => (
-            <h2 key={i} style={{ 
-              fontSize: 'clamp(2.5rem, 10vw, 12rem)', 
-              lineHeight: 0.85, 
-              margin: 0, 
-              color: i % 2 === 0 ? 'transparent' : 'rgba(0,0,0,0.03)', 
-              WebkitTextStroke: i % 2 === 0 ? '2px rgba(0,0,0,0.1)' : 'none',
-              fontFamily: 'var(--font-heading)', 
-              fontWeight: 900, 
-              textTransform: 'uppercase',
-              whiteSpace: 'nowrap'
-            }}>
-              ENGINEERING EMOTION
-            </h2>
-          ))}
-        </div>
-
-        {/* 2. Floating Centerpiece Portrait (Parallax Layer - Middle) */}
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: `translate(-50%, -50%) translate(${mousePos.x * 12}px, ${mousePos.y * 12}px)`,
-          transition: 'transform 0.1s ease-out',
-          zIndex: 2,
-          width: 'min(70vw, 360px)',
-          aspectRatio: '4/5',
-          borderRadius: '24px',
-          border: '2px solid var(--color-black)',
-          boxShadow: '16px 16px 0 rgba(0,0,0,0.15)', // Brutalist shadow
-          overflow: 'hidden',
-          backgroundColor: '#000'
-        }}>
-          <img
-            src={ABOUT_DATA.portrait}
-            alt="Nikhil Dhiman"
-            style={{ 
-              width: '100%', 
-              height: '100%', 
-              objectFit: 'cover',
-              filter: 'contrast(1.05)'
-            }}
-          />
-        </div>
-
-        {/* 3. Floating UI Badges (Parallax Layer - Front) */}
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          width: 'min(85vw, 500px)',
-          height: '400px',
-          transform: `translate(-50%, -50%) translate(${mousePos.x * 50}px, ${mousePos.y * 50}px)`,
-          transition: 'transform 0.1s ease-out',
-          zIndex: 3,
-          pointerEvents: 'none'
-        }}>
-          {/* Badge 1 */}
-          <div style={{
-            position: 'absolute',
-            top: '5%',
-            left: '5%',
-            background: 'var(--color-black)',
-            color: '#fff',
-            padding: '12px 24px',
-            borderRadius: '99px',
-            fontFamily: 'var(--font-heading)',
-            fontWeight: 800,
+    <section 
+      ref={(el) => {
+        sectionRef.current = el;
+        sandboxRef.current = el;
+      }} 
+      id="about" 
+      style={{ 
+        backgroundColor: 'var(--color-surface)', 
+        position: 'relative',
+        minHeight: '100svh',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '120px 0',
+        overflow: 'hidden'
+      }}
+    >
+      {/* 1. Massive Typography Background (Parallax Layer - Far Back) */}
+      <div style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        width: '150%',
+        transform: `translate(-50%, -50%) translate(${mousePos.x * -16}px, ${mousePos.y * -16}px)`,
+        transition: 'transform 0.1s ease-out',
+        zIndex: 0,
+        pointerEvents: 'none',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '0px'
+      }}>
+        {[...Array(5)].map((_, i) => (
+          <h2 key={i} style={{ 
+            fontSize: 'clamp(3rem, 12vw, 14rem)', 
+            lineHeight: 0.85, 
+            margin: 0, 
+            color: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)', 
+            WebkitTextStroke: i % 2 === 0 ? '2px rgba(255,255,255,0.05)' : 'none',
+            fontFamily: 'var(--font-heading)', 
+            fontWeight: 900, 
             textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            fontSize: '0.85rem'
+            whiteSpace: 'nowrap'
           }}>
-            2+ Years
-          </div>
-          
-          {/* Badge 2 */}
-          <div style={{
-            position: 'absolute',
-            bottom: '10%',
-            right: '5%',
-            background: 'var(--accent-blue)',
-            color: '#fff',
-            padding: '12px 24px',
-            borderRadius: '99px',
-            fontFamily: 'var(--font-heading)',
-            fontWeight: 800,
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            fontSize: '0.85rem'
-          }}>
-            Premiere • Resolve • AE
-          </div>
-        </div>
+            ENGINEERING EMOTION
+          </h2>
+        ))}
       </div>
 
-      {/* =========================================
-          PART 2: THE READABLE PHILOSOPHY
-          ========================================= */}
-      <div className="container" style={{ position: 'relative', zIndex: 10, paddingTop: '120px', paddingBottom: '120px' }}>
-        
-        <div className="grid-12" style={{ gap: 'max(40px, 8vw)' }}>
+      <div className="container" style={{ position: 'relative', zIndex: 10 }}>
+        <div className="grid-12" style={{ gap: 'max(60px, 8vw)', alignItems: 'center' }}>
           
-
-
-          <div style={{ gridColumn: 'span 12' }} className="about-text-left about-reveal">
-            <h3 style={{ 
-              fontSize: 'clamp(1rem, 8vw, 4rem)', 
-              color: 'var(--color-black)', 
-              fontWeight: 900, 
-              lineHeight: 1.3,
-              wordSpacing: '0.1em',
-              margin: '0',
-              overflowWrap: 'break-word',
-              wordBreak: 'break-word',
-              textTransform: 'uppercase'
+          {/* Left: Floating Portrait & Badges */}
+          <div className="about-photo-col about-reveal" style={{ gridColumn: 'span 12', position: 'relative' }}>
+            <div style={{
+              position: 'relative',
+              width: '100%',
+              maxWidth: '440px',
+              margin: '0 auto',
             }}>
-              "I build high-converting narrative engines for top creators."
-            </h3>
+              <div style={{
+                transform: `translate(${mousePos.x * 12}px, ${mousePos.y * 12}px)`,
+                transition: 'transform 0.1s ease-out',
+                width: '100%',
+                aspectRatio: '4/5',
+                borderRadius: '24px',
+                border: '2px solid var(--color-black)',
+                boxShadow: '16px 16px 0 rgba(0,0,0,0.15)',
+                overflow: 'hidden',
+                backgroundColor: '#000'
+              }}>
+                <img
+                  src={ABOUT_DATA.portrait}
+                  alt="Nikhil Dhiman"
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'cover',
+                    filter: 'contrast(1.05)'
+                  }}
+                />
+              </div>
+
+              {/* Floating UI Badges */}
+              <div style={{
+                position: 'absolute',
+                top: 0, left: 0, width: '100%', height: '100%',
+                pointerEvents: 'none',
+                transform: `translate(${mousePos.x * 40}px, ${mousePos.y * 40}px)`,
+                transition: 'transform 0.1s ease-out',
+              }}>
+                <div style={{
+                  position: 'absolute',
+                  top: '-5%',
+                  left: '-10%',
+                  background: 'var(--color-black)',
+                  color: '#111111',
+                  padding: '12px 24px',
+                  borderRadius: '99px',
+                  fontFamily: 'var(--font-heading)',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  fontSize: '0.85rem'
+                }}>
+                  2+ Years
+                </div>
+                
+                <div style={{
+                  position: 'absolute',
+                  bottom: '-5%',
+                  right: '-10%',
+                  background: 'var(--accent-blue)',
+                  color: '#111111',
+                  padding: '12px 24px',
+                  borderRadius: '99px',
+                  fontFamily: 'var(--font-heading)',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  fontSize: '0.85rem',
+                  whiteSpace: 'nowrap'
+                }}>
+                  Premiere • Resolve • AE
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div style={{ gridColumn: 'span 12' }} className="about-text-right about-reveal">
-            <p style={{ fontSize: '1.2rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0' }}>
-              With over 2 years of active directorial experience, my approach is hyper-focused on visual psychology. By obsessing over narrative rhythm, DaVinci Resolve color grading, and high-CTR thumbnail design, I ensure every frame drives measurable retention.
-            </p>
+          {/* Right: Text Copy */}
+          <div className="about-text-col about-reveal" style={{ gridColumn: 'span 12', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            <h3 style={{ 
+              fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', 
+              color: 'var(--text-main)', 
+              fontWeight: 800, 
+              lineHeight: 1.1,
+              margin: '0',
+              textTransform: 'uppercase',
+              letterSpacing: '-0.02em'
+            }}>
+              I turn ideas into <br className="hide-mobile" />
+              <span style={{ color: '#E4FF00', fontStyle: 'italic', fontFamily: "'Melodrama', serif", textTransform: 'none', fontWeight: 600 }}>visual stories people remember.</span>
+            </h3>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <p style={{ fontSize: '1.15rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0' }}>
+                I’m <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>Nikhil</span> — a creative director and visual storyteller who loves turning raw ideas into content that actually connects.
+              </p>
+              <p style={{ fontSize: '1.15rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0' }}>
+                For the past 2+ years, I’ve been creating, directing, editing, and designing for creators, brands, and digital platforms. I’m obsessed with <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>storytelling, visual psychology, pacing, and the little details</span> that make people stop scrolling and keep watching.
+              </p>
+              <p style={{ fontSize: '1.15rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0' }}>
+                Whether it’s a reel, a thumbnail, a campaign, or a complete visual identity — I don’t just make things look good. <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>I think about why they work.</span>
+              </p>
+            </div>
           </div>
 
         </div>
@@ -204,11 +201,10 @@ export default function About() {
 
       <style>{`
         @media (min-width: 992px) {
-          .about-text-left { grid-column: span 7 !important; }
-          .about-text-right { grid-column: span 5 !important; }
+          .about-photo-col { grid-column: span 5 !important; }
+          .about-text-col { grid-column: span 7 !important; }
         }
       `}</style>
-
     </section>
   );
 }

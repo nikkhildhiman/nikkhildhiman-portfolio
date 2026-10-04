@@ -408,9 +408,9 @@ export default function Reels({ onOpenVideo, onNavigate }) {
     <div 
       ref={containerRef}
       style={{
-        padding: '120px 5vw',
+        padding: '120px 5vw 0px 5vw',
         backgroundColor: 'var(--color-surface)',
-        minHeight: '100vh',
+        minHeight: 'auto',
       }}
     >
       <div style={{ marginBottom: '48px', textAlign: 'center' }}>
@@ -569,87 +569,6 @@ export default function Reels({ onOpenVideo, onNavigate }) {
         </>
       )}
 
-      {/* Navigation Buttons to other sections */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginTop: '100px', flexWrap: 'wrap', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '60px' }}>
-        <button 
-          onClick={() => {
-            if (onNavigate) onNavigate('work');
-            else window.location.hash = 'work';
-          }}
-          className="magnetic" 
-          style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.5)',
-            backdropFilter: 'blur(20px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-            border: '1px solid var(--glass-border)',
-            borderRadius: '9999px',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
-            color: 'var(--color-black)',
-            padding: '16px 40px',
-            fontFamily: 'var(--font-heading)',
-            fontWeight: 800,
-            fontSize: '1rem',
-            textTransform: 'uppercase',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-            e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.08)';
-            e.currentTarget.style.transform = 'translateY(-2px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
-            e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.03)';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-        >
-          View Work <ArrowUpRight size={20} />
-        </button>
-
-        <button 
-          onClick={() => {
-            if (onNavigate) onNavigate('thumbnails');
-            else window.location.hash = 'thumbnails';
-          }}
-          className="magnetic" 
-          style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.5)',
-            backdropFilter: 'blur(20px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-            border: '1px solid var(--glass-border)',
-            borderRadius: '9999px',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
-            color: 'var(--color-black)',
-            padding: '16px 40px',
-            fontFamily: 'var(--font-heading)',
-            fontWeight: 800,
-            fontSize: '1rem',
-            textTransform: 'uppercase',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-            e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.08)';
-            e.currentTarget.style.transform = 'translateY(-2px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
-            e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.03)';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-        >
-          View Thumbnails <ArrowUpRight size={20} />
-        </button>
-      </div>
-
       <style>{`
         .reels-grid {
           display: grid;
@@ -664,6 +583,8 @@ export default function Reels({ onOpenVideo, onNavigate }) {
             max-width: 600px;
           }
         }
+        }
+        
         @media (max-width: 600px) {
           .reels-grid {
             grid-template-columns: 1fr;

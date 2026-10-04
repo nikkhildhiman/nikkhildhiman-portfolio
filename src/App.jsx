@@ -15,7 +15,7 @@ import SelectedWork from './components/SelectedWork';
 import ServicesSection from './components/ServicesSection';
 
 import About from './components/About';
-import TestimonialsSection from './components/TestimonialsSection';
+
 import BookingModal from './components/BookingModal';
 import VideoModal from './components/VideoModal';
 import ProjectCaseStudyModal from './components/ProjectCaseStudyModal';
@@ -23,6 +23,7 @@ import ThumbnailShowcase from './components/ThumbnailShowcase';
 import ThumbnailGallery from './components/ThumbnailGallery';
 import Reels from './components/Reels';
 import Footer from './components/Footer';
+import DotNavigation from './components/DotNavigation';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -178,7 +179,7 @@ export default function App() {
             <SelectedWork onPlayVideo={handlePlayVideo} onOpenCaseStudy={handleOpenCaseStudy} />
             <ServicesSection onOpenBooking={handleOpenBooking} onNavigate={handleNavigate} />
             <About />
-            <TestimonialsSection />
+            <DotNavigation />
           </div>
         )}
 
@@ -187,84 +188,7 @@ export default function App() {
           <div style={{ paddingTop: '80px' }}>
             <SelectedWork onPlayVideo={handlePlayVideo} onOpenCaseStudy={handleOpenCaseStudy} isWorkPage={true} />
             
-            <div style={{
-              display: 'flex',
-              justifyContent: 'center',
-              gap: '24px',
-              padding: '0 4vw 120px 4vw',
-              flexWrap: 'wrap'
-            }}>
-              <button 
-                onClick={() => handleNavigate('reels')}
-                className="magnetic"
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                  backdropFilter: 'blur(20px) saturate(180%)',
-                  WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-                  border: '1px solid var(--glass-border)',
-                  borderRadius: '9999px',
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
-                  color: 'var(--color-black)',
-                  padding: '16px 40px',
-                  fontFamily: 'var(--font-heading)',
-                  fontWeight: 800,
-                  fontSize: '1rem',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-                  e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.08)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
-                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.03)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
-              >
-                View Reels <ArrowUpRight size={20} />
-              </button>
-              <button 
-                onClick={() => handleNavigate('thumbnails')}
-                className="magnetic"
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                  backdropFilter: 'blur(20px) saturate(180%)',
-                  WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-                  border: '1px solid var(--glass-border)',
-                  borderRadius: '9999px',
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
-                  color: 'var(--color-black)',
-                  padding: '16px 40px',
-                  fontFamily: 'var(--font-heading)',
-                  fontWeight: 800,
-                  fontSize: '1rem',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-                  e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.08)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
-                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.03)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
-              >
-                View Thumbnails <ArrowUpRight size={20} />
-              </button>
-            </div>
+
           </div>
         )}
 
@@ -287,60 +211,17 @@ export default function App() {
         {activePage === 'about' && (
           <div style={{ paddingTop: '100px' }}>
             <About />
-            <TestimonialsSection />
           </div>
         )}
 
 
 
-        {/* PAGE 5: CONTACT */}
-        {activePage === 'contact' && (
-          <div style={{ paddingTop: '100px' }}>
-            <div style={{ 
-              height: '60vh', 
-              display: 'flex', 
-              flexDirection: 'column', 
-              justifyContent: 'center',
-              alignItems: 'center',
-              textAlign: 'center',
-              padding: '0 4vw',
-              borderBottom: '2px solid var(--color-black)',
-              backgroundColor: 'var(--color-secondary)'
-            }}>
-              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>
-                [ INQUIRIES & BOOKING ]
-              </div>
-              <h1 style={{ 
-                fontSize: 'clamp(2.5rem, 10vw, 8rem)', 
-                fontFamily: 'var(--font-heading)',
-                fontWeight: 900,
-                color: 'transparent',
-                WebkitTextStroke: '2px var(--color-black)',
-                lineHeight: 0.9,
-                margin: '0 0 40px 0',
-                textTransform: 'uppercase'
-              }}>
-                LET'S <span style={{ color: 'var(--color-black)', WebkitTextStroke: 'none' }}>CREATE</span>
-              </h1>
 
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <button
-                  className="btn-lime"
-                  onClick={handleOpenBooking}
-                  style={{ padding: '18px 48px', fontSize: '1.1rem', borderRadius: '9999px' }}
-                >
-                  <Calendar size={20} />
-                  <span>LAUNCH BOOKING & CALENDLY INTAKE</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
       </main>
 
       {/* 7. Contact & Footer */}
-      <Footer onNavigate={handleNavigate} onOpenBooking={handleOpenBooking} />
+      <Footer onNavigate={handleNavigate} onOpenBooking={handleOpenBooking} activePage={activePage} />
 
       {/* Conversion Booking Modal */}
       <BookingModal isOpen={isBookingOpen} onClose={handleCloseBooking} />

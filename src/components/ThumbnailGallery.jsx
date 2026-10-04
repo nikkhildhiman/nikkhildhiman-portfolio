@@ -57,92 +57,13 @@ export default function ThumbnailGallery({ onNavigate }) {
   ];
 
   return (
-    <section ref={sectionRef} className="section-padding" style={{ backgroundColor: 'var(--color-surface)', minHeight: '100vh' }}>
+    <section ref={sectionRef} className="section-padding" style={{ backgroundColor: 'var(--color-surface)', minHeight: 'auto', paddingBottom: '0px' }}>
       <div className="container">
-        {/* Navigation Buttons to other sections */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginBottom: '80px', flexWrap: 'wrap' }}>
-          <button 
-            onClick={() => {
-              if (onNavigate) onNavigate('work');
-              else window.location.hash = 'work';
-            }}
-            className="magnetic" 
-            style={{
-              backgroundColor: 'rgba(0, 0, 0, 0.05)',
-              backdropFilter: 'blur(20px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-              border: '1px solid rgba(0,0,0,0.1)',
-              borderRadius: '9999px',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
-              color: 'var(--color-black)',
-              padding: '16px 40px',
-              fontFamily: 'var(--font-heading)',
-              fontWeight: 800,
-              fontSize: '1rem',
-              textTransform: 'uppercase',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
-              e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.08)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
-              e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.03)';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            View Work <ArrowUpRight size={20} />
-          </button>
 
-          <button 
-            onClick={() => {
-              if (onNavigate) onNavigate('reels');
-              else window.location.hash = 'reels';
-            }}
-            className="magnetic" 
-            style={{
-              backgroundColor: 'rgba(0, 0, 0, 0.05)',
-              backdropFilter: 'blur(20px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-              border: '1px solid rgba(0,0,0,0.1)',
-              borderRadius: '9999px',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
-              color: 'var(--color-black)',
-              padding: '16px 40px',
-              fontFamily: 'var(--font-heading)',
-              fontWeight: 800,
-              fontSize: '1rem',
-              textTransform: 'uppercase',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
-              e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.08)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
-              e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.03)';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            View Reels <ArrowUpRight size={20} />
-          </button>
-        </div>
 
         <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-          <h2 style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', color: 'var(--color-black)', margin: 0, lineHeight: 1, fontWeight: 900, textTransform: 'uppercase' }}>
-            THE <span style={{ color: 'var(--color-hover)' }}>ARCHIVE</span>
+          <h2 style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', color: 'var(--color-white)', margin: 0, lineHeight: 1, fontWeight: 900, textTransform: 'uppercase' }}>
+            THE <span style={{ color: '#E4FF00' }}>ARCHIVE</span>
           </h2>
           <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', maxWidth: '600px', margin: '16px auto 0' }}>
             A curated archive of high-converting thumbnail cutouts engineered for maximum visual impact and click-through rates.

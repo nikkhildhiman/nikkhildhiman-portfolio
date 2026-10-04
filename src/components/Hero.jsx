@@ -285,6 +285,7 @@ export default function Hero() {
 
   return (
     <section 
+      id="home"
       style={{
         minHeight: '100svh',
         width: '100vw',
@@ -325,22 +326,28 @@ export default function Hero() {
         <h1 style={{
           fontFamily: 'var(--font-heading)',
           fontSize: 'clamp(48px, 5.5vw, 88px)',
-          fontWeight: 650,
+          fontWeight: 300,
           letterSpacing: '-0.045em',
           wordSpacing: '0.15em',
           lineHeight: 0.94,
-          color: '#E4FF00', // Palette: Sun Glare
+          color: '#E4FF00',
           maxWidth: '1100px',
           margin: '0 auto'
         }}>
-          <span style={{ 
-            fontFamily: "'Melodrama', serif", 
-            fontWeight: 600, 
+          <span className="word-reveal" style={{ 
+            marginRight: '12px',
+            animationDelay: '1.0s'
+          }}>CURIOUS,</span>
+          <span className="word-reveal" style={{ animationDelay: '1.1s' }}>WHAT</span>{' '}
+          <span className="word-reveal" style={{ animationDelay: '1.2s' }}>I'VE</span>{' '}
+          <span className="word-reveal" style={{ animationDelay: '1.3s' }}>BEEN</span>{' '}
+          <span className="glitch-anim-hero" style={{ 
+            display: 'inline-block',
+            fontFamily: "'Melodrama', serif",
             fontStyle: 'italic',
-            letterSpacing: '0em',
-            marginRight: '12px'
-          }}>Curious</span>
-          WHAT I'VE BEEN CREATING?
+            fontWeight: 600,
+            textTransform: 'none'
+          }}>Creating?</span>
         </h1>
 
         <div style={{
@@ -440,6 +447,36 @@ export default function Hero() {
             @keyframes blink {
               0%, 100% { opacity: 1; }
               50% { opacity: 0.3; }
+            }
+            
+            .word-reveal {
+              display: inline-block;
+              opacity: 0;
+              animation: wordRevealAnim 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+            @keyframes wordRevealAnim {
+              0% { opacity: 0; transform: translateY(40px) scale(0.95); filter: blur(10px); }
+              100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
+            }
+            
+            .glitch-anim-hero {
+              animation: pixel-glitch-hero 0.6s steps(1) both;
+              animation-delay: 1.5s;
+            }
+
+            @keyframes pixel-glitch-hero {
+              0% { opacity: 0; transform: translateY(30px); }
+              4% { opacity: 1; transform: translate(-20px, 15px) skewX(50deg) scale(1.1); clip-path: inset(10% 0 80% 0); text-shadow: 15px 0 #ff003c, -15px 0 #00e5ff; }
+              8% { opacity: 1; transform: translate(20px, -10px) skewX(-40deg) scale(0.9); clip-path: inset(80% 0 10% 0); text-shadow: -15px 0 #ff003c, 15px 0 #00e5ff; }
+              12% { opacity: 1; transform: translate(-10px, 20px) skewX(20deg) scale(1.05); clip-path: inset(30% 0 50% 0); text-shadow: 8px 0 #E4FF00, -8px 0 #ff003c; }
+              16% { opacity: 1; transform: translate(15px, -15px) skewX(-30deg) scale(0.95); clip-path: inset(50% 0 20% 0); text-shadow: -10px 0 #E4FF00, 10px 0 #00e5ff; }
+              20% { opacity: 1; transform: translate(-5px, 5px) skewX(10deg); clip-path: inset(20% 0 70% 0); text-shadow: 10px 0 #ff003c, -10px 0 #00e5ff; }
+              24% { opacity: 1; transform: translate(5px, -5px) skewX(-10deg); clip-path: inset(70% 0 20% 0); text-shadow: -5px 0 #E4FF00, 5px 0 #ff003c; }
+              28% { opacity: 1; transform: translate(-10px, 10px) skewX(30deg); clip-path: inset(40% 0 40% 0); text-shadow: 10px 0 #00e5ff, -10px 0 #E4FF00; }
+              32% { opacity: 1; transform: translate(10px, -10px) skewX(-20deg); clip-path: inset(10% 0 10% 0); text-shadow: -10px 0 #ff003c, 10px 0 #00e5ff; }
+              36% { opacity: 1; transform: translate(0, 0) skewX(0); clip-path: none; text-shadow: none; filter: hue-rotate(90deg); }
+              40% { opacity: 1; transform: translateY(0) rotate(0deg); clip-path: none; filter: hue-rotate(0deg); }
+              100% { opacity: 1; transform: translateY(0) rotate(0deg); clip-path: none; }
             }
           `}
         </style>

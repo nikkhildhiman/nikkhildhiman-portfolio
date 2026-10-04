@@ -1,289 +1,266 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { X, ArrowRight, ArrowLeft, CheckCircle2, Film, MonitorPlay, Smartphone, Image as ImageIcon, Camera } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, CheckCircle2 } from 'lucide-react';
 
 export default function BookingModal({ isOpen, onClose }) {
-  const [step, setStep] = useState(1);
-  const [direction, setDirection] = useState('forward'); // for animation direction
-  
   const [formData, setFormData] = useState({
-    projectType: '',
-    budget: '',
     name: '',
     email: '',
     phone: '',
-    details: ''
+    projectType: 'Commercial / Brand Ad',
+    message: ''
   });
-
-  const modalRef = useRef(null);
+  
+  const [submitted, setSubmitted] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      setStep(1); // reset on open
+      setSubmitted(false);
+      setIsClosing(false);
     } else {
       document.body.style.overflow = 'auto';
     }
     return () => { document.body.style.overflow = 'auto'; };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen && !isClosing) return null;
 
-  const nextStep = () => {
-    setDirection('forward');
-    setStep(prev => prev + 1);
-  };
-
-  const prevStep = () => {
-    setDirection('backward');
-    setStep(prev => prev - 1);
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose();
+      setIsClosing(false);
+    }, 500); // Wait for closing animation to finish
   };
 
   const updateForm = (key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
-    // Auto-advance for multiple choice questions
-    if (key === 'projectType' || key === 'budget') {
-      setTimeout(nextStep, 300);
-    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setDirection('forward');
-    setStep(4); // Success step
+    if (!agreed) {
+      alert('Please agree to the processing of personal data.');
+      return;
+    }
+    setSubmitted(true);
   };
 
-  const PROJECT_TYPES = [
-    { id: 'Commercial', icon: Film, label: 'Commercial / Brand Ad' },
-    { id: 'YouTube', icon: MonitorPlay, label: 'YouTube Long-Form' },
-    { id: 'Reels', icon: Smartphone, label: 'Reels / Shorts (9:16)' },
-    { id: 'Thumbnails', icon: ImageIcon, label: 'Thumbnail Package' },
-    { id: 'Documentary', icon: Camera, label: 'Event / Documentary' },
-  ];
+  const inputContainerStyle = {
+    marginBottom: '40px'
+  };
 
-  const BUDGETS = [
-    { id: 't1', label: '₹25,000 - ₹50,000', desc: 'Standard Edits' },
-    { id: 't2', label: '₹50,000 - ₹1,00,000', desc: 'High-Impact Production' },
-    { id: 't3', label: '₹1,00,000 - ₹2,50,000', desc: 'Cinematic Excellence' },
-    { id: 't4', label: '₹2,50,000+', desc: 'Agency / Retainer' },
-  ];
+  const labelStyle = {
+    display: 'block', 
+    fontFamily: 'var(--font-heading)', 
+    fontWeight: 600, 
+    color: 'rgba(255,255,255,0.5)', 
+    marginBottom: '8px', 
+    fontSize: '0.8rem', 
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em'
+  };
+
+  const inputStyle = {
+    width: '100%', 
+    border: 'none',
+    borderBottom: '1px solid rgba(255,255,255,0.2)',
+    background: 'transparent', 
+    outline: 'none', 
+    fontSize: '1.2rem', 
+    color: '#fff', 
+    fontFamily: 'var(--font-body)',
+    paddingBottom: '12px',
+    transition: 'border-color 0.3s ease'
+  };
 
   return (
     <div
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'var(--bg-main)', // Full screen takeover
         zIndex: 99999,
         display: 'flex',
-        flexDirection: 'column',
-        animation: 'modalFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+        pointerEvents: isClosing ? 'none' : 'auto'
       }}
     >
-      {/* Top Navigation Bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'max(40px, calc(20px + env(safe-area-inset-top))) 24px 24px 24px', borderBottom: '1px solid var(--glass-border)' }}>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          {step > 1 && step < 4 && (
-            <button onClick={prevStep} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: 'var(--text-muted)' }}>
-              <ArrowLeft size={24} />
-            </button>
-          )}
-          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '0.8rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-            {step < 4 ? `Step 0${step} / 03` : 'Transmission Complete'}
-          </span>
+      {/* Background layer (Left side) */}
+      <div 
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundColor: '#E4FF00',
+          animation: isClosing ? 'fadeOut 0.5s ease forwards' : 'fadeIn 0.5s ease forwards',
+          display: 'flex',
+          alignItems: 'center',
+          paddingLeft: '5%',
+          overflow: 'hidden'
+        }}
+      >
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          gap: '0',
+          fontSize: 'clamp(4rem, 14vh, 15rem)',
+          fontWeight: 900,
+          fontFamily: 'var(--font-heading)',
+          color: '#111111',
+          lineHeight: 0.8,
+          letterSpacing: '-0.02em',
+          textTransform: 'uppercase',
+          marginLeft: '4vw'
+        }}>
+          {'CONTACT'.split('').map((char, i) => (
+            <span key={i} style={{
+              opacity: 0,
+              animation: isClosing ? 'none' : `blissReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards ${i * 0.1}s`
+            }}>{char}</span>
+          ))}
         </div>
-        
-        <button 
-          onClick={onClose}
-          style={{ 
-            width: '48px', height: '48px', borderRadius: '50%', background: 'var(--color-black)', color: 'var(--bg-main)', 
-            border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-            transition: 'transform 0.2s'
-          }}
-          onMouseDown={e => e.currentTarget.style.transform = 'scale(0.9)'}
-          onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
-        >
-          <X size={20} />
-        </button>
       </div>
+      
+      {/* Close Button */}
+      <button 
+        onClick={handleClose}
+        style={{ position: 'absolute', top: '32px', right: '32px', background: 'transparent', color: '#fff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 30, transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)', animation: isClosing ? 'fadeOut 0.4s ease forwards' : 'fadeIn 0.8s ease forwards 0.4s', opacity: 0 }}
+        onMouseDown={e => e.currentTarget.style.transform = 'scale(0.8)'}
+        onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+      >
+        <X size={40} strokeWidth={2} />
+      </button>
 
-      {/* Main Content Area */}
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-        <div style={{ width: '100%', maxWidth: '720px', position: 'relative' }}>
-          
-          {/* STEP 1: Project Type */}
-          {step === 1 && (
-            <div className="form-step-enter" style={{ width: '100%' }}>
-              <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', color: 'var(--color-black)', marginBottom: '16px', lineHeight: 1.1 }}>
-                What type of visual story are we crafting?
-              </h2>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', marginBottom: '48px' }}>Select the primary format for your project.</p>
-              
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-                {PROJECT_TYPES.map(type => {
-                  const Icon = type.icon;
-                  const isSelected = formData.projectType === type.label;
-                  return (
-                    <button
-                      key={type.id}
-                      onClick={() => updateForm('projectType', type.label)}
-                      style={{
-                        padding: '24px',
-                        background: isSelected ? 'var(--color-black)' : 'transparent',
-                        border: isSelected ? '1px solid var(--color-black)' : '1px solid var(--glass-border)',
-                        borderRadius: '16px',
-                        textAlign: 'left',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        color: isSelected ? 'var(--bg-main)' : 'var(--color-black)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '16px'
-                      }}
-                      className="magnetic-form-card"
-                    >
-                      <Icon size={28} color={isSelected ? 'var(--accent-blue)' : 'var(--color-black)'} />
-                      <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '1.05rem' }}>{type.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
+      {/* Solid Black Form Panel (Right side sliding in) */}
+      <div style={{
+        backgroundColor: '#111111',
+        width: '100%',
+        maxWidth: '600px',
+        height: '100%',
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        zIndex: 20,
+        padding: '100px 60px 60px 60px',
+        boxShadow: '-20px 0 60px rgba(0,0,0,0.3)',
+        display: 'flex',
+        flexDirection: 'column',
+        overflowY: 'auto',
+        animation: isClosing ? 'slideOutRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards' : 'slideInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+      }}>
+        
+        {submitted ? (
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center' }}>
+            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#fff', color: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 32px auto', animation: 'scaleUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+              <CheckCircle2 size={40} />
             </div>
-          )}
-
-          {/* STEP 2: Budget */}
-          {step === 2 && (
-            <div className="form-step-enter" style={{ width: '100%' }}>
-              <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', color: 'var(--color-black)', marginBottom: '16px', lineHeight: 1.1 }}>
-                What is your estimated budget?
-              </h2>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', marginBottom: '48px' }}>This helps us align production scale with expectations.</p>
-              
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
-                {BUDGETS.map(tier => {
-                  const isSelected = formData.budget === tier.label;
-                  return (
-                    <button
-                      key={tier.id}
-                      onClick={() => updateForm('budget', tier.label)}
-                      style={{
-                        padding: '24px 32px',
-                        background: isSelected ? 'var(--color-black)' : 'transparent',
-                        border: isSelected ? '1px solid var(--color-black)' : '1px solid var(--glass-border)',
-                        borderRadius: '16px',
-                        textAlign: 'left',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        color: isSelected ? 'var(--bg-main)' : 'var(--color-black)',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center'
-                      }}
-                    >
-                      <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '1.2rem' }}>{tier.label}</span>
-                      <span style={{ color: isSelected ? 'var(--text-muted)' : 'var(--text-muted)', fontSize: '0.9rem' }}>{tier.desc}</span>
-                    </button>
-                  );
-                })}
-              </div>
+            <h2 style={{ fontSize: '2.5rem', color: '#fff', marginBottom: '16px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '-0.02em' }}>
+              Message Sent
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '1.2rem', marginBottom: '40px' }}>
+              Thanks {formData.name}. We'll reach out shortly.
+            </p>
+            <button onClick={handleClose} style={{ padding: '20px 40px', background: '#fff', color: '#111', border: 'none', borderRadius: '99px', fontSize: '1.1rem', fontWeight: 700, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 auto' }}>
+              Close
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center', animation: isClosing ? 'none' : 'fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s', opacity: 0 }}>
+            
+            <div style={inputContainerStyle}>
+              <label style={labelStyle}>Name</label>
+              <input required type="text" value={formData.name} onChange={e => updateForm('name', e.target.value)} style={inputStyle} onFocus={e => e.target.style.borderColor = '#fff'} onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.2)'} />
             </div>
-          )}
 
-          {/* STEP 3: Details */}
-          {step === 3 && (
-            <div className="form-step-enter" style={{ width: '100%' }}>
-              <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', color: 'var(--color-black)', marginBottom: '16px', lineHeight: 1.1 }}>
-                Final details.
-              </h2>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', marginBottom: '48px' }}>How should we reach out to you to discuss the vision?</p>
-              
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '0.8rem', textTransform: 'uppercase', color: 'var(--color-black)' }}>Your Name</label>
-                  <input 
-                    type="text" 
-                    required
-                    value={formData.name}
-                    onChange={e => updateForm('name', e.target.value)}
-                    placeholder="John Doe"
-                    style={{ background: 'transparent', border: 'none', borderBottom: '2px solid var(--glass-border)', padding: '16px 0', fontSize: '1.5rem', color: 'var(--color-black)', outline: 'none', transition: 'border-color 0.3s' }}
-                    onFocus={e => e.target.style.borderColor = 'var(--color-black)'}
-                    onBlur={e => e.target.style.borderColor = 'var(--glass-border)'}
-                  />
-                </div>
-
-                <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, minWidth: '240px' }}>
-                    <label style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '0.8rem', textTransform: 'uppercase', color: 'var(--color-black)' }}>WhatsApp / Phone</label>
-                    <input 
-                      type="tel" 
-                      required
-                      value={formData.phone}
-                      onChange={e => updateForm('phone', e.target.value)}
-                      placeholder="+91 98765 43210"
-                      style={{ background: 'transparent', border: 'none', borderBottom: '2px solid var(--glass-border)', padding: '16px 0', fontSize: '1.5rem', color: 'var(--color-black)', outline: 'none', transition: 'border-color 0.3s' }}
-                      onFocus={e => e.target.style.borderColor = 'var(--color-black)'}
-                      onBlur={e => e.target.style.borderColor = 'var(--glass-border)'}
-                    />
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1, minWidth: '240px' }}>
-                    <label style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '0.8rem', textTransform: 'uppercase', color: 'var(--color-black)' }}>Email Address</label>
-                    <input 
-                      type="email" 
-                      required
-                      value={formData.email}
-                      onChange={e => updateForm('email', e.target.value)}
-                      placeholder="john@studio.com"
-                      style={{ background: 'transparent', border: 'none', borderBottom: '2px solid var(--glass-border)', padding: '16px 0', fontSize: '1.5rem', color: 'var(--color-black)', outline: 'none', transition: 'border-color 0.3s' }}
-                      onFocus={e => e.target.style.borderColor = 'var(--color-black)'}
-                      onBlur={e => e.target.style.borderColor = 'var(--glass-border)'}
-                    />
-                  </div>
-                </div>
-
-                <button type="submit" className="btn-lime" style={{ marginTop: '24px', padding: '24px', fontSize: '1.2rem', justifyContent: 'space-between' }}>
-                  Submit Project Brief <ArrowRight size={24} />
-                </button>
-              </form>
+            <div style={inputContainerStyle}>
+              <label style={labelStyle}>Email</label>
+              <input required type="email" value={formData.email} onChange={e => updateForm('email', e.target.value)} style={inputStyle} onFocus={e => e.target.style.borderColor = '#fff'} onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.2)'} />
             </div>
-          )}
 
-          {/* STEP 4: Success */}
-          {step === 4 && (
-            <div className="form-step-enter" style={{ textAlign: 'center' }}>
-              <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--color-success)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 32px auto', animation: 'scaleUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)' }}>
-                <CheckCircle2 size={40} />
-              </div>
-              <h2 style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', color: 'var(--color-black)', marginBottom: '16px' }}>
-                BRIEF RECEIVED.
-              </h2>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', marginBottom: '40px', maxWidth: '400px', margin: '0 auto 40px auto' }}>
-                Thanks, {formData.name || 'there'}. I'll review your brief and reach out via WhatsApp shortly to discuss the next steps.
-              </p>
-              <button onClick={onClose} className="btn-secondary">
-                Return to Portfolio
+            <div style={inputContainerStyle}>
+              <label style={labelStyle}>Project Type</label>
+              <select value={formData.projectType} onChange={e => updateForm('projectType', e.target.value)} style={{...inputStyle, appearance: 'none', cursor: 'pointer'}} onFocus={e => e.target.style.borderColor = '#fff'} onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.2)'}>
+                <option value="Commercial / Brand Ad" style={{ color: '#000' }}>Commercial / Brand Ad</option>
+                <option value="YouTube Long-Form" style={{ color: '#000' }}>YouTube Long-Form</option>
+                <option value="Reels / Shorts (9:16)" style={{ color: '#000' }}>Reels / Shorts (9:16)</option>
+                <option value="Thumbnail Package" style={{ color: '#000' }}>Thumbnail Package</option>
+                <option value="Event / Documentary" style={{ color: '#000' }}>Event / Documentary</option>
+              </select>
+            </div>
+
+            <div style={inputContainerStyle}>
+              <label style={labelStyle}>Message</label>
+              <textarea rows="4" required value={formData.message} onChange={e => updateForm('message', e.target.value)} style={{ ...inputStyle, resize: 'none' }} onFocus={e => e.target.style.borderColor = '#fff'} onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.2)'}></textarea>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '40px' }}>
+              <input 
+                type="checkbox" 
+                id="agree" 
+                checked={agreed} 
+                onChange={e => setAgreed(e.target.checked)}
+                style={{ 
+                  width: '18px', 
+                  height: '18px', 
+                  cursor: 'pointer',
+                  accentColor: '#fff' 
+                }} 
+              />
+              <label htmlFor="agree" style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', cursor: 'pointer' }}>
+                I agree to the processing of <strong>Personal data</strong>
+              </label>
+            </div>
+
+            {/* Submit Button */}
+            <div style={{ textAlign: 'center', marginTop: 'auto' }}>
+              <button type="submit" style={{ width: '100%', backgroundColor: '#fff', color: '#111', padding: '20px 24px', borderRadius: '99px', fontSize: '1.2rem', fontWeight: 800, border: 'none', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.05em', transition: 'transform 0.2s ease, opacity 0.2s ease' }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
+                SEND
               </button>
             </div>
-          )}
-
-        </div>
+          </form>
+        )}
       </div>
 
       <style>{`
-        @keyframes modalFadeIn {
-          from { opacity: 0; transform: translateY(20px); }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes fadeOut {
+          from { opacity: 1; }
+          to { opacity: 0; }
+        }
+        @keyframes slideInRight {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
+        @keyframes slideOutRight {
+          from { transform: translateX(0); }
+          to { transform: translateX(100%); }
+        }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(30px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideRightSoft {
+          from { opacity: 0; transform: translateX(-40px); }
+          to { opacity: 1; transform: translateX(0); }
         }
         @keyframes scaleUp {
           from { opacity: 0; transform: scale(0.5); }
           to { opacity: 1; transform: scale(1); }
         }
-        .form-step-enter {
-          animation: modalFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        @keyframes blissReveal {
+          0% { opacity: 0; filter: blur(20px); transform: translateY(40px) scale(0.9); }
+          100% { opacity: 1; filter: blur(0px); transform: translateY(0) scale(1); }
         }
-        .magnetic-form-card:hover {
-          border-color: var(--color-black) !important;
-          transform: translateY(-2px);
+        @media (max-width: 900px) {
+          /* On smaller screens, the black form takes up the whole screen */
+          div[style*="maxWidth: 600px"] {
+            max-width: 100% !important;
+            padding: 80px 30px 40px 30px !important;
+          }
         }
       `}</style>
     </div>
