@@ -166,19 +166,7 @@ export default function App() {
         onToggleDarkMode={handleToggleDarkMode}
       />
 
-      {/* Global Sticky Conversion CTA */}
-      <div className="sticky-cta-container">
-        <button 
-          className="btn-lime magnetic" 
-          onClick={handleOpenBooking}
-          style={{ 
-            boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
-            border: '2px solid rgba(255,255,255,0.1)'
-          }}
-        >
-          START A PROJECT <ArrowUpRight size={20} />
-        </button>
-      </div>
+
 
       {/* Multi-Page Route Views */}
       <main style={{ position: 'relative', zIndex: 2 }}>
