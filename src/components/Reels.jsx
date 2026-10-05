@@ -33,6 +33,7 @@ const ReelCard = ({ reel }) => {
   const progressRef = React.useRef(null);
   const isDragging = React.useRef(false);
   const [hasStarted, setHasStarted] = React.useState(false);
+  const [isLoaded, setIsLoaded] = React.useState(false);
 
   const formatTime = (time) => {
     if (!time || isNaN(time)) return "0:00";
@@ -173,6 +174,7 @@ const ReelCard = ({ reel }) => {
         willChange: 'transform'
       }}
     >
+      <div className="smooth-spinner" style={{ opacity: isLoaded ? 0 : 1, transition: 'opacity 0.5s ease', zIndex: 1 }} />
       <video
         ref={videoRef}
         src={reel.src}
@@ -180,6 +182,7 @@ const ReelCard = ({ reel }) => {
         playsInline
         preload="metadata"
         muted={isMuted}
+        onLoadedData={() => setIsLoaded(true)}
         onPlay={handlePlay}
         onPause={handlePause}
         onEnded={() => setIsPlaying(false)}
@@ -188,8 +191,10 @@ const ReelCard = ({ reel }) => {
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          opacity: (isPlaying || hasStarted) ? 1 : 0.6,
-          transition: 'opacity 0.4s ease'
+          opacity: isLoaded ? ((isPlaying || hasStarted) ? 1 : 0.6) : 0,
+          transition: 'opacity 0.4s ease',
+          zIndex: 2,
+          position: 'relative'
         }}
       />
 

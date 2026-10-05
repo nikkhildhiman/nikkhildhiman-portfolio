@@ -89,6 +89,7 @@ const CustomVideoCard = ({ project, isArchive = false }) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const videoRef = useRef(null);
   const progressRef = useRef(null);
   const isDragging = useRef(false);
@@ -224,6 +225,7 @@ const CustomVideoCard = ({ project, isArchive = false }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      <div className="smooth-spinner" style={{ opacity: isLoaded ? 0 : 1, transition: 'opacity 0.5s ease', zIndex: 1 }} />
       <video 
         ref={videoRef}
         src={project.videoUrl || 'https://www.w3schools.com/html/mov_bbb.mp4'}
@@ -231,6 +233,7 @@ const CustomVideoCard = ({ project, isArchive = false }) => {
         playsInline
         preload="metadata"
         muted={isMuted}
+        onLoadedData={() => setIsLoaded(true)}
         onPlay={handlePlay}
         onPause={handlePause}
         onEnded={() => setIsPlaying(false)}
@@ -239,8 +242,11 @@ const CustomVideoCard = ({ project, isArchive = false }) => {
           width: '100%',
           height: '100%',
           objectFit: 'contain',
-          opacity: 0.9,
-          backgroundColor: '#000' // Ensure black background for letterboxing
+          opacity: isLoaded ? 0.9 : 0,
+          backgroundColor: 'transparent',
+          zIndex: 2,
+          position: 'relative',
+          transition: 'opacity 0.8s ease'
         }}
       />
       
