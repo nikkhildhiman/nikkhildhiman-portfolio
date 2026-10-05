@@ -39,13 +39,36 @@ export default function BookingModal({ isOpen, onClose }) {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!agreed) {
       alert('Please agree to the processing of personal data.');
       return;
     }
-    setSubmitted(true);
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: 'c9355b8d-0f35-4258-803d-a3b1ece7bc13',
+          ...formData
+        })
+      });
+      const result = await response.json();
+      if (result.success) {
+        setSubmitted(true);
+      } else {
+        console.error(result);
+        alert('Something went wrong. Please email directly.');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Something went wrong. Please email directly.');
+    }
   };
 
   const inputContainerStyle = {
@@ -78,6 +101,7 @@ export default function BookingModal({ isOpen, onClose }) {
 
   return (
     <div
+      className="booking-modal-wrapper"
       style={{
         position: 'fixed',
         inset: 0,
@@ -86,8 +110,9 @@ export default function BookingModal({ isOpen, onClose }) {
         pointerEvents: isClosing ? 'none' : 'auto'
       }}
     >
-      {/* Background layer (Left side) */}
+      {/* Background layer */}
       <div 
+        className="contact-bg"
         style={{
           position: 'absolute',
           inset: 0,
@@ -99,7 +124,9 @@ export default function BookingModal({ isOpen, onClose }) {
           overflow: 'hidden'
         }}
       >
-        <div style={{
+        <div 
+          className="contact-text"
+          style={{
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -132,8 +159,10 @@ export default function BookingModal({ isOpen, onClose }) {
         <X size={40} strokeWidth={2} />
       </button>
 
-      {/* Solid Black Form Panel (Right side sliding in) */}
-      <div style={{
+      {/* Solid Black Form Panel */}
+      <div 
+        className="contact-form-panel"
+        style={{
         backgroundColor: '#111111',
         width: '100%',
         maxWidth: '600px',
@@ -256,10 +285,32 @@ export default function BookingModal({ isOpen, onClose }) {
           100% { opacity: 1; filter: blur(0px); transform: translateY(0) scale(1); }
         }
         @media (max-width: 900px) {
-          /* On smaller screens, the black form takes up the whole screen */
-          div[style*="maxWidth: 600px"] {
+          .contact-bg {
+            position: relative !important;
+            height: auto !important;
+            padding: 60px 20px !important;
+            justify-content: center !important;
+            order: 2; /* Put it at the bottom */
+          }
+          .contact-text {
+            flex-direction: row !important;
+            margin-left: 0 !important;
+            font-size: clamp(3rem, 15vw, 6rem) !important;
+            line-height: 1 !important;
+          }
+          .contact-form-panel {
+            position: relative !important;
             max-width: 100% !important;
-            padding: 80px 30px 40px 30px !important;
+            height: auto !important;
+            padding: 80px 30px 60px 30px !important;
+            order: 1; /* Put it at the top */
+            box-shadow: none !important;
+            overflow-y: visible !important;
+          }
+          /* Make the main wrapper scrollable on mobile */
+          .booking-modal-wrapper {
+            flex-direction: column !important;
+            overflow-y: auto !important;
           }
         }
       `}</style>

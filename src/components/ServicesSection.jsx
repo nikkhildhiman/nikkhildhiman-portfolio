@@ -6,21 +6,21 @@ const CATEGORIES = [
     id: '01',
     title: 'VIDEO / FILMS',
     desc: 'Commercial films, event films & cinematic videos',
-    image: 'https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?q=80&w=2070&auto=format&fit=crop',
+    image: '/assets/concept-jecrc.jpg',
     action: 'work'
   },
   {
     id: '02',
     title: 'REELS & SHORT-FORM',
     desc: 'Cinematic reels, social content & short-form films',
-    image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1974&auto=format&fit=crop',
+    image: '/reels/1.jpg',
     action: 'reels'
   },
   {
     id: '03',
     title: 'THUMBNAILS',
     desc: 'YouTube thumbnails, podcast covers & CTR-focused design',
-    image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=2071&auto=format&fit=crop',
+    image: '/assets/thumbnails/141.jpg',
     action: 'thumbnails'
   }
 ];

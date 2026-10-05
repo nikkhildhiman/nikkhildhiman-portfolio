@@ -11,6 +11,8 @@ const baseProjects = [
   { id: '05', title: 'GIRLS REE 4K', category: 'SHORT-FORM', video: '', poster: '/assets/girls-ree-4k.jpg' },
   { id: '06', title: 'YEH DIL', category: 'CAMPAIGN', video: '', poster: '/assets/YEH_DIL_FOR_JECRC.jpg' },
   { id: '07', title: 'SHOOT BTS', category: 'CINEMATOGRAPHY', video: '', poster: '/assets/DSC_7738.jpg' },
+  { id: '08', title: 'PORTRAIT', category: 'CREATIVE', video: '', poster: '/hero-card-1.jpg' },
+  { id: '09', title: 'GEAR', category: 'PRODUCTION', video: '', poster: '/hero-card-2.jpg' },
 ];
 
 // Use 9 cards to fill the wide cinematic lens and ensure smooth edge recycling
@@ -23,18 +25,6 @@ export const orbitProjects = Array.from({ length: 9 }).map((_, i) => ({
 // ORBIT CARD COMPONENT
 // ==========================================
 const OrbitCard = ({ project, transformData, isHovered, onHover, onLeave }) => {
-  const videoRef = useRef(null);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      if (transformData.opacity > 0.1) {
-        videoRef.current.play().catch(() => {});
-      } else {
-        videoRef.current.pause();
-      }
-    }
-  }, [transformData.opacity]);
-
   const finalZIndex = isHovered ? 60 : transformData.zIndex;
   const innerBlur = isHovered ? 0 : transformData.blur;
   
@@ -80,24 +70,12 @@ const OrbitCard = ({ project, transformData, isHovered, onHover, onLeave }) => {
         // Hover: Lift from the physical deck +50px Z, -10px Y, scale 1.04
         transform: isHovered ? `translate3d(0, -10px, 50px) scale(1.04)` : `translate3d(0, 0, 0) scale(1)`,
       }}>
-        {/* 100% OPACITY CRISP MEDIA */}
-        {project.video ? (
-          <video
-            ref={videoRef}
-            src={project.video}
-            poster={project.poster}
-            muted
-            loop
-            playsInline
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-        ) : (
-          <img 
-            src={project.poster} 
-            alt={project.title} 
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-          />
-        )}
+        {/* STATIC IMAGE ONLY */}
+        <img 
+          src={project.poster} 
+          alt={project.title} 
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+        />
       </div>
     </div>
   );

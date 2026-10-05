@@ -107,25 +107,6 @@ export default function ThumbnailGallery({ onNavigate }) {
                 alt={thumb.title} 
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
-              
-              {/* Overlay on Hover */}
-              <div 
-                className="thumbnail-overlay"
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
-                  opacity: 0,
-                  transition: 'opacity 0.3s ease',
-                  display: 'flex',
-                  alignItems: 'flex-end',
-                  padding: '20px'
-                }}
-              >
-                <div style={{ color: '#fff', fontFamily: 'var(--font-heading)', fontWeight: 700, letterSpacing: '0.05em' }}>
-                  {thumb.title}
-                </div>
-              </div>
             </div>
           ))}
         </div>

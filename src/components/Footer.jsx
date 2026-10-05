@@ -133,7 +133,7 @@ export default function Footer({ onNavigate, onOpenBooking, activePage }) {
             </button>
 
             <a 
-              href="mailto:nikhil@studio.com" 
+              href="mailto:ndproductions009@gmail.com" 
               className="magnetic" 
               style={btnStyleOutline}
               onMouseEnter={(e) => { e.currentTarget.style.background = '#111111'; e.currentTarget.style.color = 'var(--text-main)'; e.currentTarget.style.transform = 'translateY(-3px)'; }}
@@ -288,6 +288,7 @@ export default function Footer({ onNavigate, onOpenBooking, activePage }) {
                   }}>
                     {/* Decorative Star Icon */}
                     <div 
+                      className="footer-star-icon"
                       onClick={() => setIsSpinning(prev => !prev)}
                       style={{ 
                       position: 'absolute', 
@@ -390,6 +391,16 @@ export default function Footer({ onNavigate, onOpenBooking, activePage }) {
           .footer-tab-wrapper-single {
             left: 10%;
             width: 80%;
+          }
+          .footer-star-icon {
+            top: 16px !important;
+            right: 16px !important;
+            width: 36px !important;
+            height: 36px !important;
+          }
+          .footer-star-icon svg {
+            width: 18px !important;
+            height: 18px !important;
           }
         }
         @keyframes starSpin {

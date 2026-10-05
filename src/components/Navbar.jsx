@@ -13,6 +13,7 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const menuRef = useRef(null);
 
   // Close dropdown on outside click / Escape
@@ -47,8 +48,16 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking }) {
       setScrolled(window.scrollY > 30);
       if (window.scrollY > 30) setMenuOpen(false);
     };
+    
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize();
+    
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleResize, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   useEffect(() => {
@@ -75,11 +84,15 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking }) {
         left: 0,
         right: 0,
         zIndex: 9000,
-        padding: '24px 0',
         transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-        opacity: scrolled ? 0 : 1,
-        transform: scrolled ? 'translateY(-20px)' : 'translateY(0)',
-        pointerEvents: scrolled ? 'none' : 'auto',
+        opacity: (!isMobile && scrolled) ? 0 : 1,
+        transform: (!isMobile && scrolled) ? 'translateY(-20px)' : 'translateY(0)',
+        pointerEvents: (!isMobile && scrolled) ? 'none' : 'auto',
+        padding: (isMobile && scrolled) ? '16px 0' : '24px 0',
+        background: (isMobile && scrolled) ? 'rgba(16, 16, 16, 0.85)' : 'transparent',
+        backdropFilter: (isMobile && scrolled) ? 'blur(20px)' : 'none',
+        WebkitBackdropFilter: (isMobile && scrolled) ? 'blur(20px)' : 'none',
+        borderBottom: (isMobile && scrolled) ? '1px solid rgba(255,255,255,0.05)' : '1px solid transparent',
       }}
     >
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -132,7 +145,8 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking }) {
               id="nav-menu-toggle"
               aria-label="Open menu"
               aria-expanded={menuOpen}
-              onClick={() => setMenuOpen((o) => !o)}
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setMenuOpen((o) => !o); }}
+              onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); setMenuOpen((o) => !o); }}
               className={`nav-menu-btn ${menuOpen ? 'open' : ''}`}
             >
               {menuOpen ? <X size={18} strokeWidth={2.4} style={{ pointerEvents: 'none' }} /> : <Menu size={18} strokeWidth={2.4} style={{ pointerEvents: 'none' }} />}

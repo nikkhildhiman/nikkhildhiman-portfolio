@@ -9,56 +9,44 @@ gsap.registerPlugin(ScrollTrigger);
 const PORTFOLIO_DATA = [
   {
     id: 1,
-    title: 'Nike Air Max - Defy Gravity',
-    category: 'COMMERCIAL',
-    client: 'Nike Global',
+    title: 'OLD CITY X JU',
+    category: 'CAMPAIGN',
     thumbnailUrl: '/assets/concept-jecrc.jpg',
-    metric: '12M+ Views',
     videoUrl: '/assets/concept-jecrc.mp4'
   },
   {
     id: 2,
-    title: 'The Art of Coffee',
-    category: 'DOCUMENTARY',
-    client: 'Blue Bottle',
+    title: 'YE DIL X JU',
+    category: 'MUSIC VIDEO',
     thumbnailUrl: '/assets/YEH_DIL_FOR_JECRC.jpg',
-    metric: 'Staff Pick',
     videoUrl: '/assets/YEH_DIL_FOR_JECRC.mp4'
   },
   {
     id: 3,
-    title: 'Dynamic Sequence 01',
-    category: 'REELS',
-    client: 'Creator',
+    title: 'CINEMATIC EDIT',
+    category: 'CINEMATIC',
     thumbnailUrl: '/assets/Sequence_01_25.jpg',
-    metric: 'High Retention',
     videoUrl: '/assets/Sequence_01_25.mp4'
   },
   {
     id: 4,
-    title: 'Socialz 2',
-    category: 'REELS',
-    client: 'Nikhil x Socialz',
+    title: 'SOCIALZ DOCUMENTARY',
+    category: 'DOCUMENTARY',
     thumbnailUrl: '/assets/Nikkhil_x_socialz_2.jpg',
-    metric: 'High Engagement',
     videoUrl: '/assets/Nikkhil_x_socialz_2.MP4'
   },
   {
     id: 5,
-    title: 'Tech Review Hook',
-    category: 'REELS',
-    client: 'Creator MKBHD',
+    title: 'JAIPUR X CREATORS',
+    category: 'ADS',
     thumbnailUrl: '/assets/Nikhil_x_Khushal.jpg',
-    metric: '92% Retention',
     videoUrl: '/assets/Nikhil_x_Khushal.mp4'
   },
   {
     id: 6,
-    title: 'Midnight Run',
+    title: 'MIDNIGHT RUN',
     category: 'SHORT FILM',
-    client: 'Independent',
     thumbnailUrl: '/assets/girls-ree-4k.jpg',
-    metric: 'Award Winner',
     videoUrl: '/assets/girls-ree-4k.mp4'
   }
 ];
@@ -456,7 +444,7 @@ const CustomVideoCard = ({ project, isArchive = false }) => {
   );
 };
 
-const AccordionVideoItem = ({ project, isActive, onActivate, onOpenVideo, shouldAutoUnmute }) => {
+const AccordionVideoItem = ({ project, isActive, onActivate, onOpenVideo, shouldAutoUnmute, forceMute }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -500,6 +488,12 @@ const AccordionVideoItem = ({ project, isActive, onActivate, onOpenVideo, should
     }
     return () => clearTimeout(idleTimer.current);
   }, [isActive, shouldAutoUnmute]);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = forceMute || isMuted;
+    }
+  }, [forceMute, isMuted]);
 
   const formatTime = (time) => {
     if (!time || isNaN(time)) return "0:00";
@@ -650,7 +644,7 @@ const AccordionVideoItem = ({ project, isActive, onActivate, onOpenVideo, should
         flexDirection: 'column',
         justifyContent: 'space-between',
         zIndex: 1,
-        opacity: isActive ? (isIdle ? 0 : 1) : 0.4,
+        opacity: isActive ? (isIdle ? 0 : 1) : 1,
         transition: 'opacity 0.8s ease',
         pointerEvents: 'none'
       }}>
@@ -683,7 +677,7 @@ const AccordionVideoItem = ({ project, isActive, onActivate, onOpenVideo, should
           transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s'
         }}>
           <h3 style={{
-            fontFamily: "'Melodrama', serif",
+            fontFamily: 'var(--font-heading)',
             fontSize: 'clamp(1.2rem, 2vw, 1.8rem)',
             fontWeight: 600,
             lineHeight: 1.1,
@@ -692,15 +686,6 @@ const AccordionVideoItem = ({ project, isActive, onActivate, onOpenVideo, should
           }}>
             {project.title}
           </h3>
-          <p style={{
-            margin: 0,
-            color: 'var(--text-main)',
-            fontSize: '0.85rem',
-            fontWeight: 500,
-            opacity: 0.9
-          }}>
-            {project.client} &bull; {project.metric}
-          </p>
         </div>
       </div>
 
@@ -839,6 +824,19 @@ export default function SelectedWork({ onOpenVideo, isWorkPage = false }) {
   const [showArchive, setShowArchive] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
   const [userHasInteracted, setUserHasInteracted] = useState(false);
+  const [isInView, setIsInView] = useState(true);
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        setIsInView(entry.isIntersecting);
+      });
+    }, { threshold: 0.1 });
+    
+    observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     // Elegant fade-in animation for cards as you scroll down normally
@@ -949,6 +947,7 @@ export default function SelectedWork({ onOpenVideo, isWorkPage = false }) {
                 project={project}
                 isActive={activeIdx === idx}
                 shouldAutoUnmute={userHasInteracted}
+                forceMute={!isInView}
                 onActivate={() => {
                   setUserHasInteracted(true);
                   setActiveIdx(idx);
