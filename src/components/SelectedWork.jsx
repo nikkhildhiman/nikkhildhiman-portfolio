@@ -592,10 +592,10 @@ const AccordionVideoItem = ({ project, isActive, onActivate, onOpenVideo, should
           setIsIdle(true);
         }
       }}
+      className={`accordion-item ${isActive ? 'active' : ''}`}
       style={{
         position: 'relative',
         flex: isActive ? 6 : 1,
-        height: '100%',
         borderRadius: '24px',
         overflow: 'hidden',
         cursor: 'pointer',
@@ -626,8 +626,8 @@ const AccordionVideoItem = ({ project, isActive, onActivate, onOpenVideo, should
             objectFit: isActive ? 'contain' : 'cover',
             backgroundColor: '#000',
             transform: isActive ? 'scale(1)' : 'scale(1.2)',
-            transition: 'transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)',
-            filter: isActive ? 'grayscale(0%)' : 'grayscale(100%) brightness(0.4)'
+            transition: 'transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), filter 1.2s ease',
+            filter: isActive ? 'grayscale(0%)' : 'grayscale(100%)'
           }}
         />
         {/* Gradient Overlay for Text Readability */}
@@ -635,28 +635,30 @@ const AccordionVideoItem = ({ project, isActive, onActivate, onOpenVideo, should
           position: 'absolute',
           inset: 0,
           background: 'linear-gradient(to top, rgba(17,17,17,0.9) 0%, rgba(17,17,17,0.4) 40%, transparent 100%)',
-          opacity: isActive ? (isIdle ? 0 : 1) : 0.6,
+          opacity: isActive ? 1 : 0.6,
           transition: 'opacity 0.8s ease',
           pointerEvents: 'none'
         }} />
       </div>
 
       {/* Content Overlay */}
-      <div style={{
+      <div className="accordion-content-overlay" style={{
         position: 'absolute',
         inset: 0,
-        padding: '32px 32px 80px 32px', // Pushed bottom text up to make room for progress bar
+        padding: '32px 32px 80px 32px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
         zIndex: 1,
         opacity: isActive ? (isIdle ? 0 : 1) : 0.4,
         transition: 'opacity 0.8s ease',
-        pointerEvents: 'none' // Let clicks pass through to video/controls
+        pointerEvents: 'none'
       }}>
         
         {/* Category */}
-        <div style={{
+        <div 
+          className={`accordion-category ${isActive ? 'active' : ''}`}
+          style={{
           fontFamily: "'Melodrama', serif",
           fontSize: '1rem',
           fontWeight: 600,
@@ -665,7 +667,6 @@ const AccordionVideoItem = ({ project, isActive, onActivate, onOpenVideo, should
           color: '#E4FF00',
           textTransform: 'lowercase',
           transition: 'all 0.4s ease',
-          writingMode: isActive ? 'horizontal-tb' : 'vertical-rl',
           alignSelf: 'center',
           textAlign: 'center'
         }}>
@@ -941,13 +942,7 @@ export default function SelectedWork({ onOpenVideo, isWorkPage = false }) {
             ))}
           </div>
         ) : (
-          <div style={{
-            flex: 1,
-            display: 'flex',
-            width: '100%',
-            height: '75vh',
-            gap: '12px'
-          }}>
+          <div className="accordion-container">
             {PORTFOLIO_DATA.slice(0, 5).map((project, idx) => (
               <AccordionVideoItem 
                 key={project.id}
@@ -1118,9 +1113,38 @@ export default function SelectedWork({ onOpenVideo, isWorkPage = false }) {
         .portfolio-normal-grid {
           grid-template-columns: repeat(2, 1fr) !important;
         }
+        .accordion-container {
+          flex: 1;
+          display: flex;
+          width: 100%;
+          height: 75vh;
+          gap: 12px;
+          flex-direction: row;
+        }
+        .accordion-item {
+          height: 100%;
+          width: auto;
+        }
+        .accordion-category {
+          writing-mode: vertical-rl;
+        }
+        .accordion-category.active {
+          writing-mode: horizontal-tb;
+        }
         @media (max-width: 1024px) {
           .portfolio-normal-grid {
             grid-template-columns: 1fr !important;
+          }
+          .accordion-container {
+            flex-direction: column !important;
+            height: 85vh !important;
+          }
+          .accordion-item {
+            width: 100% !important;
+            height: auto !important;
+          }
+          .accordion-category {
+            writing-mode: horizontal-tb !important;
           }
         }
         .grid-card {

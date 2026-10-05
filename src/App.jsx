@@ -71,6 +71,10 @@ export default function App() {
 
     // Keyboard Easter Egg: Press 'P' for Cinema Dark Mode
     const handleKeyDown = (e) => {
+      // Ignore if user is typing in an input or textarea
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        return;
+      }
       if (e.key === 'p' || e.key === 'P') {
         setDarkMode((prev) => !prev);
       }

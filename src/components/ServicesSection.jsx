@@ -67,9 +67,9 @@ export default function ServicesSection({ onNavigate }) {
         }}>
           
           {/* Left Column: Typography & Context */}
-          <div style={{ position: 'sticky', top: '120px' }}>
+          <div className="services-sticky-col" style={{ position: 'sticky', top: '120px' }}>
 
-            <h2 style={{ 
+            <h2 className="services-main-title" style={{ 
               fontSize: 'clamp(3rem, 7vw, 6rem)', 
               margin: '0 0 32px 0', 
               lineHeight: 0.85, 
@@ -88,7 +88,7 @@ export default function ServicesSection({ onNavigate }) {
               }}>
                 WHAT <span style={{ fontFamily: "'Melodrama', serif", fontStyle: 'italic', WebkitTextStroke: 'none', color: 'var(--text-main)' }}>I</span>
               </span>
-              <span className={isVisible ? "glitch-in-view" : "glitch-hidden"} style={{ 
+              <span className={isVisible ? "glitch-in-view services-create-text" : "glitch-hidden services-create-text"} style={{ 
                 fontFamily: "'Melodrama', serif", 
                 fontStyle: 'italic', 
                 color: '#E4FF00', 
@@ -220,10 +220,21 @@ export default function ServicesSection({ onNavigate }) {
         @media (max-width: 900px) {
           .services-grid {
             grid-template-columns: 1fr !important;
-            gap: 60px !important;
+            gap: 40px !important;
+          }
+          .services-sticky-col {
+            position: relative !important;
+            top: 0 !important;
+          }
+          .services-main-title {
+            font-size: clamp(4rem, 14vw, 5.5rem) !important;
+          }
+          .services-create-text {
+            padding-left: 0 !important;
+            margin-top: -0.08em !important;
           }
           .service-row {
-            padding: 32px 0 !important;
+            padding: 24px 0 !important;
             transform: none !important;
           }
           .service-row:hover {

@@ -1,13 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowUpRight, Menu, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ArrowUpRight, Menu, X, Home, Briefcase, Clapperboard, Image as ImageIcon, Mail } from 'lucide-react';
+
+const menuItems = [
+  { label: 'Home', page: 'home', icon: Home },
+  { label: 'My Work', page: 'work', icon: Briefcase },
+  { label: 'Reels', page: 'reels', icon: Clapperboard },
+  { label: 'Thumbnails', page: 'thumbnails', icon: ImageIcon },
+  { label: 'Contact', page: null, icon: Mail },
+];
 
 export default function Navbar({ activePage, onNavigate, onOpenBooking }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  // Close dropdown on outside click / Escape
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onDown = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+    };
+    const onKey = (e) => e.key === 'Escape' && setMenuOpen(false);
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('touchstart', onDown, { passive: true });
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('touchstart', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [menuOpen]);
+
+  const handleItem = (item) => {
+    setMenuOpen(false);
+    if (item.page) {
+      onNavigate(item.page);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      onOpenBooking();
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 30);
+      if (window.scrollY > 30) setMenuOpen(false);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -66,26 +104,64 @@ export default function Navbar({ activePage, onNavigate, onOpenBooking }) {
           NDProductions
         </div>
 
-        {/* Let's Work CTA */}
-        <span
-          onClick={onOpenBooking}
-          style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '0.95rem',
-            fontWeight: 600,
-            color: '#E4FF00',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-            padding: 0,
-            transition: 'opacity 0.2s ease'
-          }}
-          onMouseEnter={(e) => (e.target.style.opacity = '0.7')}
-          onMouseLeave={(e) => (e.target.style.opacity = '1')}
-        >
-          Let's work ↗
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+          {/* Let's Work CTA */}
+          <span
+            onClick={onOpenBooking}
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.95rem',
+              fontWeight: 600,
+              color: '#E4FF00',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              padding: 0,
+              transition: 'opacity 0.2s ease'
+            }}
+            onMouseEnter={(e) => (e.target.style.opacity = '0.7')}
+            onMouseLeave={(e) => (e.target.style.opacity = '1')}
+          >
+            Let's work ↗
+          </span>
+
+          {/* Dropdown Menu */}
+          <div ref={menuRef} style={{ position: 'relative' }}>
+            <button
+              id="nav-menu-toggle"
+              aria-label="Open menu"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((o) => !o)}
+              className={`nav-menu-btn ${menuOpen ? 'open' : ''}`}
+            >
+              {menuOpen ? <X size={18} strokeWidth={2.4} style={{ pointerEvents: 'none' }} /> : <Menu size={18} strokeWidth={2.4} style={{ pointerEvents: 'none' }} />}
+            </button>
+
+            <div className={`nav-dropdown ${menuOpen ? 'open' : ''}`} role="menu">
+              {menuItems.map((item, i) => (
+                <button
+                  key={item.label}
+                  id={`nav-menu-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+                  role="menuitem"
+                  className={`nav-dropdown-item ${item.page && activePage === item.page ? 'active' : ''}`}
+                  style={{ transitionDelay: menuOpen ? `${i * 40}ms` : '0ms' }}
+                  onClick={() => handleItem(item)}
+                  onTouchEnd={(e) => {
+                    e.preventDefault();
+                    handleItem(item);
+                  }}
+                >
+                  <span className="nav-dropdown-label" style={{ pointerEvents: 'none' }}>
+                    <span className="nav-dropdown-icon"><item.icon size={15} strokeWidth={2} /></span>
+                    {item.label}
+                  </span>
+                  <ArrowUpRight size={16} className="nav-dropdown-arrow" style={{ pointerEvents: 'none' }} />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </header>
   );

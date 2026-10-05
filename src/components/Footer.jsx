@@ -212,14 +212,12 @@ export default function Footer({ onNavigate, onOpenBooking, activePage }) {
                   pointerEvents: 'none'
                 }}
               >
-                {/* Tab */}
                 <div 
+                  className={folders.length === 1 ? 'footer-tab-wrapper-single' : `footer-tab-wrapper-${folder.id}`}
                   onClick={() => setActiveFolder(folder.id)}
                   style={{
                     position: 'absolute',
                     top: 0,
-                    left: folder.id === 0 ? '10%' : '55%', 
-                    width: '35%',
                     height: '48px',
                     cursor: 'pointer',
                     display: 'flex',
@@ -246,14 +244,12 @@ export default function Footer({ onNavigate, onOpenBooking, activePage }) {
                     zIndex: 3
                   }} />
 
-                  <span style={{ 
+                  <span className="footer-tab-text" style={{ 
                     position: 'relative', 
                     zIndex: 4, 
                     color: isSolid ? '#111111' : 'var(--text-muted)', 
                     fontWeight: 800,
-                    fontSize: '0.9rem',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.08em',
                     transition: 'color 0.4s ease'
                   }}>
                     {folder.tab}
@@ -352,6 +348,12 @@ export default function Footer({ onNavigate, onOpenBooking, activePage }) {
       </div>
 
       <style>{`
+        .footer-tab-text {
+          font-size: 0.9rem;
+          letter-spacing: 0.08em;
+          white-space: nowrap;
+          text-align: center;
+        }
         .footer-tab-shape {
           position: absolute;
           inset: 0;
@@ -359,6 +361,36 @@ export default function Footer({ onNavigate, onOpenBooking, activePage }) {
           transform-origin: bottom;
           border-radius: 12px 12px 0 0;
           transition: all 0.5s ease;
+        }
+        .footer-tab-wrapper-0 {
+          left: 10%;
+          width: 35%;
+        }
+        .footer-tab-wrapper-1 {
+          left: 55%;
+          width: 35%;
+        }
+        .footer-tab-wrapper-single {
+          left: 32.5%;
+          width: 35%;
+        }
+        @media (max-width: 768px) {
+          .footer-tab-text {
+            font-size: 0.7rem !important;
+            letter-spacing: 0.02em !important;
+          }
+          .footer-tab-wrapper-0 {
+            left: 2%;
+            width: 46%;
+          }
+          .footer-tab-wrapper-1 {
+            left: 52%;
+            width: 46%;
+          }
+          .footer-tab-wrapper-single {
+            left: 10%;
+            width: 80%;
+          }
         }
         @keyframes starSpin {
           from { transform: rotate(0deg); }

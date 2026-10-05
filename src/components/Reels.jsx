@@ -368,17 +368,40 @@ export default function Reels({ onOpenVideo, onNavigate }) {
     const ctx = gsap.context(() => {
       const cards = gsap.utils.toArray(gridRef.current.children);
       
-      // Initial hidden state
-      gsap.set(cards, { opacity: 0, y: 100, filter: 'blur(5px)' });
+      const isMobile = window.innerWidth <= 900;
 
-      ScrollTrigger.batch(cards, {
-        start: 'top 90%', // Trigger when entering from bottom
-        end: 'bottom 10%', // Trigger when exiting from top
-        onEnter: batch => gsap.to(batch, { opacity: 1, y: 0, filter: 'blur(0px)', stagger: 0.1, duration: 1.0, ease: 'power4.out', overwrite: true }),
-        onLeave: batch => gsap.to(batch, { opacity: 0, y: -80, filter: 'blur(5px)', stagger: 0.1, duration: 0.8, ease: 'power3.out', overwrite: true }),
-        onEnterBack: batch => gsap.to(batch, { opacity: 1, y: 0, filter: 'blur(0px)', stagger: 0.1, duration: 1.0, ease: 'power4.out', overwrite: true }),
-        onLeaveBack: batch => gsap.to(batch, { opacity: 0, y: 80, filter: 'blur(5px)', stagger: 0.1, duration: 0.8, ease: 'power3.out', overwrite: true })
-      });
+      if (isMobile) {
+        cards.forEach((card) => {
+          // Set initial state for mobile
+          gsap.set(card, { opacity: 0, y: 80, filter: 'blur(4px)' });
+          
+          // Create individual scroll trigger for mobile
+          gsap.to(card, {
+            opacity: 1,
+            y: 0,
+            filter: 'blur(0px)',
+            duration: 1.0,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 95%', // Trigger as soon as top 5% is visible
+              once: true // Animate only once and never hide again
+            }
+          });
+        });
+      } else {
+        // Desktop Animation (Original Batch Logic)
+        gsap.set(cards, { opacity: 0, y: 100, filter: 'blur(5px)' });
+
+        ScrollTrigger.batch(cards, {
+          start: 'top 90%', 
+          end: 'bottom 10%', 
+          onEnter: batch => gsap.to(batch, { opacity: 1, y: 0, filter: 'blur(0px)', stagger: 0.1, duration: 1.0, ease: 'power4.out', overwrite: true }),
+          onLeave: batch => gsap.to(batch, { opacity: 0, y: -80, filter: 'blur(5px)', stagger: 0.1, duration: 0.8, ease: 'power3.out', overwrite: true }),
+          onEnterBack: batch => gsap.to(batch, { opacity: 1, y: 0, filter: 'blur(0px)', stagger: 0.1, duration: 1.0, ease: 'power4.out', overwrite: true }),
+          onLeaveBack: batch => gsap.to(batch, { opacity: 0, y: 80, filter: 'blur(5px)', stagger: 0.1, duration: 0.8, ease: 'power3.out', overwrite: true })
+        });
+      }
     }, gridRef);
 
     return () => ctx.revert();
@@ -583,12 +606,12 @@ export default function Reels({ onOpenVideo, onNavigate }) {
             max-width: 600px;
           }
         }
-        }
-        
         @media (max-width: 600px) {
           .reels-grid {
             grid-template-columns: 1fr;
-            max-width: 300px;
+            max-width: 400px;
+            gap: 24px;
+            padding: 0 16px;
           }
         }
       `}</style>

@@ -130,7 +130,7 @@ export default function About() {
                 transform: `translate(${mousePos.x * 40}px, ${mousePos.y * 40}px)`,
                 transition: 'transform 0.1s ease-out',
               }}>
-                <div style={{
+                <div className="about-badge-left" style={{
                   position: 'absolute',
                   top: '-5%',
                   left: '-10%',
@@ -147,7 +147,7 @@ export default function About() {
                   2+ Years
                 </div>
                 
-                <div style={{
+                <div className="about-badge-right" style={{
                   position: 'absolute',
                   bottom: '-5%',
                   right: '-10%',
@@ -170,7 +170,7 @@ export default function About() {
 
           {/* Right: Text Copy */}
           <div className="about-text-col about-reveal" style={{ gridColumn: 'span 12', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-            <h3 style={{ 
+            <h3 className="about-title" style={{ 
               fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', 
               color: 'var(--text-main)', 
               fontWeight: 800, 
@@ -180,17 +180,17 @@ export default function About() {
               letterSpacing: '-0.02em'
             }}>
               I turn ideas into <br className="hide-mobile" />
-              <span style={{ color: '#E4FF00', fontStyle: 'italic', fontFamily: "'Melodrama', serif", textTransform: 'none', fontWeight: 600 }}>visual stories people remember.</span>
+              <span style={{ color: '#E4FF00', fontStyle: 'italic', fontFamily: "'Melodrama', serif", textTransform: 'none', fontWeight: 600 }}>visual stories that people remember.</span>
             </h3>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <p style={{ fontSize: '1.15rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0' }}>
+            <div className="about-desc-container" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <p className="about-desc" style={{ fontSize: '1.15rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0' }}>
                 I’m <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>Nikhil</span> — a creative director and visual storyteller who loves turning raw ideas into content that actually connects.
               </p>
-              <p style={{ fontSize: '1.15rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0' }}>
+              <p className="about-desc" style={{ fontSize: '1.15rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0' }}>
                 For the past 2+ years, I’ve been creating, directing, editing, and designing for creators, brands, and digital platforms. I’m obsessed with <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>storytelling, visual psychology, pacing, and the little details</span> that make people stop scrolling and keep watching.
               </p>
-              <p style={{ fontSize: '1.15rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0' }}>
+              <p className="about-desc" style={{ fontSize: '1.15rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0' }}>
                 Whether it’s a reel, a thumbnail, a campaign, or a complete visual identity — I don’t just make things look good. <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>I think about why they work.</span>
               </p>
             </div>
@@ -200,6 +200,31 @@ export default function About() {
       </div>
 
       <style>{`
+        @media (max-width: 768px) {
+          .about-title {
+            font-size: 2.1rem !important;
+          }
+          .about-desc {
+            font-size: 1rem !important;
+          }
+          .about-text-col {
+            padding: 0 16px;
+            gap: 24px !important;
+          }
+          .about-desc-container {
+            gap: 16px !important;
+          }
+          .about-badge-left {
+            left: 0 !important;
+            top: -2% !important;
+            transform: translateX(10px);
+          }
+          .about-badge-right {
+            right: 0 !important;
+            bottom: -2% !important;
+            transform: translateX(-10px);
+          }
+        }
         @media (min-width: 992px) {
           .about-photo-col { grid-column: span 5 !important; }
           .about-text-col { grid-column: span 7 !important; }
