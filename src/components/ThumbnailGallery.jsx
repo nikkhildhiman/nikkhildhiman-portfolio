@@ -5,49 +5,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const ThumbnailGalleryCard = ({ thumb }) => {
-  const [isLoaded, setIsLoaded] = React.useState(false);
-
-  return (
-    <div 
-      className="thumbnail-card"
-      style={{
-        position: 'relative',
-        borderRadius: '24px',
-        overflow: 'hidden',
-        aspectRatio: '16/9',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-        cursor: 'pointer',
-        transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateY(-10px) scale(1.02)';
-        e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.2)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = 'translateY(0) scale(1)';
-        e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
-      }}
-    >
-      <div className="smooth-spinner" style={{ opacity: isLoaded ? 0 : 1, transition: 'opacity 0.5s ease', zIndex: 1 }} />
-      <img 
-        src={thumb.img} 
-        alt={thumb.title} 
-        onLoad={() => setIsLoaded(true)}
-        style={{ 
-          width: '100%', 
-          height: '100%', 
-          objectFit: 'cover',
-          opacity: isLoaded ? 1 : 0,
-          transition: 'opacity 0.4s ease',
-          position: 'relative',
-          zIndex: 2
-        }}
-      />
-    </div>
-  );
-};
-
 export default function ThumbnailGallery({ onNavigate }) {
   const sectionRef = useRef(null);
   const gridRef = useRef(null);
@@ -122,7 +79,35 @@ export default function ThumbnailGallery({ onNavigate }) {
           }}
         >
           {thumbnails.map((thumb) => (
-            <ThumbnailGalleryCard key={thumb.id} thumb={thumb} />
+            <div 
+              key={thumb.id}
+              className="thumbnail-card"
+              style={{
+                position: 'relative',
+                borderRadius: '24px',
+                overflow: 'hidden',
+                aspectRatio: '16/9',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+                cursor: 'pointer',
+                transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-10px) scale(1.02)';
+                e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.2)';
+                e.currentTarget.querySelector('.thumbnail-overlay').style.opacity = '1';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+                e.currentTarget.querySelector('.thumbnail-overlay').style.opacity = '0';
+              }}
+            >
+              <img 
+                src={thumb.img} 
+                alt={thumb.title} 
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </div>
           ))}
         </div>
       </div>

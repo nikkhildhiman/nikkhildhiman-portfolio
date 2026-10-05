@@ -25,7 +25,6 @@ export const orbitProjects = Array.from({ length: 9 }).map((_, i) => ({
 // ORBIT CARD COMPONENT
 // ==========================================
 const OrbitCard = ({ project, transformData, isHovered, onHover, onLeave }) => {
-  const [isLoaded, setIsLoaded] = useState(false);
   const finalZIndex = isHovered ? 60 : transformData.zIndex;
   const innerBlur = isHovered ? 0 : transformData.blur;
   
@@ -72,20 +71,10 @@ const OrbitCard = ({ project, transformData, isHovered, onHover, onLeave }) => {
         transform: isHovered ? `translate3d(0, -10px, 50px) scale(1.04)` : `translate3d(0, 0, 0) scale(1)`,
       }}>
         {/* STATIC IMAGE ONLY */}
-        <div className="smooth-spinner" style={{ opacity: isLoaded ? 0 : 1, transition: 'opacity 0.5s ease', zIndex: 1 }} />
         <img 
           src={project.poster} 
           alt={project.title} 
-          onLoad={() => setIsLoaded(true)}
-          style={{ 
-            width: '100%', 
-            height: '100%', 
-            objectFit: 'cover',
-            opacity: isLoaded ? 1 : 0,
-            transition: 'opacity 0.4s ease',
-            position: 'relative',
-            zIndex: 2
-          }} 
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
         />
       </div>
     </div>

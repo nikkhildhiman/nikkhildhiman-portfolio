@@ -10,7 +10,6 @@ gsap.registerPlugin(ScrollTrigger);
 const ThumbnailCard = ({ data, index }) => {
   const cardRef = useRef(null);
   const imageRef = useRef(null);
-  const [isLoaded, setIsLoaded] = useState(false);
   const contentRef = useRef(null);
 
   const handleMouseMove = (e) => {
@@ -71,23 +70,17 @@ const ThumbnailCard = ({ data, index }) => {
         backgroundColor: '#111'
       }}
     >
-      <div className="smooth-spinner" style={{ opacity: isLoaded ? 0 : 1, transition: 'opacity 0.5s ease', zIndex: 1 }} />
       {/* 3D Tilting Image */}
       <img
         ref={imageRef}
         src={data.afterImg}
         alt={data.title}
-        onLoad={() => setIsLoaded(true)}
         style={{
           width: '100%',
           height: '100%',
           objectFit: 'cover',
           transformOrigin: 'center center',
-          willChange: 'transform',
-          opacity: isLoaded ? 1 : 0,
-          transition: 'opacity 0.4s ease',
-          position: 'relative',
-          zIndex: 2
+          willChange: 'transform'
         }}
       />
     </div>
